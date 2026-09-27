@@ -1,0 +1,221 @@
+{
+  "name": "AI Travel Assistant (MCP)",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {
+          "inputPlaceholder": "e.g. Plan a 3-day trip to Cox's Bazar",
+          "showWelcomeScreen": true,
+          "subtitle": "Ask about weather, hotels, attractions, food, or currency for any trip.",
+          "title": "AI Travel Assistant 🌏",
+          "responseMode": "streaming"
+        }
+      },
+      "id": "bb9c2fbf-2d5b-4711-8763-839d1f6c80a1",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        112
+      ],
+      "webhookId": "48c8bcb0-b006-4df0-8b1d-996980a5d9f4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a professional AI Travel Assistant, expert on destinations like Cox's Bazar, Sajek Valley, Bandarban, and Kathmandu, but able to help with any destination.\n\nRULES:\n1. NEVER answer factual travel questions (weather, hotel availability, attractions, restaurants, currency exchange) from your own memory. ALWAYS call the matching MCP tool first (use the Geocoding tool first to get coordinates, then Weather/Hotels/Restaurants/Attractions which need those coordinates; use the Currency tool for international destinations).\n2. At the very start of the conversation, call \"Get Saved Preferences\" to check if this user already has saved preferences (budget, hotel type, transport, diet, activities). Use them silently to personalize your recommendation without forcing the user to repeat info.\n3. If the user states a new or updated preference during the chat (e.g. \"I prefer budget hotels\", \"I'm vegetarian\", \"I like adventure trips\"), call \"Save Preferences\" to store it for next time.\n4. Combine ALL relevant tool results into ONE clear, well-structured recommendation using short sections, not a wall of text.\n5. If a tool fails or returns no data, say so honestly instead of inventing information.\n6. Keep tone friendly, concise, and practical, like a knowledgeable local travel agent."
+        }
+      },
+      "id": "5a9be426-92b9-41fc-85da-6b3de843c89a",
+      "name": "AI Travel Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://n8n:5678/mcp/64d67502-4704-49d0-bdec-6bb5bfa0831e",
+        "options": {}
+      },
+      "id": "2271a34f-0198-4420-a305-f13f6f6be619",
+      "name": "Travel MCP Tools",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.4,
+      "position": [
+        480,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "CwFJj1vzOHMM5HvS",
+          "cachedResultName": "travel_user_preferences"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "sessionId",
+              "keyValue": "={{ $('When chat message received').item.json.sessionId }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "id": "cd410f53-8922-4bc2-9d0c-576d5d4c7e2a",
+      "name": "Get Saved Preferences",
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "CwFJj1vzOHMM5HvS",
+          "cachedResultName": "travel_user_preferences"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "sessionId",
+              "keyValue": "={{ $('When chat message received').item.json.sessionId }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $('When chat message received').item.json.sessionId }}",
+            "budget": "={{ $fromAI('budget', 'Budget level: Budget, Mid-range or Luxury', 'string') }}",
+            "hotelType": "={{ $fromAI('hotelType', 'Preferred hotel type', 'string') }}",
+            "transport": "={{ $fromAI('transport', 'Preferred transport method', 'string') }}",
+            "diet": "={{ $fromAI('diet', 'Dietary preference', 'string') }}",
+            "activities": "={{ $fromAI('activities', 'Preferred activity style e.g. Adventure, Relaxation, Sightseeing', 'string') }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "6e2aaec5-009d-48a2-afce-b70a3d49cdd0",
+      "name": "Save Preferences",
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {
+          "maxOutputTokens": 1200,
+          "temperature": 0.4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        320
+      ],
+      "id": "d607ba2d-83a1-47c2-bdb8-4725981fa96d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1U1w3PYo1Q56y3cB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Travel Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Travel MCP Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Travel Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Saved Preferences": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Travel Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Preferences": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Travel Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Travel Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "3d9125e9-f566-4cb2-a606-1c591382c814",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+  },
+  "nodeGroups": [],
+  "id": "q4o1iMXmPmB3QTBT",
+  "tags": []
+}
