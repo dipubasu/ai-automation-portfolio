@@ -1,0 +1,214 @@
+{
+  "name": "EstateBot (Real Estate Lead Qualification) server",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "2d596155-c2f3-4d55-8fb3-bc70cf9c7ac3",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1F4eacM06Cay8CWf2iPUfdYl-m5Gpm_Om",
+          "mode": "list",
+          "cachedResultName": "Copy of EstateBot_Realty_Austin_Demo_Property_Knowledge_Base (1).pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1F4eacM06Cay8CWf2iPUfdYl-m5Gpm_Om/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "id": "fc2f3445-64cd-4d61-9ecd-1f01bafb90fc",
+      "name": "Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        224,
+        112
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "gWEOq445DILlzS86",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "id": "b6b9d4e1-de30-4ae5-9971-7b933a884d9a",
+      "name": "Extract From File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        448,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "f69928d2-01ba-40d2-8d38-31ec2a843ffc",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        704,
+        112
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xm5S1Yt9UWNyte10",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chunkSize": 500,
+        "chunkOverlap": 50,
+        "options": {}
+      },
+      "id": "1b781e0d-788a-4994-9a3c-375459972eab",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        896,
+        560
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "24a8187d-0b55-4362-b276-37b5bfa466df",
+      "name": "Google Gemini Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        688,
+        352
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1U1w3PYo1Q56y3cB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "= {{ $json.text }}",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        352
+      ],
+      "id": "447d1860-c3f7-40b3-b5ac-9723ebbc2658",
+      "name": "Default Data Loader"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Extract From File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract From File": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "614ced85-faad-4c9c-9450-51dd8fa6b09f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+  },
+  "nodeGroups": [],
+  "id": "cuj18eppPhQadMeu",
+  "tags": []
+}
