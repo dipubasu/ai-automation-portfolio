@@ -1,0 +1,296 @@
+{
+  "name": "Travel MCP Server",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "64d67502-4704-49d0-bdec-6bb5bfa0831e"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "760962cc-b4fe-4f64-9317-131f79e3fafc",
+      "name": "MCP Server Trigger",
+      "webhookId": "64d67502-4704-49d0-bdec-6bb5bfa0831e"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search hotels near a destination.\n\nProvide coordinates in this format:\n\ncircle:longitude,latitude,10000\n\nExample:\ncircle:91.9790,21.4272,10000",
+        "url": "https://api.geoapify.com/v2/places?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "categories",
+              "value": "accommodation.hotel"
+            },
+            {
+              "name": "limit",
+              "value": "5"
+            },
+            {
+              "name": "filter",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Coordinates in the format: circle:longitude,latitude,10000`, 'string') }}"
+            },
+            {
+              "name": "apiKey",
+              "value": "YOUR_GEOAPIFY_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        -368,
+        224
+      ],
+      "id": "79d87f76-7cb2-4525-be41-4dbe1da88487",
+      "name": "HTTP Request Tool (Hotels)"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search restaurants near the destination.",
+        "url": "https://api.geoapify.com/v2/places",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "categories",
+              "value": "catering.restaurant"
+            },
+            {
+              "name": "filter",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Search hotels near the destination.\n\nProvide the value in this format:\n\ncircle:longitude,latitude,10000\n\nExample:\ncircle:91.9790,21.4272,10000\n\nUse the destination coordinates obtained from the geocoding tool.`, 'string') }}"
+            },
+            {
+              "name": "limit",
+              "value": "5"
+            },
+            {
+              "name": "apiKey",
+              "value": "YOUR_GEOAPIFY_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        -192,
+        224
+      ],
+      "id": "f766446e-0e5d-4614-a02a-94a0d253b89b",
+      "name": "HTTP Request Tool (Restaurants)"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search tourist attractions near a destination.",
+        "url": "https://api.geoapify.com/v2/places",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "categories",
+              "value": "tourism.attraction"
+            },
+            {
+              "name": "filter",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Search attractions within the destination area.\n\nFormat:\ncircle:longitude,latitude,10000\n\nExample:\ncircle:91.9790,21.4272,10000`, 'string') }}"
+            },
+            {
+              "name": "limit",
+              "value": "10"
+            },
+            {
+              "name": "apiKey",
+              "value": "YOUR_GEOAPIFY_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        -32,
+        224
+      ],
+      "id": "730f12e4-7def-4e84-ba27-b6fd86a155e9",
+      "name": "HTTP Request Tool (Attractions)"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Get the current currency exchange rate. Provide a base currency code (e.g. USD, BDT, INR, EUR, GBP) and this returns exchange rates from that base currency to all major world currencies.",
+        "url": "=https://open.er-api.com/v6/latest/{{ $fromAI('base_currency', 'Base currency code, e.g. USD, BDT, INR, EUR, GBP', 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        128,
+        224
+      ],
+      "id": "6273012a-7445-4f59-a26a-40c45f20cf81",
+      "name": "HTTP Request Tool (Currency)"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Convert a destination name into latitude and longitude coordinates.",
+        "url": "https://api.geoapify.com/v1/geocode/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `Destination name or city.\n\nExamples:\nCox's Bazar\nSajek Valley\nKathmandu\nBandarban`, 'string') }}"
+            },
+            {
+              "name": "format",
+              "value": "json"
+            },
+            {
+              "name": "apiKey",
+              "value": "YOUR_GEOAPIFY_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        256,
+        224
+      ],
+      "id": "2437e99c-a159-48e6-878e-a82866b51b17",
+      "name": "HTTP Request Tool (Geocoding)"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Get the current weather conditions for a destination using latitude and longitude.\n\nUse this tool after the Geocoding Tool to retrieve real-time weather information.\n\nReturns:\n- Temperature\n- Weather condition\n- Humidity\n- Wind speed\n- Local timezone\n\nNever guess the weather. Always use this tool before answering travel-related questions.",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "latitude",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `Latitude of the destination.\n\nExample:\n21.4272`, 'string') }}"
+            },
+            {
+              "name": "longitude",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Longitude of the destination.\n\nExample:\n91.9790`, 'string') }}"
+            },
+            {
+              "name": "current",
+              "value": "temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m"
+            },
+            {
+              "name": "timezone",
+              "value": "auto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        496,
+        224
+      ],
+      "id": "b710545f-a5c2-47ca-9cec-5b69dafc1b37",
+      "name": "HTTP Request tool (weather)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request Tool (Hotels)": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Tool (Restaurants)": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Tool (Attractions)": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Tool (Currency)": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Tool (Geocoding)": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request tool (weather)": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "versionId": "3306857b-3dd1-4bfe-b4f8-a479933c7820",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+  },
+  "nodeGroups": [],
+  "id": "6FMFWc74wJi3P1LZ",
+  "tags": []
+}
