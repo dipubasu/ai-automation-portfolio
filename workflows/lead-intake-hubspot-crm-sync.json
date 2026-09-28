@@ -1,0 +1,512 @@
+{
+  "name": "Lead Intake → HubSpot CRM Sync → Notification",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-telegram-chat-id",
+              "name": "telegramAlertChatId",
+              "type": "string",
+              "value": "REPLACE_WITH_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "cfg-sheet-id",
+              "name": "leadsSheetId",
+              "type": "string",
+              "value": "REPLACE_WITH_YOUR_GOOGLE_SHEET_ID"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "c3ca3ee9-7efd-4cfc-84a0-f6f7e2935ca5",
+      "name": "Set - Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2496,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-lead-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "4718874d-c5ee-4e28-b44d-9df00a741738",
+      "name": "Webhook - New Lead1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2720,
+        592
+      ],
+      "webhookId": "new-lead-intake"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-email-exists",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "cond-email-format",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4c0687ac-ccd8-4a71-8d80-07f15a4d38fe",
+      "name": "IF - Valid Lead Data1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2272,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "email": "={{ $json.body.email }}",
+        "additionalFields": {},
+        "options": {}
+      },
+      "id": "1c440935-304a-4838-901d-61310ecf6175",
+      "name": "HubSpot - Create or Update Contact1",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [
+        -2048,
+        496
+      ],
+      "credentials": {
+        "hubspotAppToken": {
+          "id": "45DELGo3c40unAGs",
+          "name": "HubSpot account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "resource": "deal",
+        "stage": "4142257897",
+        "additionalFields": {
+          "amount": "={{ $('Webhook - New Lead1').item.json.body.deal_amount }}"
+        }
+      },
+      "id": "be6da92b-8f4f-4e4a-8728-ebc0050ebc15",
+      "name": "HubSpot - Create Deal1",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [
+        -1824,
+        416
+      ],
+      "credentials": {
+        "hubspotAppToken": {
+          "id": "45DELGo3c40unAGs",
+          "name": "HubSpot account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-high-value",
+              "leftValue": "={{ Number($('HubSpot - Create Deal1').item.json.properties.amount?.value ?? $('HubSpot - Create Deal1').item.json.properties.amount) }}",
+              "rightValue": 1000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "56a5a958-3fd3-4942-a2fd-315e97c82b82",
+      "name": "IF - High Value Deal1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1600,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set - Config').item.json.telegramAlertChatId }}",
+        "text": "==🚨 High-value lead created!\nCompany: {{ $('Webhook - New Lead1').first().json.body.company }}\nDeal Amount: {{ $('Webhook - New Lead1').first().json.body.deal_amount }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "20ff8f20-7b98-441c-b6c3-ead8c86f78fa",
+      "name": "Telegram - Alert Sales Team1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1376,
+        272
+      ],
+      "webhookId": "28c97999-ac48-4c10-b11d-a8bc95ed5cb7",
+      "credentials": {
+        "telegramApi": {
+          "id": "TBvMrI4OGNSypcbV",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set - Config').item.json.leadsSheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Webhook - New Lead1').item.json.body.email }}",
+            "Company": "={{ $('Webhook - New Lead1').item.json.body.company }}",
+            "Deal Amount": "={{ $('HubSpot - Create Deal1').item.json.properties.amount.value }}",
+            "Status": "={{ $('HubSpot - Create Deal1').item.json.properties.dealstage.value }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Deal Amount",
+              "displayName": "Deal Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Created At",
+              "displayName": "Created At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "cdd3a88a-1c82-4940-9f7c-069384565f92",
+      "name": "Google Sheets - Log Standard Lead1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1376,
+        464
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1oY2uphtln0mbAgV",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"success\", \"message\": \"Lead processed and synced to HubSpot\", \"dealId\": $json.dealId } }}",
+        "options": {}
+      },
+      "id": "3a7b72dc-cf07-42a1-a845-e643072d3273",
+      "name": "Respond - Success1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        -1152,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"error\", \"message\": \"Invalid lead data: email is missing or malformed\" } }}",
+        "options": {}
+      },
+      "id": "fa8c4b87-f61f-437f-8d06-a4553002a3e0",
+      "name": "Respond - Validation Error1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        -2048,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set - Config').item.json.telegramAlertChatId }}",
+        "text": "=⚠️ HubSpot sync failed for lead: {{ $('Webhook - New Lead1').item.json.body.email }}\nError: {{ $json.error?.message || 'Unknown error' }}\nThis lead needs manual follow-up.",
+        "additionalFields": {}
+      },
+      "id": "2fbd1c50-6aea-43b6-814a-059fe974aee5",
+      "name": "Telegram - Error Alert1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1600,
+        688
+      ],
+      "webhookId": "534ed571-a28d-471f-a201-ae83df7aa496",
+      "credentials": {
+        "telegramApi": {
+          "id": "6In2ORLgTHT5Zzz4",
+          "name": "Telegram account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"error\", \"message\": \"Lead received but HubSpot sync failed. Logged for manual review.\" } }}",
+        "options": {}
+      },
+      "id": "a8ee6e20-9fd4-4a96-a113-2bae273dab6e",
+      "name": "Respond - Sync Error1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        -1376,
+        688
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Set - Config": {
+      "main": [
+        [
+          {
+            "node": "IF - Valid Lead Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - New Lead1": {
+      "main": [
+        [
+          {
+            "node": "Set - Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Valid Lead Data1": {
+      "main": [
+        [
+          {
+            "node": "HubSpot - Create or Update Contact1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond - Validation Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HubSpot - Create or Update Contact1": {
+      "main": [
+        [
+          {
+            "node": "HubSpot - Create Deal1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram - Error Alert1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HubSpot - Create Deal1": {
+      "main": [
+        [
+          {
+            "node": "IF - High Value Deal1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram - Error Alert1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - High Value Deal1": {
+      "main": [
+        [
+          {
+            "node": "Telegram - Alert Sales Team1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets - Log Standard Lead1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram - Alert Sales Team1": {
+      "main": [
+        [
+          {
+            "node": "Respond - Success1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Log Standard Lead1": {
+      "main": [
+        [
+          {
+            "node": "Respond - Success1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram - Error Alert1": {
+      "main": [
+        [
+          {
+            "node": "Respond - Sync Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "5ea7bba2-b200-4653-a636-53071cca680b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+  },
+  "nodeGroups": [],
+  "id": "FVSGitHKZZ7c3f6E",
+  "tags": []
+}
