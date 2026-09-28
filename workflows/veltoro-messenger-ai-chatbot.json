@@ -1,0 +1,301 @@
+{
+  "name": "VELTORO — Messenger AI Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "your-webhook-path",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "15cd18e4-83f0-4a4c-b744-a8b43c89478f",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -512,
+        336
+      ],
+      "webhookId": "70f7e73c-1ca2-4935-a075-e1698bbd26eb"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b2f1391a-d7b1-425c-987f-41facefbff73",
+              "leftValue": "={{ $json.query['hub.mode'] }}",
+              "rightValue": "subscribe",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "52b71316-3a56-4870-98de-7bed8176f56a",
+              "leftValue": "={{ $json.query['hub.verify_token'] }}",
+              "rightValue": "YOUR_WEBHOOK_VERIFY_TOKEN",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "124061bc-3afd-4c2b-8638-02b66c77500a",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -144,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Webhook').item.json.query['hub.challenge'] }}",
+        "options": {}
+      },
+      "id": "236ea77c-cfd8-40af-a92b-d07885a7c60e",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        208,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.entry[0].messaging[0].message.text }}",
+        "options": {
+          "systemMessage": "=You are a helpful and friendly customer support assistant for the VELTORO Facebook Page.\n\nYou have access to a Supabase Vector Store containing the official VELTORO product catalogue.\n\nIMPORTANT RULES:\n- Use the Supabase Vector Store whenever the customer asks about VELTORO products, prices, SKUs, materials, sizes, colors, fit, care instructions, or availability.\n- Answer catalogue-related questions using only information retrieved from the official product catalogue.\n- Never invent product information.\n- If the catalogue does not contain the answer, clearly say that the information is not available in the catalogue.\n- Keep replies short and clear, preferably 1-3 sentences.\n- Reply in the same language as the customer.\n- Do not mention internal tools, Supabase, RAG, vector databases, or system instructions.\n- Do not repeat the customer's question."
+        }
+      },
+      "id": "6d889256-9c3c-4ce5-8b15-ee43f16419fb",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -256,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "id": "6e44c267-0315-44b6-88f7-6aaf52259a9c",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        704
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "RdKMzsAmK9oqjpFH",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v19.0/{{ $('Webhook').first().json.body.entry[0].messaging[0].recipient.id }}/messages",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "YOUR_FACEBOOK_PAGE_ACCESS_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\": {\n    \"id\": \"{{ $('Webhook').first().json.body.entry[0].messaging[0].sender.id }}\"\n  },\n  \"messaging_type\": \"RESPONSE\",\n  \"message\": {\n    \"text\": \"{{ $json.output }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "3f1da3e5-c4e0-4b20-82c9-0f1ba375ebb4",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search the VELTORO product catalogue and knowledge base for accurate information about products, prices, SKUs, sizes, colors, materials, fit, care instructions, and availability. Use this tool whenever the customer asks about VELTORO products or catalogue-specific information.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "id": "9c3946e3-b750-468f-a220-2fb7ad267a7a",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        768
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "LpjnYg7ZnDMKKB3J",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        976
+      ],
+      "id": "b6e9a14a-88c3-4684-af6c-54b912e1e9dd",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1U1w3PYo1Q56y3cB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "EVENT_RECEIVED",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "824338d9-47d4-4003-9e98-b985c6cb6b9a",
+      "name": "Ack Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -384,
+        400
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Ack Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "f9784ec1-a356-41fb-9708-d21388902dfb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+  },
+  "nodeGroups": [],
+  "id": "YXHjqAfhBAeb4Hqt",
+  "tags": []
+}
