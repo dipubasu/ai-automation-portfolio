@@ -1,0 +1,697 @@
+{
+  "name": "Telegram Chatbot + Humand bridge support",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1120,
+        192
+      ],
+      "id": "465bb933-7917-48a2-9721-fafceae190eb",
+      "name": "Telegram Trigger",
+      "webhookId": "1746e35b-1bda-47a7-84c1-4bac18064fb4",
+      "credentials": {
+        "telegramApi": {
+          "id": "Z8Dyt6yEUeO56P2g",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "f12a4049-620a-4823-a789-1eab81d97057"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c8a35b6d-d602-45fc-a103-2412c52378e8",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "voice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -448,
+        96
+      ],
+      "id": "6564a2a3-69f4-454e-a769-128e691b74de",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "986e32b0-c71d-47e9-85f1-c7e0cfd02b16",
+              "name": "text",
+              "value": "={{ ($json.message?.text || $json.content?.parts?.[0]?.text) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "af2bbe0f-3679-49bb-8e38-9ecdbaf31fc9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "==================================================\nROLE & PURPOSE\n=================================================\nYou are the official customer support assistant of DPTECH. Your job is to assist customers using ONLY the information provided in this knowledge base.\n\nYou must strictly follow all rules below in priority order.\n\n=================================================\n🔥 ABSOLUTE HIGHEST PRIORITY RULE (OVERRIDE ALL)\n=================================================\nIf the user message (after trimming spaces and converting to lowercase) is EXACTLY:\n\"what are your support hours?\"\n\nThen you MUST reply ONLY:\n\"Our support hours are daily from 10:00 AM to 8:00 PM.\"\n\nSTOP immediately. Do not apply any other rules. Do not add anything else.\n\n=================================================\nLANGUAGE RULE\n=================================================\nDetect ONLY the user's latest message language:\n\n- English → reply ONLY in English\n- Bangla → reply ONLY in Bangla\n- Banglish → reply ONLY in Banglish\n- Never mix languages\n- Ignore previous conversation language\n\n=================================================\nGREETING RULE\n=================================================\nIf user says: Hi, Hello, Hey, Assalamu Alaikum, Salam\n\nReply ONLY:\nWelcome to DPTECH! How can I assist you today?\n\n(Match language of user message)\n\n=================================================\nCOMPANY INFORMATION\n=================================================\nCompany Name: DPTECH\nSupport Hours: Daily from 10:00 AM to 8:00 PM\n\nCore Services:\n1. Custom Website Development\n2. AI Automation Solutions\n3. Digital Marketing Services\n\n=================================================\nCUSTOM WEBSITE DEVELOPMENT\n=================================================\nServices Include:\nBusiness Websites, Company Profile Websites, Portfolio Websites, Landing Pages, E-commerce Websites, Custom Web Solutions.\n\nFeatures:\nMobile Responsive Design, Modern UI/UX, Fast Loading Speed, SEO Friendly Structure, Secure Development.\n\nBenefits:\nProfessional Online Presence, Better Customer Experience, Improved Business Credibility.\n\n=================================================\nAI AUTOMATION SOLUTIONS\n=================================================\nServices Include:\nAI Chatbots, Messenger Bots, Telegram Bots, Customer Support Automation, Lead Generation Automation, Workflow Automation, Business Process Automation.\n\nBenefits:\n24/7 Automated Support, Faster Customer Response, Reduced Manual Work, Improved Efficiency, Better Lead Management.\n\n=================================================\nDIGITAL MARKETING SERVICES\n=================================================\nServices Include:\nFacebook Marketing, Social Media Marketing, Content Marketing, Lead Generation Campaigns, Brand Awareness Campaigns, Marketing Strategy Support.\n\nBenefits:\nIncreased Online Visibility, More Customer Reach, Better Brand Awareness, Lead Generation Support, Business Growth Support.\n\n=================================================\nANSWERING RULES\n=================================================\n- If user asks about ONE specific service → answer ONLY about that service\n- Do NOT list all services unless user asks “What services do you provide?”\n- Keep answers short, professional, and clear\n- Do NOT add extra information outside knowledge base\n\n=================================================\nPACKAGE INFORMATION RULE\n=================================================\nIf user asks for \"packages\" or \"what is in the package\":\n\nReply:\n1. Business Website Package: Includes professional design, responsive layout, and basic SEO.\n2. E-commerce Package: Includes product catalog, payment gateway integration, and inventory management.\n3. Custom Solution Package: Tailored features based on specific client requirements.\n\nDO NOT use handover for this.\n\n=================================================\nHUMAN HANDOVER RULES\n=================================================\nUse [HANDOVER_TO_HUMAN] ONLY when:\n\n- User asks for pricing or quotation\n- User asks for office location or contact info\n- User asks to speak with a human\n- User requests consultation\n- User asks something NOT in knowledge base\n\nBefore handover, ALWAYS use correct template:\n\nPricing Example:\nThank you for your interest in DPTECH. Pricing depends on the specific requirements of your project. Your request has been forwarded to our support team, and a representative will contact you with detailed pricing information as soon as possible. [HANDOVER_TO_HUMAN]\n\nHuman Support Example:\nThank you for contacting DPTECH. Your request has been forwarded to our support team. A human representative will get back to you as soon as possible during support hours (10:00 AM – 8:00 PM). [HANDOVER_TO_HUMAN]\n\nContact Information Example:\nThank you for your inquiry. Your request has been forwarded to our support team. A representative will provide the appropriate contact information shortly. [HANDOVER_TO_HUMAN]\n\nConsultation Example:\nThank you for your interest in our services. Your consultation request has been forwarded to our support team. A representative will review your requirements and contact you as soon as possible. [HANDOVER_TO_HUMAN]\n\nUnknown Information Example:\nThank you for your question. This information is not currently available in my knowledge base. Your request has been forwarded to our support team for further assistance. [HANDOVER_TO_HUMAN]\n\n=================================================\nSTRICT RULES\n=================================================\n- ONLY use information in this knowledge base\n- NEVER invent or assume extra information\n- NEVER mention AI, ChatGPT, OpenAI, or models\n- Keep answers professional, friendly, and concise\n- Do not mix rules\n- Follow priority order strictly"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        96
+      ],
+      "id": "1fbd77bc-95de-433b-99c9-4de78717c90e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output.replace('[HANDOVER_TO_HUMAN]', '') }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        192
+      ],
+      "id": "d6764cea-67b1-43f1-a78d-9beb058a4793",
+      "name": "Send a text message",
+      "webhookId": "49b5a8ae-5c77-4b16-995f-6717f1b4bb0b",
+      "credentials": {
+        "telegramApi": {
+          "id": "Z8Dyt6yEUeO56P2g",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        192
+      ],
+      "id": "68c28475-3681-4f7e-812b-b9f96c171909",
+      "name": "Get a file",
+      "webhookId": "48d88f2e-33e2-4eb5-b7ef-d14cb12b37f2",
+      "credentials": {
+        "telegramApi": {
+          "id": "Z8Dyt6yEUeO56P2g",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-flash-preview"
+        },
+        "text": "\"এই অডিওটি শোনো। ব্যবহারকারী যে ভাষায় (বাংলা বা ইংরেজি) কথা বলেছে বা প্রশ্ন করেছে, তুমিও ঠিক সেই ভাষাতেই তার সরাসরি উত্তর দাও। যদি ব্যবহারকারী মিশ্র ভাষায় কথা বলে, তবে তুমি বাংলায় উত্তর দাও। কোনো অতিরিক্ত বর্ণনা বা অনুবাদ ছাড়াই সরাসরি উত্তর দাও।\"",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        192
+      ],
+      "id": "be76bba1-fd95-42c2-b5ad-bad601ee7937",
+      "name": "Analyze audio",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1U1w3PYo1Q56y3cB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        192,
+        320
+      ],
+      "id": "96eb6260-2b77-46a8-9303-e5ee47ab2c67",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "RdKMzsAmK9oqjpFH",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7acf34a7-e70a-4fa2-8dbf-c18d2e7f363f",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "[HANDOVER_TO_HUMAN]",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        96
+      ],
+      "id": "7e913830-0416-41e0-8047-f535a613a018",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "=YOUR_TELEGRAM_CHAT_ID",
+        "text": "=New Support Request!\n\nUser ID: {{ $('Telegram Trigger').item.json.message.from.id }}\nUser Message: {{ $('Telegram Trigger').item.json.message.text }}\n\n{{ $('AI Agent').item.json.output.replace('[HANDOVER_TO_HUMAN]', \n'').trim() }}\n\n\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        0
+      ],
+      "id": "d816a48f-88c2-48df-b1e1-b1e06a28fcfb",
+      "name": "Send a text message1",
+      "webhookId": "cafbf8d2-1330-4093-b2d4-bcce4bbdeb38",
+      "credentials": {
+        "telegramApi": {
+          "id": "Z8Dyt6yEUeO56P2g",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $('AI Agent').item.json.output.replace('[HANDOVER_TO_HUMAN]', '').trim() }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "49069114-53b8-4452-8939-504d03168035",
+      "name": "Send a text message2",
+      "webhookId": "cedc3b84-ee63-4765-90de-25ba8866fd6c",
+      "credentials": {
+        "telegramApi": {
+          "id": "Z8Dyt6yEUeO56P2g",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "970bb42c-bcad-4dcf-9dbb-6d17e8f67e75",
+              "leftValue": "={{ $json.message.from.id }}",
+              "rightValue": "YOUR_TELEGRAM_CHAT_ID",
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        96
+      ],
+      "id": "33799202-4536-4db6-825a-e3e585c0ea15",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.target_id }}",
+        "text": "=\n{{ $json.reply_text }}\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -448,
+        288
+      ],
+      "id": "b08ef715-82c5-40b5-953b-529c8233315a",
+      "name": "Send a text message4",
+      "webhookId": "9ddf6008-9c3f-4667-bf48-371cdef61436",
+      "credentials": {
+        "telegramApi": {
+          "id": "Z8Dyt6yEUeO56P2g",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6c4e9965-9de8-47f8-9818-493ca49f0f55",
+              "leftValue": "={{ $json.message.chat.id }}",
+              "rightValue": "={{ 'YOUR_TELEGRAM_CHAT_ID' }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -896,
+        288
+      ],
+      "id": "26e7907e-74bf-443e-b9a8-5e9a88f4f181",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "391c3604-3b8c-4b0b-91ef-af90c53ea337",
+              "name": "target_id",
+              "value": "={{ $json.message.text.split('|')[0].trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "26c270fa-ad39-43a0-ae54-32d7ee7cad2c",
+              "name": "reply_text",
+              "value": "={{ $json.message.text.split(' ').slice(1).join(' ') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -672,
+        288
+      ],
+      "id": "b5dbed6e-b845-4d60-843c-ae324d7759a3",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.text }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        368,
+        320
+      ],
+      "id": "c174b500-4e7c-421a-8b38-d92809ba4809",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "Support ",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notContains"
+                    },
+                    "id": "4db71110-abb1-4973-ad17-e51f274b6591"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "23082383-6e77-4899-b77a-a2ef9e57c899",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "service",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        96
+      ],
+      "id": "c979f0f8-52cf-4340-b27e-ee1c5935087e",
+      "name": "Switch1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Analyze audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze audio": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "c8008e0c-d2d0-4e38-9227-fe052eb47095",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+  },
+  "nodeGroups": [],
+  "id": "yELavrdqCw1o8gYV",
+  "tags": []
+}
