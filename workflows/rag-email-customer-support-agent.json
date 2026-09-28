@@ -1,0 +1,391 @@
+{
+  "name": "Module 6 - RAG Email Customer Support Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "includeSpamTrash": false,
+          "includeDrafts": false,
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "id": "ebd89d7d-2d94-4d20-ba43-ba955bf4a9fb",
+      "name": "New Customer Email",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        208
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qaD7Iv5zTHNQxmrY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nreturn items.map(i => {\n  const item = i.json;\n  let body = item.text || item.snippet || '';\n  const cutMarkers = [/\\n>/, /\\nOn .* wrote:/i, /\\n-{2,}\\s*Original Message\\s*-{2,}/i];\n  for (const marker of cutMarkers) {\n    const idx = body.search(marker);\n    if (idx !== -1) { body = body.slice(0, idx); }\n  }\n  body = body.trim();\n  return {\n    json: {\n      messageId: item.id,\n      threadId: item.threadId,\n      from: item.from,\n      subject: item.subject,\n      body\n    }\n  };\n});"
+      },
+      "id": "3f6605be-c81b-4967-9093-0d90c34f0a25",
+      "name": "Extract & Clean Email Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Customer email subject: {{ $json.subject }}\nFrom: {{ $json.from }}\n\nCustomer message:\n{{ $json.body }}",
+        "options": {
+          "systemMessage": "You are a customer support assistant for Veltoro, an online fashion retailer. Before answering, always call the 'Veltoro Knowledge Base' tool to search company policy documents relevant to the customer's question (shipping, returns, payments, sizing, warranty, account help, escalation). Base your answer strictly on the retrieved knowledge base content and the customer's message. Do not invent policies or details that are not present in the retrieved context. Write the reply as a complete, ready-to-send email body: a polite greeting, a direct answer to the question, relevant policy details from the knowledge base, and a professional sign-off from 'Veltoro Customer Support'. Do not include a subject line. If the knowledge base has no relevant information, say a human support agent will follow up, and do not guess."
+        }
+      },
+      "id": "0dba3b0b-9c2f-4c86-a2d3-a5f414e94f35",
+      "name": "Draft Support Reply (RAG Agent)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        480,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search Veltoro company policy documents (shipping, returns, payments, sizing, warranty, account help, escalation) for information relevant to the customer question. Always call this before answering a policy-related question.",
+        "tableName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "veltoro_support_documents"
+        },
+        "options": {
+          "queryName": "match_veltoro_support_documents"
+        }
+      },
+      "id": "6129e0c3-4b6c-48eb-8bae-530d7b5b860b",
+      "name": "Veltoro Knowledge Base",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        448
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "LpjnYg7ZnDMKKB3J",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "your-approval-email@example.com",
+        "subject": "=[Approval Needed] Reply to: {{ $('Extract & Clean Email Content').item.json.subject }}",
+        "message": "=Customer: {{ $('Extract & Clean Email Content').item.json.from }}\nSubject: {{ $('Extract & Clean Email Content').item.json.subject }}\n\nCustomer message:\n{{ $('Extract & Clean Email Content').item.json.body }}\n\n---\nAI-drafted reply:\n{{ $json.output }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "Send to Customer",
+            "disapproveLabel": "Reject"
+          }
+        },
+        "options": {}
+      },
+      "id": "0b3be0ba-52e1-43aa-b0b1-deb815927c3e",
+      "name": "Request Human Approval",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        208
+      ],
+      "webhookId": "13e4f6fb-a1cb-4b99-b6ce-39061636eb1b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kF0WdZK8l5LaQyuu",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.data.approved }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              },
+              "rightValue": true
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "10f170f5-a4a5-4ab6-90c1-f575d1178c43",
+      "name": "Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1168,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Extract & Clean Email Content').item.json.messageId }}",
+        "emailType": "text",
+        "message": "={{ $('Draft Support Reply (RAG Agent)').item.json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "168678c8-a138-4123-b01e-483c00cf5999",
+      "name": "Send Approved Reply to Customer",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        112
+      ],
+      "webhookId": "af3c5445-23d5-49f3-a8b9-b8383d69ce23",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qaD7Iv5zTHNQxmrY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "status-field",
+              "name": "status",
+              "value": "rejected_needs_manual_reply",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "64c146de-4f80-42be-865e-96e499ca4574",
+      "name": "Flag for Manual Review",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1392,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        464,
+        448
+      ],
+      "id": "7b7ba549-989f-4f1d-82a2-447502a60ffb",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "RdKMzsAmK9oqjpFH",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1616,
+        112
+      ],
+      "id": "114d031a-0e74-41ba-b674-6d4035947d7a",
+      "name": "Mark a message as read",
+      "webhookId": "77fa2522-7c52-4be1-b214-2db3d657dd51",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qaD7Iv5zTHNQxmrY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        688,
+        656
+      ],
+      "id": "69d1e7c8-5965-4fa2-854c-e556da476bce",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1U1w3PYo1Q56y3cB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "New Customer Email": {
+      "main": [
+        [
+          {
+            "node": "Extract & Clean Email Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract & Clean Email Content": {
+      "main": [
+        [
+          {
+            "node": "Draft Support Reply (RAG Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Support Reply (RAG Agent)": {
+      "main": [
+        [
+          {
+            "node": "Request Human Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Veltoro Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Draft Support Reply (RAG Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Human Approval": {
+      "main": [
+        [
+          {
+            "node": "Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved?": {
+      "main": [
+        [
+          {
+            "node": "Send Approved Reply to Customer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Flag for Manual Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Draft Support Reply (RAG Agent)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Approved Reply to Customer": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Veltoro Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "6f821990-327e-4466-bc29-115fe99583e0",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+  },
+  "nodeGroups": [],
+  "id": "3NusXrn0pgQz6HVZ",
+  "tags": []
+}
