@@ -1,0 +1,903 @@
+{
+  "name": "Youtube automation workflow 2 (Topic to YouTube)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "73b82a06-ce67-4384-ae08-a8c363337ad2",
+      "name": "When clicking Execute workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "topic-field",
+              "name": "topic",
+              "value": "3 surprising facts about the deep ocean",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "42d6538a-6b1f-475c-975d-6ff773d6a7dd",
+      "name": "Video Topic",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "openai/gpt-4o-mini"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You create YouTube Shorts video concepts from the user topic. Return ONLY valid JSON with exactly these keys:\n{\n  \"Title\": \"40-60 characters, curiosity-driven, no hashtags\",\n  \"Description\": \"100-250 characters: a hook, one call to action, and 3 hashtags\",\n  \"ImagePrompts\": [\"exactly 4 short photorealistic scene descriptions as an array of strings, each depicting a different visual beat of the script order, shot like a real photograph: natural lighting, shallow depth of field, DSLR-quality detail, realistic human subjects when relevant, no text, no logos, no watermark, no illustration or cartoon style\"],\n  \"Script\": \"A spoken voiceover of 75-90 words for a 30-35 second video: one strong hook, three surprising facts, one short call to action at the end. Plain sentences, no hashtags, no emojis.\"\n}"
+            },
+            {
+              "content": "=<user-query>\n{{ $json.topic }}\n</user-query>"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "store": false,
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "id": "6012ed34-fa8d-43eb-8eac-f5f2f5a020f1",
+      "name": "Ideator",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        192
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "9f9V3QftTqLSkjVY",
+          "name": "OpenAI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "title-field",
+              "name": "title",
+              "type": "string",
+              "value": "={{ $json.output[0].content[0].text.Title }}"
+            },
+            {
+              "id": "description-field",
+              "name": "description",
+              "type": "string",
+              "value": "={{ $json.output[0].content[0].text.Description }}"
+            },
+            {
+              "id": "image-prompts-field",
+              "name": "imagePrompts",
+              "type": "array",
+              "value": "={{ $json.output[0].content[0].text.ImagePrompts }}"
+            },
+            {
+              "id": "script-field",
+              "name": "script",
+              "type": "string",
+              "value": "={{ $json.output[0].content[0].text.Script }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4affb582-9e64-4bb2-ae86-6df0e97b3c03",
+      "name": "Video Details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudflare.com/client/v4/accounts/YOUR_CLOUDFLARE_ACCOUNT_ID/ai/run/@cf/black-forest-labs/flux-1-schnell",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_CLOUDFLARE_API_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ prompt: \"Ultra-realistic photograph, shot on DSLR, natural lighting, shallow depth of field, high detail, real-world physics and texture, no illustration, no cartoon, no CGI look. \" + $json.imagePrompt }) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 10000
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "f8866b7d-5302-4b6d-87e0-fd6dcc10f4ba",
+      "name": "Generate Video Frame",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1248,
+        272
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "result.image",
+        "options": {
+          "fileName": "image.jpg",
+          "mimeType": "image/jpeg"
+        }
+      },
+      "id": "8d83f0e4-902a-435c-9dbb-f55874a7e606",
+      "name": "Convert to File",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/ingest/stage/upload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "x-api-key",
+              "value": "YOUR_SHOTSTACK_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a0f196bb-7763-4324-a02d-b7d522e6fe11",
+      "name": "Request Upload URL (Image)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1696,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return { json: $json, binary: $('Convert to File').item.binary };"
+      },
+      "id": "867b1f66-7d5c-4284-929a-3be75b39fd88",
+      "name": "Attach Image Binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $json.data.attributes.url }}",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "f4431af5-080a-4510-8409-bad0821a894a",
+      "name": "Upload Image Binary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2144,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 12
+      },
+      "id": "d946d139-d8eb-4ec2-adef-0073f48f9741",
+      "name": "Wait for Image Ingest",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2368,
+        288
+      ],
+      "webhookId": "5836a362-32ee-4840-9242-44f28140625b"
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api.shotstack.io/ingest/stage/sources/' + $('Request Upload URL (Image)').item.json.data.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "YOUR_SHOTSTACK_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "668f3f29-e360-4d77-91de-d631723ee7f7",
+      "name": "Check Image Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2592,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const images = $('Check Image Source').all().map(item => item.json.data.attributes.source);\nconst audioAttrs = $('Check Audio Source').first().json.data.attributes;\nconst audioUrl = audioAttrs.source;\nconst audioDuration = audioAttrs.duration || 30;\nconst outroLength = 2.5;\nconst minLength = 30;\nconst totalLength = Math.max(minLength, Math.round((audioDuration + outroLength) * 10) / 10);\nconst title = $('Video Details').first().json.title;\n\nconst clipLength = Math.round((totalLength / images.length) * 10) / 10;\nconst effects = ['zoomIn', 'zoomOut', 'slideLeft', 'slideRight'];\n\nconst imageClips = images.map((url, i) => ({\n  asset: { type: 'image', src: url },\n  start: Math.round(i * clipLength * 10) / 10,\n  length: clipLength,\n  fit: 'crop',\n  effect: effects[i % effects.length],\n  transition: { in: 'fade', out: 'fade' }\n}));\n\nconst payload = {\n  timeline: {\n    background: '#000000',\n    tracks: [\n      {\n        clips: [\n          { asset: { type: 'title', text: title, style: 'minimal', color: '#ffffff', size: 'x-small', position: 'center' }, start: 0, length: 3, transition: { in: 'fade', out: 'fade' } },\n          { asset: { type: 'title', text: 'Follow for more!', style: 'minimal', color: '#ffffff', size: 'x-small', position: 'bottom' }, start: totalLength - outroLength, length: outroLength, transition: { in: 'fade', out: 'fade' } }\n        ]\n      },\n      { clips: imageClips },\n      { clips: [ { asset: { type: 'audio', src: audioUrl }, start: 0, length: totalLength } ] }\n    ]\n  },\n  output: { format: 'mp4', resolution: 'sd', aspectRatio: '9:16' }\n};\n\nreturn [{ json: payload }];"
+      },
+      "id": "42cea7c6-a58b-49ec-92ed-3db15c695a7b",
+      "name": "Build Shotstack Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "id": "c2eee9e6-9b99-4b4c-8e5f-974b4203fff1",
+      "name": "Wait for Render",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3488,
+        192
+      ],
+      "webhookId": "c589c544-8b0c-4935-86bc-9fb9c94bb482"
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api.shotstack.io/edit/stage/render/' + $('Submit Render (Shotstack)').item.json.response.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "YOUR_SHOTSTACK_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a153b954-db3d-46c7-bcd1-45cccf5ff336",
+      "name": "Check Render Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        3712,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.response.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "2ea78c09-07b2-49d9-b3af-575190bd1400",
+      "name": "Download Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        3936,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $(\"Video Details\").first().json.title + \" #Shorts\" }}",
+        "regionCode": "US",
+        "categoryId": "22",
+        "options": {
+          "description": "={{ $(\"Video Details\").first().json.description + \"\\n\\n#Shorts\" }}",
+          "notifySubscribers": false,
+          "privacyStatus": "private",
+          "selfDeclaredMadeForKids": false
+        }
+      },
+      "id": "2d6feddb-e148-4f4f-a0b2-943ff9dac52e",
+      "name": "Upload to YouTube",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        4160,
+        192
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "hDmSiqrCrO1DNwDY",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/hpp4J3VqNfWAUOO0d1Us",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key",
+              "value": "YOUR_ELEVENLABS_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: $('Video Details').first().json.script, model_id: 'eleven_multilingual_v2' }) }}",
+        "options": {}
+      },
+      "id": "e5f1c3a9-7b4d-4c0e-98f6-9a3b2c1d0e4f",
+      "name": "Generate Voiceover",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1472,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/ingest/stage/upload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "x-api-key",
+              "value": "YOUR_SHOTSTACK_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f6a2d4b0-8c5e-4d1f-a907-0b4c3d2e1f5a",
+      "name": "Request Upload URL (Audio)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1696,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return { json: $json, binary: $('Generate Voiceover').item.binary };"
+      },
+      "id": "a7b3e5c1-9d6f-4e20-ba18-1c5d4e3f2a6b",
+      "name": "Attach Audio Binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $json.data.attributes.url }}",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "b8c4f6d2-0e7a-4f31-8c29-2d6e5f4a3b7c",
+      "name": "Upload Audio Binary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2144,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 12
+      },
+      "id": "c9d5a7e3-1f8b-4a42-9d3a-3e7f6a5b4c8d",
+      "name": "Wait for Audio Ingest",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2368,
+        96
+      ],
+      "webhookId": "ee0c1d1c-fa2b-4808-9fd4-42179d277111"
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api.shotstack.io/ingest/stage/sources/' + $('Request Upload URL (Audio)').item.json.data.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "YOUR_SHOTSTACK_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d0e6b8f4-2a9c-4b53-ae4b-4f8a7b6c5d9e",
+      "name": "Check Audio Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2592,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "watch-link",
+              "name": "watchLink",
+              "type": "string",
+              "value": "={{ 'https://www.youtube.com/watch?v=' + $json.uploadId }}"
+            },
+            {
+              "id": "studio-link",
+              "name": "studioLink",
+              "type": "string",
+              "value": "={{ 'https://studio.youtube.com/video/' + $json.uploadId + '/edit' }}"
+            },
+            {
+              "id": "shorts-link",
+              "name": "shortsLink",
+              "type": "string",
+              "value": "={{ 'https://www.youtube.com/shorts/' + $json.uploadId }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "e1f7a9c5-3b8d-4c64-bf5c-5a9b8c7d6e0f",
+      "name": "Video Link",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4384,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/edit/stage/render",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-api-key",
+              "value": "YOUR_SHOTSTACK_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "f4e5cc0d-181d-4fb7-b205-d2fabab20468",
+      "name": "Submit Render (Shotstack)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        3264,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst prompts = data.imagePrompts || [];\nreturn prompts.map((prompt, i) => ({\n  json: {\n    ...data,\n    imagePrompt: prompt,\n    imageIndex: i,\n    imageCount: prompts.length\n  }\n}));"
+      },
+      "id": "b37ff863-a34d-4649-ba33-199497305618",
+      "name": "Split Image Prompts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        288
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6cb30734-fc6e-459f-bb95-9cba69a7e1e9",
+      "name": "Merge Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2816,
+        192
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Video Topic": {
+      "main": [
+        [
+          {
+            "node": "Ideator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ideator": {
+      "main": [
+        [
+          {
+            "node": "Video Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video Frame": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Request Upload URL (Image)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Upload URL (Image)": {
+      "main": [
+        [
+          {
+            "node": "Attach Image Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Image Binary": {
+      "main": [
+        [
+          {
+            "node": "Upload Image Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image Binary": {
+      "main": [
+        [
+          {
+            "node": "Wait for Image Ingest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Image Ingest": {
+      "main": [
+        [
+          {
+            "node": "Check Image Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Render": {
+      "main": [
+        [
+          {
+            "node": "Check Render Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Render Status": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Upload to YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Request Upload URL (Audio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Upload URL (Audio)": {
+      "main": [
+        [
+          {
+            "node": "Attach Audio Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Audio Binary": {
+      "main": [
+        [
+          {
+            "node": "Upload Audio Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Audio Binary": {
+      "main": [
+        [
+          {
+            "node": "Wait for Audio Ingest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Audio Ingest": {
+      "main": [
+        [
+          {
+            "node": "Check Audio Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to YouTube": {
+      "main": [
+        [
+          {
+            "node": "Video Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Shotstack Payload": {
+      "main": [
+        [
+          {
+            "node": "Submit Render (Shotstack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit Render (Shotstack)": {
+      "main": [
+        [
+          {
+            "node": "Wait for Render",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "Video Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Details": {
+      "main": [
+        [
+          {
+            "node": "Split Image Prompts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Voiceover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Image Prompts": {
+      "main": [
+        [
+          {
+            "node": "Generate Video Frame",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Image Source": {
+      "main": [
+        [
+          {
+            "node": "Merge Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Audio Source": {
+      "main": [
+        [
+          {
+            "node": "Merge Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Branches": {
+      "main": [
+        [
+          {
+            "node": "Build Shotstack Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "70773837-25f4-424c-b647-410df49ab628",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+  },
+  "nodeGroups": [],
+  "id": "4KHyAJuABUotAmbI",
+  "tags": []
+}
