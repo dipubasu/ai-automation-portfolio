@@ -1,0 +1,140 @@
+{
+  "name": "Automated Dental Clinic Support Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -288,
+        -16
+      ],
+      "id": "82653aa2-f8d8-4d8b-afcb-eec735853cdd",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Eaym3Ve0sbKgP1S8",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please write a professional reply to the following customer email based on our clinic guidelines:\n{{ $json.snippet }}",
+        "options": {
+          "systemMessage": "You are an advanced AI Email Assistant for \"SmileCare Dental Clinic\". Your only job is to read incoming customer emails, understand their intent, and write professional email responses based strictly on the provided clinic information.\n\n### CLINIC INFORMATION (KNOWLEDGE BASE)\n- Clinic Name: SmileCare Dental Clinic\n- Opening Hours: Saturday–Thursday, 9:00 AM – 7:00 PM\n- Friday: Closed\n- Consultation Fee: $20\n- Teeth Whitening: Available\n- Braces Treatment: Available\n- Emergency Service: Available during opening hours\n- Appointment Booking: Call +1 234 567 890\n\n### RESPONSE RULES\n1. Tone: Always be polite, helpful, and professional.\n2. Accuracy: Only provide information that is explicitly mentioned in the Clinic Information above. Do not invent any details.\n3. Structure: Keep the response structured exactly like this:\n   - Greeting (e.g., Thank you for contacting SmileCare Dental Clinic.)\n   - Clear and direct answers to their questions.\n   - Call to action (e.g., If you would like to book an appointment, please call +1 234 567 890.)\n   - Professional closing.\n\n### BONUS CHALLENGE (UNKNOWN QUESTIONS)\nIf the customer asks about something NOT listed in the Clinic Information (such as specific insurance companies like XYZ Company, specific doctor names, or other treatments):\n- Do not make up an answer.\n- Respond with this exact structure:\n  \"Thank you for your inquiry. \n  We do not currently have information regarding that request. \n  Please contact our clinic directly at +1 234 567 890 for assistance.\"\n\n### OUTPUT FORMAT\nProvide ONLY the email body in your output. Do not include \"Subject:\" or any other text outside of the email response."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "deba1a37-a502-4d07-a2e7-8d757cf94dcd",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        240
+      ],
+      "id": "26419394-451c-4d1c-be94-fb94e3b126e9",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "3d3bNeTme6TKWg6Z",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        -16
+      ],
+      "id": "8cd083ac-850e-486d-b255-20953f2c8db4",
+      "name": "Reply to a message",
+      "webhookId": "3100ab51-d70c-4469-b455-c5915ce81d11",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Eaym3Ve0sbKgP1S8",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2d00d482-23cd-4d34-9809-bd0ee7095969",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "01d401e31cbbdba8f60055ce598a221002aca90ede020ef4fcea9ddc4138ab8b"
+  },
+  "nodeGroups": [],
+  "id": "vFvb8baPLMU3yB4k",
+  "tags": []
+}
