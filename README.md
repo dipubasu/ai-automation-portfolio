@@ -37,15 +37,19 @@ Related: [Veltoro RAG Knowledge Base Setup](workflows/veltoro-rag-knowledge-base
 Detects unread customer emails every minute via Gmail, strips quoted replies/signatures, and uses a RAG agent (Groq, Supabase Vector Store, Gemini Embeddings) to search a policy knowledge base and draft a reply. Drafts go through human approval (Approve/Reject) before sending; rejected ones are flagged for manual review.
 **Tech:** n8n · Gmail API · Groq / Llama · Supabase Vector DB · Google Gemini Embeddings · RAG · Human-in-the-Loop Approval
 
-### 5. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.json)
-Multilingual (Bangla, English, Banglish) Telegram support assistant with conversation memory and seamless escalation/hand-off to a human agent when needed.
+### 5. [Automated Dental Clinic Support Agent](workflows/automated-dental-clinic-support-agent.json)
+An AI email assistant that reads incoming patient emails every minute and drafts professional, on-brand replies strictly grounded in the clinic's own knowledge base (hours, fees, services, booking), escalating anything outside that scope instead of guessing.
+**Tech:** n8n · Gmail API · Groq / Llama
+
+### 6. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.json)
+Multilingual (Bangla, English, Banglish) Telegram support assistant with conversation memory, voice-message understanding, and seamless escalation/hand-off to a human agent when needed.
 **Tech:** n8n · Groq / Llama · Google Gemini · Telegram API
 
-### 6. [AI YouTube Video Automation — Single-Scene Pipeline](workflows/youtube-automation-topic-to-video.json)
+### 7. [AI YouTube Video Automation — Single-Scene Pipeline](workflows/youtube-automation-topic-to-video.json)
 An end-to-end pipeline that turns a topic into a finished, published YouTube Short: OpenAI (GPT-4o-mini) generates the title, description, script, and image prompt; Cloudflare AI (Flux) generates the visual; ElevenLabs generates the voiceover; Shotstack renders the video; and the result is auto-uploaded to YouTube.
 **Tech:** n8n · OpenAI API · Cloudflare AI (Flux) · ElevenLabs · Shotstack API · YouTube API
 
-### 7. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.json)
+### 8. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.json)
 An MCP-based conversational agent that coordinates multiple tools for hotel search, restaurant discovery, live weather information, and currency conversion.
 **Tech:** n8n · MCP Server/Client · Groq / Llama · Geoapify · Open-Meteo
 Related: [Travel MCP Server](workflows/travel-mcp-server.json)
