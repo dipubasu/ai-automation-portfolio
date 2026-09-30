@@ -37,7 +37,7 @@ Related: [Veltoro RAG Knowledge Base Setup](workflows/veltoro-rag-knowledge-base
 Detects unread customer emails every minute via Gmail, strips quoted replies/signatures, and uses a RAG agent (Groq, Supabase Vector Store, Gemini Embeddings) to search a policy knowledge base and draft a reply. Drafts go through human approval (Approve/Reject) before sending; rejected ones are flagged for manual review.
 **Tech:** n8n · Gmail API · Groq / Llama · Supabase Vector DB · Google Gemini Embeddings · RAG · Human-in-the-Loop Approval
 
-### 5. [Automated Dental Clinic Support Agent](workflows/automated-dental-clinic-support-agent.json)
+### 5. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.json)
 An AI email assistant that reads incoming patient emails every minute and drafts professional, on-brand replies strictly grounded in the clinic's own knowledge base (hours, fees, services, booking), escalating anything outside that scope instead of guessing.
 **Tech:** n8n · Gmail API · Groq / Llama
 
