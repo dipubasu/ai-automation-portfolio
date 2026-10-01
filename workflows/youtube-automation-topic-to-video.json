@@ -46,7 +46,7 @@
           "values": [
             {
               "role": "system",
-              "content": "You create YouTube Shorts video concepts from the user topic. Return ONLY valid JSON with exactly these keys: Title (40-60 characters), Description (100-250 characters with hashtags), ImagePrompts (array of 4 photorealistic scene descriptions), Script (75-90 word voiceover for a 30-35 second video)."
+              "content": "You create YouTube Shorts video concepts from the user topic. Return ONLY valid JSON with exactly these keys:\n{\n  \"Title\": \"40-60 characters, curiosity-driven, no hashtags\",\n  \"Description\": \"100-250 characters: a hook, one call to action, and 3 hashtags\",\n  \"ImagePrompts\": [\"exactly 4 short photorealistic scene descriptions as an array of strings, each depicting a different visual beat of the script in order, shot like a real photograph: natural lighting, shallow depth of field, DSLR-quality detail, realistic human subjects when relevant, no text, no logos, no watermark, no illustration or cartoon style\"],\n  \"Script\": \"A spoken voiceover of 75-90 words for a 30-35 second video: one strong hook, three surprising facts, one short call to action at the end. Plain sentences, no hashtags, no emojis.\"\n}"
             },
             {
               "content": "=<user-query>\n{{ $json.topic }}\n</user-query>"
