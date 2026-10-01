@@ -45,8 +45,8 @@ An AI email assistant that reads incoming patient emails every minute and drafts
 Multilingual (Bangla, English, Banglish) Telegram support assistant with conversation memory, voice-message understanding, and seamless escalation/hand-off to a human agent when needed.
 **Tech:** n8n · Groq / Llama · Google Gemini · Telegram API
 
-### 7. [AI YouTube Video Automation — Single-Scene Pipeline](workflows/youtube-automation-topic-to-video.json)
-An end-to-end pipeline that turns a topic into a finished, published YouTube Short: OpenAI (GPT-4o-mini) generates the title, description, script, and image prompt; Cloudflare AI (Flux) generates the visual; ElevenLabs generates the voiceover; Shotstack renders the video; and the result is auto-uploaded to YouTube.
+### 7. [AI YouTube Video Automation — Multi-Scene Pipeline](workflows/youtube-automation-topic-to-video.json)
+An end-to-end pipeline that turns a topic into a finished, published YouTube Short: OpenAI (GPT-4o-mini) generates the title, description, script, and 4 scene-by-scene image prompts; Cloudflare AI (Flux) generates a distinct photorealistic visual for each scene; ElevenLabs generates the voiceover; Shotstack composites the scenes with transitions and effects into one video; and the result is auto-uploaded to YouTube as a Short.
 **Tech:** n8n · OpenAI API · Cloudflare AI (Flux) · ElevenLabs · Shotstack API · YouTube API
 
 ### 8. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.json)
