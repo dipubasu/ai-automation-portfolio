@@ -16,7 +16,7 @@ Retrieval can ground answers in the product catalogue, while webhook acknowledge
 Configure the Meta app/webhook settings, access tokens, Supabase index, embedding model, and product-catalogue content. Test signature/verification handling and error responses in the target deployment; the export alone does not prove that a public Messenger endpoint is deployed.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. Product-answer quality depends on catalogue coverage and the retrieval configuration.
+Live-tested by me in my own n8n environment. Product-answer quality depends on catalogue coverage and the retrieval configuration.
 
 
 ## Workflow export
