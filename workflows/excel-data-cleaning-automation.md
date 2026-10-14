@@ -20,3 +20,8 @@ Connect your own Drive and Sheets credentials, set source/destination IDs and wo
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. The repository export is sanitized and intentionally inactive for sharing; configure it before running in another instance.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](excel-data-cleaning-automation.json)
