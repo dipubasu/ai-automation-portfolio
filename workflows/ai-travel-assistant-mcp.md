@@ -17,3 +17,8 @@ Configure the MCP server URL and exposed tools, model credentials, and preferenc
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. The exported active flag is not a promise that the copy is active in every environment.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](ai-travel-assistant-mcp.json)
