@@ -16,7 +16,7 @@ An email-triggered flow can reduce repetitive response drafting. Clinic-specific
 Connect the correct Gmail account, review the prompt and response policy, and test with synthetic messages. This exported node structure does not itself establish that a separate clinic knowledge base or a human approval gate is present.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. Inactive status may be intentional when the workflow is not currently needed.
+Live-tested by me in my own n8n environment. Inactive status may be intentional when the workflow is not currently needed.
 
 
 ## Workflow export
