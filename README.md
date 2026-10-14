@@ -18,7 +18,7 @@ AI Automation Developer specializing in n8n workflows, RAG systems, AI agents, a
 
 ## Workflow Library
 
-The `workflows/` directory contains importable n8n workflow exports for the projects listed below. These are workflow templates, not hosted services; integrations may require your own credentials, API access, environment-specific IDs, and configuration before they can run.
+The workflows in this portfolio have been live-tested by me in my n8n environment. The `workflows/` directory contains their importable JSON exports; these files are not hosted services, and a sanitized export may still need your own credentials, API access, IDs, and environment-specific configuration to run in another instance. Some workflows may be intentionally left inactive when they are not currently needed.
 
 - **CRM and lead intake:** webhook-based lead validation and HubSpot synchronization.
 - **AI agents and RAG:** real-estate lead qualification, product-catalogue Q&A, and knowledge-grounded support flows.
@@ -27,7 +27,7 @@ The `workflows/` directory contains importable n8n workflow exports for the proj
 - **Tool-enabled travel assistant:** MCP-based travel tools, including discovery and utility integrations.
 - **Data quality:** Excel/XLSX cleaning, validation, duplicate classification, report export, and Google Sheets run summaries.
 
-See each linked project entry for its scope, integrations, setup notes, and limitations. Review every exported JSON before importing it into a live environment; never commit credentials or real customer data.
+See each linked project entry for its scope, integrations, setup notes, and limitations. Live testing refers to my configured environment; review credentials, IDs, permissions, and destination settings when importing into a different environment. Never commit credentials or real customer data.
 
 ## Projects
 
