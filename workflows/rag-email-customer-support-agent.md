@@ -1,24 +1,34 @@
-# Case Study: Veltoro — RAG Email Customer Support with Human Approval
+# Veltoro — RAG Email Customer Support with Human Approval
 
-## Overview
-An email support flow that drafts knowledge-grounded replies and places a human approval step before sending them.
+## Business problem
+An online fashion retailer may receive repetitive questions about shipping, returns, payments, sizing, warranty, account help, and escalation. Replying manually to every email can slow the queue; allowing an AI to send policy answers without review risks incorrect or off-brand commitments.
 
-## Workflow design
-The exported workflow includes a Gmail trigger, email-content cleaning, an AI agent, Supabase vector-store question answering, Groq chat model, Google Gemini embeddings, an approval request, an approval condition, Gmail send/reply action, manual-review flagging, and marking the message as read.
+## Solution
+I built an email support flow that cleans the incoming email, searches Veltoro's policy knowledge base, and drafts a response grounded in the retrieved content. Instead of sending immediately, it requests human approval. Approved replies are sent through Gmail; rejected or unapproved cases are flagged for manual review.
 
-## Integrations
-Gmail, Groq, Supabase vector store, Google Gemini embeddings, and n8n conditional routing.
+## Business value
+- Reduces the time support staff spend drafting routine responses.
+- Keeps policy answers tied to the configured knowledge base.
+- Preserves a human checkpoint before a customer receives the AI-written reply.
+- Provides a route for messages that need individual judgement.
 
-## Why this design
-Retrieval helps the agent reference the support knowledge base. Human approval adds a review checkpoint before an AI-drafted message is sent to a customer.
+## How it works
+1. Gmail detects a new customer email.
+2. The workflow extracts and cleans the email content.
+3. The AI agent searches the Supabase policy knowledge base and drafts a ready-to-review response.
+4. A human receives an approval request.
+5. Approved messages are sent; rejected messages are flagged for manual review.
 
-## Configuration and boundaries
-Connect the Gmail and model/vector-store credentials, populate and maintain the knowledge base, and verify that approval notifications and branch conditions behave as intended. Do not send real customer replies until test cases cover both approval and rejection paths.
+## Intended use
+Customer support teams that want AI assistance with email drafting but require a person to approve outbound replies.
 
-## Testing and status
-Live-tested by me in my own n8n environment. No claim is made that every future reply will be correct; knowledge quality and review policy remain important.
+## Setup and limitations
+Configure Gmail, Groq, Gemini embeddings, and Supabase. Populate the knowledge base with current company policies and test both approval and rejection paths. Retrieval quality depends on the indexed content; the human reviewer remains responsible for checking accuracy, tone, and exceptions.
 
+## How I would measure success
+Measure draft preparation time, approval rate, common edits, policy accuracy, and time to resolution. These are suggested measures, not claimed results.
 
-## Workflow export
+## Testing and export
+I live-tested this workflow in my own n8n environment. Credentials and the knowledge-base index must be configured for the destination environment.
 
-[**Open the n8n workflow JSON**](rag-email-customer-support-agent.json)
+[Open workflow JSON](rag-email-customer-support-agent.json)
