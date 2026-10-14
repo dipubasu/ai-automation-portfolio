@@ -15,8 +15,7 @@
       "position": [
         -512,
         336
-      ],
-      "webhookId": "70f7e73c-1ca2-4935-a075-e1698bbd26eb"
+      ]
     },
     {
       "parameters": {
@@ -104,13 +103,7 @@
       "position": [
         -352,
         704
-      ],
-      "credentials": {
-        "groqApi": {
-          "id": "RdKMzsAmK9oqjpFH",
-          "name": "Groq account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -158,13 +151,7 @@
       "position": [
         -144,
         768
-      ],
-      "credentials": {
-        "supabaseApi": {
-          "id": "LpjnYg7ZnDMKKB3J",
-          "name": "Supabase account"
-        }
-      }
+      ]
     },
     {
       "parameters": {},
@@ -175,13 +162,7 @@
         976
       ],
       "id": "b6e9a14a-88c3-4684-af6c-54b912e1e9dd",
-      "name": "Embeddings Google Gemini",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "1U1w3PYo1Q56y3cB",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      "name": "Embeddings Google Gemini"
     },
     {
       "parameters": {
@@ -282,20 +263,16 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "f9784ec1-a356-41fb-9708-d21388902dfb",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "aiBuilderAssisted": true,
-    "builderVariant": "mcp",
-    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+    "builderVariant": "mcp"
   },
   "nodeGroups": [],
-  "id": "YXHjqAfhBAeb4Hqt",
   "tags": []
 }
