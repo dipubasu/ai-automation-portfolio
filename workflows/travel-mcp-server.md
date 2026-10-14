@@ -17,3 +17,8 @@ Inspect each endpoint, query parameters, authentication requirements, timeouts, 
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. Availability and returned data depend on the upstream APIs and credentials configured in the deployment.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](travel-mcp-server.json)
