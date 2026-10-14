@@ -36,13 +36,13 @@ Captures leads via webhook, validates submitted data, creates or updates HubSpot
 **Tech:** n8n · HubSpot · Webhooks · Telegram · Google Sheets · REST APIs
 
 ### 2. [EstateBot — AI Real Estate Lead Qualification Agent](workflows/estatebot-ai-agent-memory-supabase-rag.md)
-A Telegram AI agent that qualifies property buyers through structured one-at-a-time questioning, maintains conversation context, and uses RAG to search a Supabase-based property knowledge base. Logs completed buyer requirements to Google Sheets and notifies agents in real time.
+A Telegram AI agent that answers property questions through Supabase retrieval and a property-ID lookup, then collects buyer requirements step by step and logs confirmed lead details to Google Sheets.
 **Tech:** n8n · Telegram API · Groq / Llama · Supabase Vector DB · RAG · Google Sheets
 Related: [EstateBot AI Agent + Memory + Supabase RAG](workflows/estatebot-ai-agent-memory-supabase-rag.json)
 
 ### 3. [Veltoro — AI Shopping Assistant (Messenger RAG Chatbot)](workflows/veltoro-messenger-ai-chatbot.md)
-A Messenger-based RAG assistant that retrieves product information from a vectorized catalogue and generates context-aware answers to customer product questions.
-**Tech:** n8n · Supabase · OpenAI Embeddings · Groq / Llama · Facebook Graph API
+A Messenger webhook assistant that retrieves product information from a Supabase vector store and generates catalogue-grounded answers to customer questions.
+**Tech:** n8n · Supabase · Google Gemini Embeddings · Groq / Llama · Facebook Graph API
 Related: [Veltoro RAG Knowledge Base Setup](workflows/veltoro-rag-knowledge-base-setup.json)
 
 ### 4. [Veltoro — AI Email Support with Human-in-the-Loop Approval](workflows/rag-email-customer-support-agent.md)
@@ -50,7 +50,7 @@ Detects unread customer emails every minute via Gmail, strips quoted replies/sig
 **Tech:** n8n · Gmail API · Groq / Llama · Supabase Vector DB · Google Gemini Embeddings · RAG · Human-in-the-Loop Approval
 
 ### 5. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.md)
-An AI email assistant that reads incoming patient emails every minute and drafts professional, on-brand replies strictly grounded in the clinic's own knowledge base (hours, fees, services, booking), escalating anything outside that scope instead of guessing.
+An AI email assistant that reads incoming clinic emails, uses clinic information configured in its prompt to draft a reply, and sends the response through Gmail. The exported workflow does not include a human approval step.
 **Tech:** n8n · Gmail API · Groq / Llama
 
 ### 6. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.md)
@@ -58,7 +58,7 @@ Multilingual (Bangla, English, Banglish) Telegram support assistant with convers
 **Tech:** n8n · Groq / Llama · Google Gemini · Telegram API
 
 ### 7. [AI YouTube Video Automation — Multi-Scene Pipeline](workflows/youtube-automation-topic-to-video.md)
-An end-to-end pipeline that turns a topic into a finished, published YouTube Short: OpenAI (GPT-4o-mini) generates the title, description, script, and 4 scene-by-scene image prompts; Cloudflare AI (Flux) generates a distinct photorealistic visual for each scene; ElevenLabs generates the voiceover; Shotstack composites the scenes with transitions and effects into one video; and the result is auto-uploaded to YouTube as a Short.
+An end-to-end pipeline that turns a topic into video metadata, a script, four scene prompts, generated images and voiceover, then renders a vertical video through Shotstack and uploads it to YouTube. The exported workflow sets upload privacy to private for review.
 **Tech:** n8n · OpenAI API · Cloudflare AI (Flux) · ElevenLabs · Shotstack API · YouTube API
 
 ### 8. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.md)
