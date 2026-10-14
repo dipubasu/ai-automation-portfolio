@@ -45,8 +45,7 @@
       "position": [
         -2720,
         592
-      ],
-      "webhookId": "new-lead-intake"
+      ]
     },
     {
       "parameters": {
@@ -105,12 +104,6 @@
         -2048,
         496
       ],
-      "credentials": {
-        "hubspotAppToken": {
-          "id": "45DELGo3c40unAGs",
-          "name": "HubSpot account"
-        }
-      },
       "onError": "continueErrorOutput"
     },
     {
@@ -130,12 +123,6 @@
         -1824,
         416
       ],
-      "credentials": {
-        "hubspotAppToken": {
-          "id": "45DELGo3c40unAGs",
-          "name": "HubSpot account"
-        }
-      },
       "onError": "continueErrorOutput"
     },
     {
@@ -186,14 +173,7 @@
       "position": [
         -1376,
         272
-      ],
-      "webhookId": "28c97999-ac48-4c10-b11d-a8bc95ed5cb7",
-      "credentials": {
-        "telegramApi": {
-          "id": "TBvMrI4OGNSypcbV",
-          "name": "Telegram account 3"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -286,12 +266,6 @@
         -1376,
         464
       ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "1oY2uphtln0mbAgV",
-          "name": "Google Sheets account"
-        }
-      },
       "onError": "continueErrorOutput"
     },
     {
@@ -338,13 +312,6 @@
         -1600,
         688
       ],
-      "webhookId": "534ed571-a28d-471f-a201-ae83df7aa496",
-      "credentials": {
-        "telegramApi": {
-          "id": "6In2ORLgTHT5Zzz4",
-          "name": "Telegram account 2"
-        }
-      },
       "onError": "continueRegularOutput"
     },
     {
@@ -493,7 +460,7 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -501,12 +468,6 @@
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "5ea7bba2-b200-4653-a636-53071cca680b",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
-  },
   "nodeGroups": [],
-  "id": "FVSGitHKZZ7c3f6E",
   "tags": []
 }
