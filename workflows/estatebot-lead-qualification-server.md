@@ -1,24 +1,32 @@
-# Case Study: EstateBot Lead Qualification Server — Knowledge Ingestion
+# EstateBot — Property Knowledge Base Ingestion
 
-## Overview
-Despite the filename, this exported workflow is the document-ingestion side of the EstateBot setup: it loads source content and prepares it for retrieval, rather than acting as the Telegram conversation flow.
+## Business problem
+A real-estate assistant can only answer from a property knowledge base if the underlying documents have been loaded into a searchable store. Manually copying property details into a database is time-consuming and can leave the assistant using incomplete or outdated information.
 
-## Workflow design
-The export includes a manual trigger, Google Drive node, Extract From File, recursive text splitter, default data loader, Google Gemini embeddings, and Supabase vector store.
+## Solution
+This workflow handles the ingestion step for EstateBot. It downloads a property knowledge-base PDF from Google Drive, extracts its text, splits the content into smaller chunks, creates embeddings with Google Gemini, and inserts the resulting documents into a Supabase vector store.
 
-## Integrations
-Google Drive, n8n document processing and text splitting, Google Gemini embeddings, and Supabase vector storage.
+## Business value
+- Creates a repeatable way to prepare property documents for AI search.
+- Separates knowledge-base updates from the customer-facing Telegram conversation.
+- Makes it easier to refresh indexed information when source documents change.
 
-## Why this design
-Separating ingestion from the chat agent lets source documents be indexed independently before the conversational agent retrieves relevant chunks.
+## How it works
+1. An operator starts a manual run.
+2. The workflow downloads the configured PDF from Google Drive.
+3. Text is extracted and split into chunks with overlap.
+4. Gemini embeddings are generated and the chunks are stored in Supabase for retrieval.
 
-## Configuration and boundaries
-Configure the source document, Google Drive permissions, embedding model, Supabase credentials and collection/table settings. Re-index when source content changes, and verify the target schema before ingestion.
+## Intended use
+An internal content-preparation workflow for a real-estate team maintaining the information used by its AI assistant.
 
-## Testing and status
-Live-tested by me in my own n8n environment. The export is saved inactive; that may be intentional if ingestion is run only when the knowledge base needs updating.
+## Setup and limitations
+Confirm that the source PDF is current, text extraction is complete, the Supabase table and matching function are configured, and the embedding model matches the retrieval setup. Re-ingestion can create repeated or stale chunks unless the data-refresh strategy handles old records; check how updates and deletions are managed before running repeatedly.
 
+## How I would measure success
+Check document coverage, extraction quality, retrieval relevance for a test set of property questions, and how quickly updated documents become searchable. These are suggested measures, not claimed results.
 
-## Workflow export
+## Testing and export
+I live-tested this workflow in my own n8n environment. It is a manually run ingestion job and may be left inactive between knowledge-base updates.
 
-[**Open the n8n workflow JSON**](estatebot-lead-qualification-server.json)
+[Open workflow JSON](estatebot-lead-qualification-server.json)
