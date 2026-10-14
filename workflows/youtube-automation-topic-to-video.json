@@ -70,13 +70,7 @@
       "position": [
         448,
         192
-      ],
-      "credentials": {
-        "openAiApi": {
-          "id": "9f9V3QftTqLSkjVY",
-          "name": "OpenAI account 2"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -255,8 +249,7 @@
       "position": [
         2368,
         288
-      ],
-      "webhookId": "5836a362-32ee-4840-9242-44f28140625b"
+      ]
     },
     {
       "parameters": {
@@ -305,8 +298,7 @@
       "position": [
         3488,
         192
-      ],
-      "webhookId": "c589c544-8b0c-4935-86bc-9fb9c94bb482"
+      ]
     },
     {
       "parameters": {
@@ -372,13 +364,7 @@
       "position": [
         4160,
         192
-      ],
-      "credentials": {
-        "youTubeOAuth2Api": {
-          "id": "hDmSiqrCrO1DNwDY",
-          "name": "YouTube account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -478,8 +464,7 @@
       "position": [
         2368,
         96
-      ],
-      "webhookId": "ee0c1d1c-fa2b-4808-9fd4-42179d277111"
+      ]
     },
     {
       "parameters": {
@@ -891,13 +876,10 @@
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "70773837-25f4-424c-b647-410df49ab628",
   "meta": {
     "aiBuilderAssisted": true,
-    "builderVariant": "mcp",
-    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+    "builderVariant": "mcp"
   },
   "nodeGroups": [],
-  "id": "4KHyAJuABUotAmbI",
   "tags": []
 }
