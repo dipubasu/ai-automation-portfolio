@@ -16,7 +16,7 @@ Breaking the process into asset generation, upload, render, and publish stages m
 Review API endpoints, request payloads, asset URLs, polling intervals, and YouTube visibility settings. Rendering and upload depend on external service quotas and successful asynchronous processing. Test with private/unlisted output and non-sensitive credentials before public publishing.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. This case study does not claim a specific number of videos, views, or time saved.
+Live-tested by me in my own n8n environment. This case study does not claim a specific number of videos, views, or time saved.
 
 
 ## Workflow export
