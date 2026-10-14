@@ -39,4 +39,4 @@ This directory contains JSON exports of workflows that I have live-tested in my 
 4. Verify external API permissions, quotas, and request/response formats.
 5. When moving a workflow to a different instance or changing its configuration, run a controlled test and inspect success and error paths before enabling it for production use.
 
-The `active` flag records the state saved in the export; some workflows are intentionally inactive when not needed. Live testing was performed in the my configured environment, and behavior in another environment depends on its credentials, permissions, IDs, service availability, and configuration.
+The `active` flag records the state saved in the export; some workflows are intentionally inactive when not needed. I live-tested these workflows in my configured environment, and behavior in another environment depends on its credentials, permissions, IDs, service availability, and configuration.
