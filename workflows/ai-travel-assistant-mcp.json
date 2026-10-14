@@ -19,8 +19,7 @@
       "position": [
         0,
         112
-      ],
-      "webhookId": "48c8bcb0-b006-4df0-8b1d-996980a5d9f4"
+      ]
     },
     {
       "parameters": {
@@ -135,13 +134,7 @@
         320
       ],
       "id": "d607ba2d-83a1-47c2-bdb8-4725981fa96d",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "1U1w3PYo1Q56y3cB",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      "name": "Google Gemini Chat Model"
     }
   ],
   "pinData": {},
@@ -202,20 +195,16 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "3d9125e9-f566-4cb2-a606-1c591382c814",
   "meta": {
     "aiBuilderAssisted": true,
-    "builderVariant": "mcp",
-    "templateCredsSetupCompleted": true,
-    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+    "builderVariant": "mcp"
   },
   "nodeGroups": [],
-  "id": "q4o1iMXmPmB3QTBT",
   "tags": []
 }
