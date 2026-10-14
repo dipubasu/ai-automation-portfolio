@@ -15,14 +15,7 @@
         192
       ],
       "id": "465bb933-7917-48a2-9721-fafceae190eb",
-      "name": "Telegram Trigger",
-      "webhookId": "1746e35b-1bda-47a7-84c1-4bac18064fb4",
-      "credentials": {
-        "telegramApi": {
-          "id": "Z8Dyt6yEUeO56P2g",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Telegram Trigger"
     },
     {
       "parameters": {
@@ -147,14 +140,7 @@
         192
       ],
       "id": "d6764cea-67b1-43f1-a78d-9beb058a4793",
-      "name": "Send a text message",
-      "webhookId": "49b5a8ae-5c77-4b16-995f-6717f1b4bb0b",
-      "credentials": {
-        "telegramApi": {
-          "id": "Z8Dyt6yEUeO56P2g",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message"
     },
     {
       "parameters": {
@@ -169,14 +155,7 @@
         192
       ],
       "id": "68c28475-3681-4f7e-812b-b9f96c171909",
-      "name": "Get a file",
-      "webhookId": "48d88f2e-33e2-4eb5-b7ef-d14cb12b37f2",
-      "credentials": {
-        "telegramApi": {
-          "id": "Z8Dyt6yEUeO56P2g",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Get a file"
     },
     {
       "parameters": {
@@ -199,13 +178,7 @@
         192
       ],
       "id": "be76bba1-fd95-42c2-b5ad-bad601ee7937",
-      "name": "Analyze audio",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "1U1w3PYo1Q56y3cB",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      "name": "Analyze audio"
     },
     {
       "parameters": {
@@ -219,13 +192,7 @@
         320
       ],
       "id": "96eb6260-2b77-46a8-9303-e5ee47ab2c67",
-      "name": "Groq Chat Model",
-      "credentials": {
-        "groqApi": {
-          "id": "RdKMzsAmK9oqjpFH",
-          "name": "Groq account"
-        }
-      }
+      "name": "Groq Chat Model"
     },
     {
       "parameters": {
@@ -275,14 +242,7 @@
         0
       ],
       "id": "d816a48f-88c2-48df-b1e1-b1e06a28fcfb",
-      "name": "Send a text message1",
-      "webhookId": "cafbf8d2-1330-4093-b2d4-bcce4bbdeb38",
-      "credentials": {
-        "telegramApi": {
-          "id": "Z8Dyt6yEUeO56P2g",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message1"
     },
     {
       "parameters": {
@@ -299,14 +259,7 @@
         0
       ],
       "id": "49069114-53b8-4452-8939-504d03168035",
-      "name": "Send a text message2",
-      "webhookId": "cedc3b84-ee63-4765-90de-25ba8866fd6c",
-      "credentials": {
-        "telegramApi": {
-          "id": "Z8Dyt6yEUeO56P2g",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message2"
     },
     {
       "parameters": {
@@ -356,14 +309,7 @@
         288
       ],
       "id": "b08ef715-82c5-40b5-953b-529c8233315a",
-      "name": "Send a text message4",
-      "webhookId": "9ddf6008-9c3f-4667-bf48-371cdef61436",
-      "credentials": {
-        "telegramApi": {
-          "id": "Z8Dyt6yEUeO56P2g",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message4"
     },
     {
       "parameters": {
@@ -680,18 +626,12 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "c8008e0c-d2d0-4e38-9227-fe052eb47095",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
-  },
   "nodeGroups": [],
-  "id": "yELavrdqCw1o8gYV",
   "tags": []
 }
