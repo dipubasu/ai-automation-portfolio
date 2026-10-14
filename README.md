@@ -16,6 +16,19 @@ AI Automation Developer specializing in n8n workflows, RAG systems, AI agents, a
 - **Integrations:** HubSpot · Facebook Graph API · Telegram API · Gmail OAuth2 · WhatsApp · REST APIs · Shotstack · YouTube API · Google Drive API
 - **Data & Infrastructure:** Supabase Vector DB · Google Sheets · Google Drive · API Authentication · Error Handling · Secure Credential Management
 
+## Workflow Library
+
+The `workflows/` directory contains importable n8n workflow exports for the projects listed below. These are workflow templates, not hosted services; integrations may require your own credentials, API access, environment-specific IDs, and configuration before they can run.
+
+- **CRM and lead intake:** webhook-based lead validation and HubSpot synchronization.
+- **AI agents and RAG:** real-estate lead qualification, product-catalogue Q&A, and knowledge-grounded support flows.
+- **Customer support:** email drafting with human approval, clinic email support, and Telegram-to-human handoff.
+- **Content automation:** multi-scene YouTube video generation and publishing pipeline.
+- **Tool-enabled travel assistant:** MCP-based travel tools, including discovery and utility integrations.
+- **Data quality:** Excel/XLSX cleaning, validation, duplicate classification, report export, and Google Sheets run summaries.
+
+See each linked project entry for its scope, integrations, setup notes, and limitations. Review every exported JSON before importing it into a live environment; never commit credentials or real customer data.
+
 ## Projects
 
 ### 1. [Automated Lead Management Pipeline](workflows/lead-intake-hubspot-crm-sync.json) — n8n + HubSpot CRM Automation
