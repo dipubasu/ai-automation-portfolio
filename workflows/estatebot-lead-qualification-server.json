@@ -31,13 +31,7 @@
       "position": [
         224,
         112
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "gWEOq445DILlzS86",
-          "name": "Google Drive account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -71,13 +65,7 @@
       "position": [
         704,
         112
-      ],
-      "credentials": {
-        "supabaseApi": {
-          "id": "xm5S1Yt9UWNyte10",
-          "name": "Supabase account 2"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -103,13 +91,7 @@
       "position": [
         688,
         352
-      ],
-      "credentials": {
-        "googlePalmApi": {
-          "id": "1U1w3PYo1Q56y3cB",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -203,12 +185,6 @@
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "614ced85-faad-4c9c-9450-51dd8fa6b09f",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
-  },
   "nodeGroups": [],
-  "id": "cuj18eppPhQadMeu",
   "tags": []
 }
