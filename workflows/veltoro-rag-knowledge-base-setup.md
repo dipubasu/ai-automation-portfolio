@@ -17,3 +17,8 @@ Choose the correct source PDF, ensure extraction produces usable text, configure
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. The export is inactive, which can be appropriate for an ingestion job that runs only when the knowledge base is updated.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](veltoro-rag-knowledge-base-setup.json)
