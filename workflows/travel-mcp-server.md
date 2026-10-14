@@ -1,24 +1,32 @@
-# Case Study: Travel MCP Server
+# Travel MCP Server — Travel Search Tools for AI Assistants
 
-## Overview
-An MCP server workflow that exposes travel-related HTTP request tools for use by an MCP-compatible client or AI agent.
+## Business problem
+A travel assistant that needs to answer destination questions may otherwise rely on a language model's stored knowledge, which can be stale or inaccurate for current weather, nearby places, and currency rates. Maintaining separate custom integrations for every assistant can also duplicate work.
 
-## Workflow design
-The export includes an MCP Server Trigger and HTTP Request Tool nodes for hotels, restaurants, attractions, currency, geocoding, and weather.
+## Solution
+I built an MCP server workflow that exposes separate HTTP request tools for geocoding, hotels, restaurants, attractions, currency conversion, and weather. An MCP-compatible AI client can call the relevant tool when a user asks a travel question.
 
-## Integrations
-n8n MCP server trigger and HTTP request tools, plus the upstream services configured in each request node.
+## Business value
+- Makes travel data lookups available through a consistent tool interface.
+- Separates individual data sources into focused operations that are easier to inspect and maintain.
+- Helps an AI assistant use live tool responses instead of guessing factual details.
 
-## Why this design
-Exposing operations as separate tools lets an AI client call focused travel functions rather than handling all requests through one large endpoint.
+## How it works
+1. An MCP-compatible client connects to the n8n MCP server.
+2. The client selects a tool based on the travel question.
+3. Geocoding can translate a destination into coordinates for location-based searches.
+4. The selected HTTP request calls its configured upstream service and returns the response to the client.
 
-## Configuration and boundaries
-Inspect each endpoint, query parameters, authentication requirements, timeouts, and response mapping. External providers may have rate limits or change their APIs; verify current behavior and avoid promising live data unless the upstream request succeeds.
+## Intended use
+A reusable tool layer for an AI travel assistant or other MCP-compatible client.
 
-## Testing and status
-Live-tested by me in my own n8n environment. Availability and returned data depend on the upstream APIs and credentials configured in the deployment.
+## Setup and limitations
+Configure each HTTP endpoint, query parameters, authentication, and upstream API access. Verify provider response formats and rate limits. Tool exposure does not itself guarantee that an upstream service is available or that returned hotel data represents confirmed booking availability.
 
+## How I would measure success
+Measure tool-call success rate, API latency, data freshness, and how often users need to verify or correct results. These are suggested measures, not claimed results.
 
-## Workflow export
+## Testing and export
+I live-tested this workflow in my own n8n environment. External API behavior depends on the services and credentials configured in the target environment.
 
-[**Open the n8n workflow JSON**](travel-mcp-server.json)
+[Open workflow JSON](travel-mcp-server.json)
