@@ -17,3 +17,8 @@ Set Telegram credentials and chat permissions, inspect every switch/IF condition
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. The exact handoff behavior depends on the configured branch logic and operational process.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](telegram-chatbot-human-bridge-support.json)
