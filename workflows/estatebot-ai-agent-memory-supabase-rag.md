@@ -4,7 +4,7 @@
 Property enquiries often arrive as unstructured conversations. Agents need to answer property questions accurately, understand a buyer's requirements, and collect enough details for follow-up. Asking every question at once can create friction, and answering property questions from memory risks inaccurate claims.
 
 ## Solution
-I built a Telegram-based real-estate assistant that searches a property knowledge base for property-related questions and qualifies interested buyers through a step-by-step conversation. It collects name, phone, budget, location, property type, and buying timeline, then asks the user to confirm the summary before marking the lead complete. Completed details are logged to Google Sheets.
+I built a Telegram-based real-estate assistant that searches a property knowledge base for property-related questions and qualifies interested buyers through a step-by-step conversation. It collects name, phone, budget, location, property type, and buying timeline, then asks the user to confirm the summary before marking the lead complete. Completed details are logged to Google Sheets. The current node structure does not show a separate real-time agent notification step.
 
 ## Business value
 - Gives prospective buyers a conversational first point of contact.
