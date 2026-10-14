@@ -76,9 +76,6 @@ The exported workflow is a sanitized, inactive template. It contains no saved n8
 
 `n8n` · `JavaScript` · `Google Drive API` · `Google Sheets API` · `Excel/XLSX` · `Data Validation` · `Deduplication` · `Error Handling`
 
-## Screenshots
-
-Add redacted screenshots of the workflow canvas and the cleaned output sheet here. Do not include email addresses, phone numbers, customer data, OAuth details, or private file IDs.
 
 ---
 
