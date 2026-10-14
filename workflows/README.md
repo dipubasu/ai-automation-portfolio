@@ -1,6 +1,6 @@
 # n8n Workflow Library
 
-This directory contains JSON exports of the n8n workflows referenced from the portfolio's root README. Each export should be reviewed and configured in your own n8n instance before use.
+This directory contains JSON exports of workflows that I have live-tested in my n8n environment. Some workflows may be intentionally inactive because they are not currently needed; an inactive export does not by itself mean a workflow is untested. When importing into another n8n instance, credentials, IDs, permissions, and service settings may need to be configured for that environment.
 
 ## Workflow catalogue
 
@@ -37,6 +37,6 @@ This directory contains JSON exports of the n8n workflows referenced from the po
 2. Add your own credentials through n8n's credential manager; do not paste secrets into workflow parameters or commit them to Git.
 3. Replace placeholder IDs, URLs, model settings, and other environment-specific configuration.
 4. Verify external API permissions, quotas, and request/response formats.
-5. Test with sample or synthetic data and inspect success and error paths before enabling a production workflow.
+5. When moving a workflow to a different instance or changing its configuration, run a controlled test and inspect success and error paths before enabling it for production use.
 
-The `active` flag inside a JSON export is only the state recorded in that export; it does not prove that a live instance is deployed, connected, or currently running. The descriptions above summarize the exported node structure and intended flow, not a guarantee of successful execution or production readiness.
+The `active` flag records the state saved in the export; some workflows are intentionally inactive when not needed. Live testing was performed in the author's configured environment, and behavior in another environment depends on its credentials, permissions, IDs, service availability, and configuration.
