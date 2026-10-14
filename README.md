@@ -5,10 +5,9 @@ n8n Automation Engineer | AI Agent & RAG Developer
 **Contact:** dpbasu32@gmail.com | +880 1876-233071 | [LinkedIn](https://linkedin.com/in/dipubasu) | Bangladesh — Remote / Worldwide
 
 ## About
-
 AI Automation Developer specializing in n8n workflows, RAG systems, AI agents, and API integrations. I build automated systems for lead management, customer support, knowledge retrieval, and business operations using n8n, OpenAI, Groq, Gemini, Supabase, and REST APIs — with a focus on reliable workflow design, error handling, and maintainable integrations.
 
-> **Note:** All workflow exports in this repository have had API keys, tokens, and personal identifiers replaced with placeholders (e.g. `YOUR_API_KEY`). Import these into your own n8n instance and connect your own credentials before running.
+> **Security note:** Workflow exports in this repository should use placeholders for secrets and private identifiers. Import into your own n8n instance and connect your own credentials before running. Never commit API keys, tokens, OAuth secrets, or real customer data.
 
 ## Core Skills
 
@@ -53,6 +52,11 @@ An end-to-end pipeline that turns a topic into a finished, published YouTube Sho
 An MCP-based conversational agent that coordinates multiple tools for hotel search, restaurant discovery, live weather information, and currency conversion.
 **Tech:** n8n · MCP Server/Client · Groq / Llama · Geoapify · Open-Meteo
 Related: [Travel MCP Server](workflows/travel-mcp-server.json)
+
+### 9. [Excel Data Cleaning Automation](projects/excel-data-cleaning-automation/README.md)
+A data-quality workflow that imports Excel customer records from Google Drive, maps inconsistent headers, standardizes names and contact fields, validates email/phone/date values, detects duplicate records, routes questionable rows for review, exports a cleaned workbook, and logs run metrics to Google Sheets.
+**Tech:** n8n · JavaScript · Google Drive · Google Sheets · Excel/XLSX · Data Validation · Deduplication · Error Handling
+**Highlights:** configurable rules, audit-friendly original values, explicit needs-review handling, and failure branches for key integration steps.
 
 ## Education
 
