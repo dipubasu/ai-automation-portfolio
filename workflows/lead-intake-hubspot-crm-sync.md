@@ -19,7 +19,7 @@ Validation before CRM writes helps keep incomplete submissions out of the normal
 Set the webhook contract, required lead fields, HubSpot credential and pipeline/stage settings, Telegram chat ID, and Google Sheets document/worksheet. The exported JSON contains placeholders for environment-specific values. Confirm HubSpot field mappings and duplicate-handling behavior in your own instance.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. The export's active flag reflects the saved copy only; a workflow may be inactive when it is not currently needed. No business outcome metrics are claimed here.
+Live-tested by me in my own n8n environment. The export's active flag reflects the saved copy only; a workflow may be inactive when it is not currently needed. No business outcome metrics are claimed here.
 
 
 ## Workflow export
