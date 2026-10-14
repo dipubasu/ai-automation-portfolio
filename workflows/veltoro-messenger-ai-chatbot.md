@@ -17,3 +17,8 @@ Configure the Meta app/webhook settings, access tokens, Supabase index, embeddin
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. Product-answer quality depends on catalogue coverage and the retrieval configuration.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](veltoro-messenger-ai-chatbot.json)
