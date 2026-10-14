@@ -19,13 +19,7 @@
         -16
       ],
       "id": "82653aa2-f8d8-4d8b-afcb-eec735853cdd",
-      "name": "Gmail Trigger",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "Eaym3Ve0sbKgP1S8",
-          "name": "Gmail OAuth2 API"
-        }
-      }
+      "name": "Gmail Trigger"
     },
     {
       "parameters": {
@@ -56,13 +50,7 @@
         240
       ],
       "id": "26419394-451c-4d1c-be94-fb94e3b126e9",
-      "name": "Groq Chat Model",
-      "credentials": {
-        "groqApi": {
-          "id": "3d3bNeTme6TKWg6Z",
-          "name": "Groq account"
-        }
-      }
+      "name": "Groq Chat Model"
     },
     {
       "parameters": {
@@ -78,14 +66,7 @@
         -16
       ],
       "id": "8cd083ac-850e-486d-b255-20953f2c8db4",
-      "name": "Reply to a message",
-      "webhookId": "3100ab51-d70c-4469-b455-c5915ce81d11",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "Eaym3Ve0sbKgP1S8",
-          "name": "Gmail OAuth2 API"
-        }
-      }
+      "name": "Reply to a message"
     }
   ],
   "pinData": {},
@@ -124,17 +105,11 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "2d00d482-23cd-4d34-9809-bd0ee7095969",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "01d401e31cbbdba8f60055ce598a221002aca90ede020ef4fcea9ddc4138ab8b"
-  },
   "nodeGroups": [],
-  "id": "vFvb8baPLMU3yB4k",
   "tags": []
 }
