@@ -31,37 +31,37 @@ See each linked project entry for its scope, integrations, setup notes, and limi
 
 ## Projects
 
-### 1. [Automated Lead Management Pipeline](workflows/lead-intake-hubspot-crm-sync.json) — n8n + HubSpot CRM Automation
+### 1. [Automated Lead Management Pipeline](workflows/lead-intake-hubspot-crm-sync.md) — n8n + HubSpot CRM Automation
 Captures leads via webhook, validates submitted data, creates or updates HubSpot CRM records, and conditionally routes high-value opportunities. Includes Google Sheets logging and Telegram alerts for high-value leads and failed HubSpot syncs.
 **Tech:** n8n · HubSpot · Webhooks · Telegram · Google Sheets · REST APIs
 
-### 2. [EstateBot — AI Real Estate Lead Qualification Agent](workflows/estatebot-lead-qualification-server.json)
+### 2. [EstateBot — AI Real Estate Lead Qualification Agent](workflows/estatebot-ai-agent-memory-supabase-rag.md)
 A Telegram AI agent that qualifies property buyers through structured one-at-a-time questioning, maintains conversation context, and uses RAG to search a Supabase-based property knowledge base. Logs completed buyer requirements to Google Sheets and notifies agents in real time.
 **Tech:** n8n · Telegram API · Groq / Llama · Supabase Vector DB · RAG · Google Sheets
 Related: [EstateBot AI Agent + Memory + Supabase RAG](workflows/estatebot-ai-agent-memory-supabase-rag.json)
 
-### 3. [Veltoro — AI Shopping Assistant (Messenger RAG Chatbot)](workflows/veltoro-messenger-ai-chatbot.json)
+### 3. [Veltoro — AI Shopping Assistant (Messenger RAG Chatbot)](workflows/veltoro-messenger-ai-chatbot.md)
 A Messenger-based RAG assistant that retrieves product information from a vectorized catalogue and generates context-aware answers to customer product questions.
 **Tech:** n8n · Supabase · OpenAI Embeddings · Groq / Llama · Facebook Graph API
 Related: [Veltoro RAG Knowledge Base Setup](workflows/veltoro-rag-knowledge-base-setup.json)
 
-### 4. [Veltoro — AI Email Support with Human-in-the-Loop Approval](workflows/rag-email-customer-support-agent.json)
+### 4. [Veltoro — AI Email Support with Human-in-the-Loop Approval](workflows/rag-email-customer-support-agent.md)
 Detects unread customer emails every minute via Gmail, strips quoted replies/signatures, and uses a RAG agent (Groq, Supabase Vector Store, Gemini Embeddings) to search a policy knowledge base and draft a reply. Drafts go through human approval (Approve/Reject) before sending; rejected ones are flagged for manual review.
 **Tech:** n8n · Gmail API · Groq / Llama · Supabase Vector DB · Google Gemini Embeddings · RAG · Human-in-the-Loop Approval
 
-### 5. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.json)
+### 5. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.md)
 An AI email assistant that reads incoming patient emails every minute and drafts professional, on-brand replies strictly grounded in the clinic's own knowledge base (hours, fees, services, booking), escalating anything outside that scope instead of guessing.
 **Tech:** n8n · Gmail API · Groq / Llama
 
-### 6. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.json)
+### 6. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.md)
 Multilingual (Bangla, English, Banglish) Telegram support assistant with conversation memory, voice-message understanding, and seamless escalation/hand-off to a human agent when needed.
 **Tech:** n8n · Groq / Llama · Google Gemini · Telegram API
 
-### 7. [AI YouTube Video Automation — Multi-Scene Pipeline](workflows/youtube-automation-topic-to-video.json)
+### 7. [AI YouTube Video Automation — Multi-Scene Pipeline](workflows/youtube-automation-topic-to-video.md)
 An end-to-end pipeline that turns a topic into a finished, published YouTube Short: OpenAI (GPT-4o-mini) generates the title, description, script, and 4 scene-by-scene image prompts; Cloudflare AI (Flux) generates a distinct photorealistic visual for each scene; ElevenLabs generates the voiceover; Shotstack composites the scenes with transitions and effects into one video; and the result is auto-uploaded to YouTube as a Short.
 **Tech:** n8n · OpenAI API · Cloudflare AI (Flux) · ElevenLabs · Shotstack API · YouTube API
 
-### 8. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.json)
+### 8. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.md)
 An MCP-based conversational agent that coordinates multiple tools for hotel search, restaurant discovery, live weather information, and currency conversion.
 **Tech:** n8n · MCP Server/Client · Groq / Llama · Geoapify · Open-Meteo
 Related: [Travel MCP Server](workflows/travel-mcp-server.json)
