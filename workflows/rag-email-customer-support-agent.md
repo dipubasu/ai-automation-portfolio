@@ -17,3 +17,8 @@ Connect the Gmail and model/vector-store credentials, populate and maintain the 
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. No claim is made that every future reply will be correct; knowledge quality and review policy remain important.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](rag-email-customer-support-agent.json)
