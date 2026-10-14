@@ -12,8 +12,7 @@
         0
       ],
       "id": "760962cc-b4fe-4f64-9317-131f79e3fafc",
-      "name": "MCP Server Trigger",
-      "webhookId": "64d67502-4704-49d0-bdec-6bb5bfa0831e"
+      "name": "MCP Server Trigger"
     },
     {
       "parameters": {
@@ -276,7 +275,7 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -284,13 +283,10 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": true
   },
-  "versionId": "3306857b-3dd1-4bfe-b4f8-a479933c7820",
   "meta": {
     "aiBuilderAssisted": true,
-    "builderVariant": "mcp",
-    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+    "builderVariant": "mcp"
   },
   "nodeGroups": [],
-  "id": "6FMFWc74wJi3P1LZ",
   "tags": []
 }
