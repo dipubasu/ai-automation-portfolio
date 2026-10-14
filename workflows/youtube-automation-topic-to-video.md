@@ -17,3 +17,8 @@ Review API endpoints, request payloads, asset URLs, polling intervals, and YouTu
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. This case study does not claim a specific number of videos, views, or time saved.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](youtube-automation-topic-to-video.json)
