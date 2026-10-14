@@ -42,6 +42,12 @@ The test workbook shown during development included a repeated customer record. 
 
 These counts describe the sample execution only; they are not a performance guarantee for other files.
 
+## Download the workflow
+
+[**Download the n8n workflow JSON**](../../workflows/excel-data-cleaning-automation.json)
+
+The exported workflow is a sanitized, inactive template. It contains no saved n8n credential objects and uses placeholders for source/destination IDs. After importing, connect your own Google Drive and Google Sheets credentials, configure the IDs and worksheet names in the `Config` node and Google Sheets nodes, then test with a copy of your data.
+
 ## Setup
 
 1. Import the workflow JSON into your own n8n instance.
