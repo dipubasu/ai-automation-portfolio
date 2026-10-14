@@ -16,7 +16,7 @@ Retrieval helps the agent reference the support knowledge base. Human approval a
 Connect the Gmail and model/vector-store credentials, populate and maintain the knowledge base, and verify that approval notifications and branch conditions behave as intended. Do not send real customer replies until test cases cover both approval and rejection paths.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. No claim is made that every future reply will be correct; knowledge quality and review policy remain important.
+Live-tested by me in my own n8n environment. No claim is made that every future reply will be correct; knowledge quality and review policy remain important.
 
 
 ## Workflow export
