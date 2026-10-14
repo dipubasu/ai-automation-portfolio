@@ -15,14 +15,7 @@
         0
       ],
       "id": "d8b1004b-5a6b-46ab-b51f-b1302b6d9417",
-      "name": "Telegram Trigger",
-      "webhookId": "f61605cf-17b8-493a-87b6-77aa14a2f1f3",
-      "credentials": {
-        "telegramApi": {
-          "id": "6In2ORLgTHT5Zzz4",
-          "name": "Telegram account 2"
-        }
-      }
+      "name": "Telegram Trigger"
     },
     {
       "parameters": {
@@ -94,14 +87,7 @@
         96
       ],
       "id": "7617417d-3cf1-43d0-a11f-408b72d3c1a8",
-      "name": "Send a text message",
-      "webhookId": "b4127c9b-34ec-4517-9db4-675ee7e479ce",
-      "credentials": {
-        "telegramApi": {
-          "id": "6In2ORLgTHT5Zzz4",
-          "name": "Telegram account 2"
-        }
-      }
+      "name": "Send a text message"
     },
     {
       "parameters": {
@@ -284,13 +270,7 @@
         -96
       ],
       "id": "be862c0a-6028-4590-9b02-359a70c5c5e9",
-      "name": "Append row in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "1oY2uphtln0mbAgV",
-          "name": "Google Sheets account"
-        }
-      }
+      "name": "Append row in sheet"
     },
     {
       "parameters": {
@@ -307,14 +287,7 @@
         -96
       ],
       "id": "4cad2170-fe0c-4983-851a-35ba161a65cb",
-      "name": "Send a text message1",
-      "webhookId": "0f77b5d2-1e0d-4f18-988f-9ab3087d9f80",
-      "credentials": {
-        "telegramApi": {
-          "id": "6In2ORLgTHT5Zzz4",
-          "name": "Telegram account 2"
-        }
-      }
+      "name": "Send a text message1"
     },
     {
       "parameters": {
@@ -331,13 +304,7 @@
         240
       ],
       "id": "0dd74b7a-5af3-4e03-bf0a-e0ebe6d55ed3",
-      "name": "OpenRouter Chat Model",
-      "credentials": {
-        "openRouterApi": {
-          "id": "5ahd6MTRLuMdATGk",
-          "name": "OpenRouter account"
-        }
-      }
+      "name": "OpenRouter Chat Model"
     },
     {
       "parameters": {
@@ -374,13 +341,7 @@
         448
       ],
       "id": "3fae8a74-5419-4f8c-a5a0-ed448d4825e3",
-      "name": "Supabase Vector Store1",
-      "credentials": {
-        "supabaseApi": {
-          "id": "LpjnYg7ZnDMKKB3J",
-          "name": "Supabase account"
-        }
-      }
+      "name": "Supabase Vector Store1"
     },
     {
       "parameters": {},
@@ -391,13 +352,7 @@
         656
       ],
       "id": "ed79ca56-12bb-46a3-8e0b-43c1026ce23c",
-      "name": "Embeddings Google Gemini",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "1U1w3PYo1Q56y3cB",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      "name": "Embeddings Google Gemini"
     },
     {
       "parameters": {
@@ -425,13 +380,7 @@
         448
       ],
       "id": "7c639662-7d6a-483b-a627-f622f723c0de",
-      "name": "Groq Chat Model",
-      "credentials": {
-        "groqApi": {
-          "id": "RdKMzsAmK9oqjpFH",
-          "name": "Groq account"
-        }
-      }
+      "name": "Groq Chat Model"
     },
     {
       "parameters": {
@@ -450,13 +399,7 @@
         240
       ],
       "id": "d7e3deb1-bff3-4a78-8cde-fe7d1ad5757b",
-      "name": "property_id_lookup",
-      "credentials": {
-        "postgres": {
-          "id": "9zF9d5uvSu7wMZSF",
-          "name": "Postgres account"
-        }
-      }
+      "name": "property_id_lookup"
     }
   ],
   "pinData": {},
@@ -612,18 +555,12 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "034a2524-0db6-4312-b0a1-1696117c9d8b",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
-  },
   "nodeGroups": [],
-  "id": "rnUL95DQa3vOpcOG",
   "tags": []
 }
