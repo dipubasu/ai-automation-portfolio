@@ -16,7 +16,7 @@ Exposing operations as separate tools lets an AI client call focused travel func
 Inspect each endpoint, query parameters, authentication requirements, timeouts, and response mapping. External providers may have rate limits or change their APIs; verify current behavior and avoid promising live data unless the upstream request succeeds.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. Availability and returned data depend on the upstream APIs and credentials configured in the deployment.
+Live-tested by me in my own n8n environment. Availability and returned data depend on the upstream APIs and credentials configured in the deployment.
 
 
 ## Workflow export
