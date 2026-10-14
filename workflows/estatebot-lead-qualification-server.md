@@ -17,3 +17,8 @@ Configure the source document, Google Drive permissions, embedding model, Supaba
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. The export is saved inactive; that may be intentional if ingestion is run only when the knowledge base needs updating.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](estatebot-lead-qualification-server.json)
