@@ -46,7 +46,7 @@ These counts describe the sample execution only; they are not a performance guar
 
 [**Download the n8n workflow JSON**](../../workflows/excel-data-cleaning-automation.json)
 
-The exported workflow is a sanitized, inactive template. It contains no saved n8n credential objects and uses placeholders for source/destination IDs. After importing, connect your own Google Drive and Google Sheets credentials, configure the IDs and worksheet names in the `Config` node and Google Sheets nodes, then test with a copy of your data.
+The workflow has been live-tested in my configured n8n environment. The repository export is a sanitized, inactive copy for sharing; it contains no saved n8n credential objects and uses placeholders for source/destination IDs. After importing into your own instance, connect your Google Drive and Google Sheets credentials and configure the IDs and worksheet names in the `Config` node and Google Sheets nodes.
 
 ## Setup
 
@@ -55,14 +55,14 @@ The exported workflow is a sanitized, inactive template. It contains no saved n8
 3. Configure the source Excel file ID, destination report file ID (or adjust the upload node to create a new file), and destination spreadsheet ID.
 4. Ensure the spreadsheet contains the expected worksheets, including `Cleaned_Customers` and `Run_Summary`, with headers matching the workflow's mapped fields.
 5. Review the `Config` node settings, especially required columns, date convention, email auto-fix behavior, and default phone country calling code.
-6. Run against a copy of your input workbook first, then inspect the cleaned data, duplicates, and needs-review records before using it operationally.
+6. If you are adapting the workflow for another environment, run it against a copy of your input workbook first, then inspect the cleaned data, duplicates, and needs-review records before using it operationally.
 
 ## Security notes
 
 - Do not commit OAuth tokens, API keys, client secrets, real customer spreadsheets, or execution data.
 - Keep credentials in n8n's credential manager; never paste secrets into node parameters or this repository.
 - Replace all file and spreadsheet IDs with your own values after importing.
-- The published workflow should remain inactive until credentials and destination IDs are configured.
+- The repository export is intentionally inactive; activate it in your own n8n instance only after connecting credentials and configuring destination IDs.
 - Review the exported JSON and its node parameters before each public release. Automated pattern scans reduce risk but cannot guarantee that every secret has been detected.
 
 ## Limitations
