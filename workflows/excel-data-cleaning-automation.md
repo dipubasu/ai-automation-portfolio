@@ -1,27 +1,39 @@
-# Case Study: Excel Data Cleaning Automation
+# Excel Data Cleaning Automation
 
-## Overview
-This workflow processes customer records from an Excel workbook and creates a cleaner, categorized output plus a run summary. It is designed for inconsistent headers, formatting differences, missing or invalid values, and duplicate records.
+## Business problem
+Customer spreadsheets often arrive with inconsistent column names, messy text, malformed contact details, mixed date formats, blank rows, and duplicate customers. Cleaning these manually is repetitive and makes it easy to remove the wrong row or overlook questionable data.
 
-## Workflow design
-The 26-node export includes manual trigger and configuration, Google Drive download, Excel parsing, schema checks, standardization, duplicate detection, record classification, separate valid/review/invalid/duplicate/empty-row paths, merge/report generation, Drive upload, Google Sheets summary logging, and upsert of valid customer rows. Stop-and-error nodes cover key download, parsing, upload, and Sheets failure paths.
+## Solution
+I built an n8n workflow that reads an Excel workbook from Google Drive, maps supported header aliases, standardizes and validates records, detects duplicates, and separates rows into valid, needs-review, invalid, duplicate, and empty-row categories. It then creates a report, uploads the output to Drive, upserts valid customer records into Google Sheets, and records run-level metrics.
 
-## Data quality handling
-The workflow maps supported header aliases, normalizes text, checks email and phone formats, parses supported date formats, derives name fields when possible, and separates questionable records for review rather than silently treating every row as valid.
+## Business value
+- Reduces repetitive spreadsheet cleanup.
+- Makes data-quality decisions more transparent by keeping separate categories instead of treating every row as clean.
+- Gives teams a repeatable report and run summary to review.
+- Helps keep a cleaned customer sheet updated without manually copying each valid record.
 
-## Integrations
-n8n, JavaScript transformation logic, Google Drive, Google Sheets, and Excel/XLSX.
+## How the workflow operates
+1. Downloads and parses the source workbook.
+2. Maps supported header names and checks required columns.
+3. Normalizes text and validates email, phone, and date fields according to configuration.
+4. Detects duplicates using configured keys such as email, phone, and customer ID.
+5. Classifies rows and assembles an output workbook.
+6. Uploads the report, logs summary metrics, and upserts valid records into Google Sheets.
+7. Stops with explicit errors for key Drive, parsing, upload, or Sheets failures.
 
-## Sample execution
-The project README records one development sample with four input rows, four processed records, three unique records, and one duplicate. These are sample-run figures, not a general performance claim.
+## Intended use
+Operations, sales, and admin teams that regularly receive customer lists in Excel and need a repeatable first-pass data-quality process.
 
-## Configuration and boundaries
-Connect your own Drive and Sheets credentials, set source/destination IDs and worksheet names, and review date convention, phone country code, and email-repair options. Phone validation is conservative; ambiguous dates may need review.
+## Sample run
+The project notes one development sample with four input rows, four processed records, three unique records, and one duplicate. This is an example from that sample only, not a benchmark or guarantee for other files.
 
-## Testing and status
-Live-tested by me in my own n8n environment. The repository export is sanitized and intentionally inactive for sharing; configure it before running in another instance.
+## Setup and limitations
+Connect your own Google Drive and Sheets credentials, set the source/destination IDs and worksheet names, and review required fields, date convention, email auto-fix, dedupe keys, and default phone country code. Phone checks are conservative; ambiguous dates or uncertain matches should be reviewed by a person.
 
+## How I would measure success
+Compare manual cleanup time, duplicate rate, number of rows sent to review, invalid-record rate, and the number of upload/sync failures before and after adoption. These are suggested measures, not claimed outcomes.
 
-## Workflow export
+## Testing and export
+I live-tested this workflow in my own n8n environment. The public JSON is a sanitized, intentionally inactive export; configure your own credentials and IDs before running it.
 
-[**Open the n8n workflow JSON**](excel-data-cleaning-automation.json)
+[Open workflow JSON](excel-data-cleaning-automation.json)
