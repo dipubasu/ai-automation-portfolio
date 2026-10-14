@@ -1,0 +1,1400 @@
+{
+  "name": "Excel Data Cleaning Automation (GitHub Template)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "3dcaa3d5-b963-43a0-87a1-47844990f01c",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "53cf82f7-5fbd-4573-a51b-abddef43b9de",
+              "name": "driveFileId",
+              "value": "REPLACE_WITH_SOURCE_XLSX_FILE_ID",
+              "type": "string"
+            },
+            {
+              "id": "fbc3df1a-8764-4cd5-af14-dde6f294e67a",
+              "name": "outputDriveFolderId",
+              "value": "root",
+              "type": "string"
+            },
+            {
+              "id": "f1c1cac5-d99f-4331-a805-cd6d17e2a9a5",
+              "name": "sheetsSpreadsheetId",
+              "value": "REPLACE_WITH_TARGET_GOOGLE_SHEET_ID",
+              "type": "string"
+            },
+            {
+              "id": "23d52db6-a831-45db-a325-e341535efbff",
+              "name": "sheetsCleanWorksheet",
+              "value": "Cleaned_Customers",
+              "type": "string"
+            },
+            {
+              "id": "e16ad444-0704-45d3-ac39-b82e75bb3b86",
+              "name": "sheetsSummaryWorksheet",
+              "value": "Run_Summary",
+              "type": "string"
+            },
+            {
+              "id": "5618fbde-93d2-4a74-a021-a3d2d762f234",
+              "name": "requiredColumns",
+              "value": "email",
+              "type": "string"
+            },
+            {
+              "id": "f8a8e626-2adb-4833-a448-4018b2044984",
+              "name": "requiredFields",
+              "value": "name,email",
+              "type": "string"
+            },
+            {
+              "id": "1b9f5485-a032-4943-a7c5-7ff51a3167e1",
+              "name": "dedupeKeys",
+              "value": "email,phone,customer_id",
+              "type": "string"
+            },
+            {
+              "id": "bab1bacb-e313-468d-a5ae-c0cff1f5d92f",
+              "name": "dateConvention",
+              "value": "DMY",
+              "type": "string"
+            },
+            {
+              "id": "2a23a939-7c3f-46bf-a288-1bcd3edbc95b",
+              "name": "autoFixEmail",
+              "value": "true",
+              "type": "string"
+            },
+            {
+              "id": "7e19cc44-15a6-4041-a845-07bfff4bef51",
+              "name": "defaultPhoneCountryCode",
+              "value": "880",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "27ef7869-ba95-4f10-ae24-6a05ded44afd",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -448,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "value": "REPLACE_WITH_SOURCE_XLSX_FILE_ID",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "3ec85833-1473-414c-80a9-d2f23623f4cf",
+      "name": "Download Excel from Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -240,
+        192
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "headerRow": true,
+          "includeEmptyCells": true
+        }
+      },
+      "id": "49a9b610-2c97-4e2e-a0b8-b797dd74e859",
+      "name": "Parse Excel",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        192
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Stage: Check Schema  (Code node, \"Run Once for All Items\")\n// Maps source headers to canonical column names, enforces required columns,\n// and assigns a 1-based source_row_number (position among the data rows\n// returned by the Excel parser; fully blank rows are dropped by the parser).\n// Throws a stage-labelled error when the sheet is unusable.\n\nconst STAGE = 'Check Schema';\nconst cfg = $('Config').first().json;\n\nconst ALIASES = {\n  customer_id: ['customer_id', 'customerid', 'cust_id', 'customer_number', 'customer_no', 'id'],\n  first_name: ['first_name', 'firstname', 'given_name', 'first'],\n  last_name: ['last_name', 'lastname', 'surname', 'family_name', 'last'],\n  full_name: ['full_name', 'fullname', 'customer_name', 'name'],\n  email: ['email', 'e_mail', 'email_address', 'mail'],\n  phone: ['phone', 'phone_number', 'mobile', 'mobile_number', 'telephone', 'tel', 'cell'],\n  date_of_birth: ['date_of_birth', 'dob', 'birth_date', 'birthdate'],\n  created_at: ['created_at', 'created', 'created_date', 'date_created', 'signup_date', 'registration_date'],\n  company: ['company', 'company_name', 'organization', 'organisation'],\n  country: ['country', 'country_name'],\n  city: ['city', 'town'],\n  address: ['address', 'street_address', 'address_line_1'],\n};\n\nconst normalizeHeader = (h) =>\n  String(h).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');\n\nconst aliasToCanonical = {};\nfor (const [canonical, list] of Object.entries(ALIASES)) {\n  for (const a of list) aliasToCanonical[a] = canonical;\n}\n\nconst rows = $input.all().map((i) => i.json);\nif (rows.length === 0) {\n  throw new Error(`[Stage: ${STAGE}] The worksheet returned no data rows. Check the file ID, the sheet name, and that the first row contains headers.`);\n}\n\n// Union of headers across all rows (SheetJS omits keys for empty cells unless includeEmptyCells is on).\nconst headers = [];\nconst seen = new Set();\nfor (const r of rows) {\n  for (const k of Object.keys(r)) {\n    if (!seen.has(k)) { seen.add(k); headers.push(k); }\n  }\n}\n\nconst headerMap = {};      // source header -> canonical\nconst ignoredColumns = []; // headers not mapped (unknown or duplicate of an already mapped canonical column)\nconst usedCanonical = new Set();\nfor (const h of headers) {\n  const canonical = aliasToCanonical[normalizeHeader(h)];\n  if (canonical && !usedCanonical.has(canonical)) {\n    headerMap[h] = canonical;\n    usedCanonical.add(canonical);\n  } else {\n    ignoredColumns.push(h);\n  }\n}\n\nconst required = String(cfg.requiredColumns || '')\n  .split(',').map((s) => s.trim()).filter(Boolean);\nconst missing = required.filter((c) => !usedCanonical.has(c));\nif (missing.length > 0) {\n  throw new Error(\n    `[Stage: ${STAGE}] Missing required column(s): ${missing.join(', ')}. ` +\n    `Headers found: ${headers.join(', ') || '(none)'}. ` +\n    `Accepted names include e.g. email, e_mail, email_address. See README \"Expected columns\".`\n  );\n}\n\nconst mappedColumns = Object.entries(headerMap).map(([source, canonical]) => ({ source, canonical }));\n\nreturn rows.map((r, idx) => {\n  const row = {};\n  for (const [h, canonical] of Object.entries(headerMap)) {\n    row[canonical] = r[h] === undefined ? null : r[h];\n  }\n  const json = { source_row_number: idx + 1, row };\n  if (idx === 0) {\n    json._schema = { headers, mapped_columns: mappedColumns, ignored_columns: ignoredColumns, missing_optional_columns: Object.keys(ALIASES).filter((c) => !usedCanonical.has(c)) };\n  }\n  return { json };\n});\n"
+      },
+      "id": "03e626f9-623b-4577-9e96-59f6e29624aa",
+      "name": "Check Schema",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\n // Stage: Clean & Standardize\n// n8n Code node: Run Once for All Items\n// Field-level cleaning and validation only.\n// Duplicates and final classification are handled by later stages.\n\nconst cfg = $('Config').first().json;\n\nconst DATE_CONVENTION = String(cfg.dateConvention || 'STRICT')\n  .trim()\n  .toUpperCase();\n\nconst AUTO_FIX_EMAIL =\n  String(cfg.autoFixEmail ?? 'false').trim().toLowerCase() === 'true';\n\nconst DEFAULT_CC = String(cfg.defaultPhoneCountryCode ?? '').replace(/\\D/g, '');\n\n// ---------- Generic helpers ----------\nfunction cleanText(v) {\n  if (v === null || v === undefined) return null;\n\n  if (v instanceof Date) {\n    return Number.isNaN(v.getTime()) ? null : v.toISOString();\n  }\n\n  const s = String(v)\n    .replace(/[\\u200B-\\u200D\\u2060\\uFEFF]/g, '')\n    .replace(/\\s+/g, ' ')\n    .trim();\n\n  return s === '' ? null : s;\n}\n\n// ---------- Email ----------\nfunction isValidEmailSyntax(email) {\n  if (email.length > 254 || /\\s/.test(email)) return false;\n\n  const at = email.indexOf('@');\n  if (at < 1 || at !== email.lastIndexOf('@')) return false;\n\n  const local = email.slice(0, at);\n  const domain = email.slice(at + 1);\n\n  if (local.length > 64 || domain.length > 253) return false;\n\n  if (!/^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+$/i.test(local)) {\n    return false;\n  }\n\n  if (\n    local.startsWith('.') ||\n    local.endsWith('.') ||\n    local.includes('..')\n  ) {\n    return false;\n  }\n\n  const labels = domain.split('.');\n  if (labels.length < 2) return false;\n\n  for (const label of labels) {\n    if (label.length > 63) return false;\n\n    if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i.test(label)) {\n      return false;\n    }\n  }\n\n  const tld = labels[labels.length - 1];\n\n  return /^[a-z]{2,}$/i.test(tld) ||\n    /^xn--[a-z0-9-]+$/i.test(tld);\n}\n\nconst EMAIL_PROVIDERS = [\n  'gmail.com',\n  'yahoo.com',\n  'hotmail.com',\n  'outlook.com',\n  'icloud.com',\n  'live.com',\n];\n\nconst EMAIL_DOMAIN_TYPOS = {\n  gmail: 'gmail.com',\n  'gmial.com': 'gmail.com',\n  'gmai.com': 'gmail.com',\n  'gmal.com': 'gmail.com',\n  'gamil.com': 'gmail.com',\n  'gmail.con': 'gmail.com',\n  'gmail.cm': 'gmail.com',\n  'gmail.comm': 'gmail.com',\n  'gmail.vom': 'gmail.com',\n  'gmail.co': 'gmail.com',\n  'yaho.com': 'yahoo.com',\n  'yahooo.com': 'yahoo.com',\n  'yahoo.con': 'yahoo.com',\n  'hotmial.com': 'hotmail.com',\n  'hotmai.com': 'hotmail.com',\n  'hotmail.con': 'hotmail.com',\n  'outlook.con': 'outlook.com',\n  'outlok.com': 'outlook.com',\n};\n\nconst EMAIL_SUFFIXES = [...new Set([\n  ...EMAIL_PROVIDERS,\n  ...Object.keys(EMAIL_DOMAIN_TYPOS),\n])].sort((a, b) => b.length - a.length);\n\nfunction repairEmail(lowered) {\n  const fixes = [];\n  let s = lowered;\n\n  const apply = (next, label) => {\n    if (next !== s) {\n      s = next;\n      fixes.push(label);\n    }\n  };\n\n  apply(s.replace(/\\s+/g, ''), 'removed_spaces');\n  apply(s.replace(/[.,;:]+$/, ''), 'removed_trailing_punctuation');\n  apply(s.replace(/@{2,}/g, '@'), 'collapsed_double_at');\n\n  if (!s.includes('@')) {\n    const suffix = EMAIL_SUFFIXES.find(\n      (domain) => s.endsWith(domain) && s.length > domain.length\n    );\n\n    if (suffix) {\n      const local = s.slice(0, -suffix.length).replace(/\\.+$/, '');\n\n      if (local) {\n        s = `${local}@${suffix}`;\n        fixes.push(`inserted_missing_at_before_${suffix}`);\n      }\n    }\n  }\n\n  if (s.split('@').length === 2) {\n    let [local, domain] = s.split('@');\n\n    const commaFixed = domain.replace(/,/g, '.');\n\n    if (commaFixed !== domain) {\n      domain = commaFixed;\n      fixes.push('comma_in_domain_to_dot');\n    }\n\n    if (EMAIL_DOMAIN_TYPOS[domain]) {\n      fixes.push(\n        `domain_typo_${domain}_to_${EMAIL_DOMAIN_TYPOS[domain]}`\n      );\n\n      domain = EMAIL_DOMAIN_TYPOS[domain];\n    }\n\n    s = `${local}@${domain}`;\n  }\n\n  return fixes.length > 0 && isValidEmailSyntax(s)\n    ? { value: s, fixes }\n    : null;\n}\n\nfunction processEmail(raw) {\n  const original = cleanText(raw);\n\n  if (original === null) {\n    return {\n      email: null,\n      email_original: null,\n      email_status: 'missing',\n      issues: [],\n      fixes: [],\n    };\n  }\n\n  const lowered = original.toLowerCase();\n\n  if (AUTO_FIX_EMAIL) {\n    const repaired = repairEmail(lowered);\n\n    if (repaired) {\n      return {\n        email: repaired.value,\n        email_original: original,\n        email_status: 'valid',\n        issues: [],\n        fixes: repaired.fixes.map(\n          (fix) => `email_${fix}`\n        ),\n      };\n    }\n  }\n\n  if (isValidEmailSyntax(lowered)) {\n    return {\n      email: lowered,\n      email_original: original,\n      email_status: 'valid',\n      issues: [],\n      fixes: [],\n    };\n  }\n\n  return {\n    email: null,\n    email_original: original,\n    email_status: 'invalid',\n    issues: ['email_invalid_syntax'],\n    fixes: [],\n  };\n}\n\n// ---------- Phone ----------\n// Conservative calling-code list; not a replacement for libphonenumber.\n\nconst CC1 = new Set(['1', '7']);\n\nconst CC2 = new Set(\n  '20 27 30 31 32 33 34 36 39 40 41 43 44 45 46 47 48 49 51 52 53 54 55 56 57 58 60 61 62 63 64 65 66 81 82 84 86 90 91 92 93 94 95 98'\n    .split(' ')\n);\n\nconst CC3 = new Set((\n  '211 212 213 216 ' +\n  '220 221 222 223 224 225 226 227 228 229 230 231 232 233 234 235 236 237 238 239 240 241 242 243 244 245 246 247 248 249 250 251 252 253 254 255 256 257 258 ' +\n  '260 261 262 263 264 265 266 267 268 269 290 291 297 298 299 ' +\n  '350 351 352 353 354 355 356 357 358 359 370 371 372 373 374 375 376 377 378 380 381 382 383 385 386 387 389 ' +\n  '420 421 423 500 501 502 503 504 505 506 507 508 509 590 591 592 593 594 595 596 597 598 599 ' +\n  '670 672 673 674 675 676 677 678 679 680 681 682 683 685 686 687 688 689 690 691 692 ' +\n  '850 852 853 855 856 880 886 960 961 962 963 964 965 966 967 968 970 971 972 973 974 975 976 977 992 993 994 995 996 998'\n).split(' '));\n\nfunction countryCodeOf(digits) {\n  if (CC1.has(digits.slice(0, 1))) return digits.slice(0, 1);\n  if (CC2.has(digits.slice(0, 2))) return digits.slice(0, 2);\n  if (CC3.has(digits.slice(0, 3))) return digits.slice(0, 3);\n\n  return null;\n}\n\nfunction checkE164(digits) {\n  if (!/^\\d+$/.test(digits)) {\n    return 'phone_invalid_characters';\n  }\n\n  if (digits.startsWith('0')) {\n    return 'phone_invalid_country_code';\n  }\n\n  if (digits.length < 8 || digits.length > 15) {\n    return 'phone_invalid_length';\n  }\n\n  const cc = countryCodeOf(digits);\n\n  if (cc === null) {\n    return 'phone_unknown_country_code';\n  }\n\n  if (cc === '1' && !/^1[2-9]\\d{2}[2-9]\\d{6}$/.test(digits)) {\n    return 'phone_invalid_nanp_structure';\n  }\n\n  if (cc === '880') {\n    const national = digits.slice(3);\n\n    if (\n      national[0] === '1' &&\n      !/^1[3-9]\\d{8}$/.test(national)\n    ) {\n      return 'phone_invalid_bd_mobile';\n    }\n  }\n\n  return null;\n}\n\nfunction repairLocalPhone(digitsOnly) {\n  if (!DEFAULT_CC || !/^\\d+$/.test(DEFAULT_CC)) return null;\n\n  if (countryCodeOf(DEFAULT_CC + '0000000') !== DEFAULT_CC) {\n    return null;\n  }\n\n  if (!/^\\d+$/.test(digitsOnly)) return null;\n\n  const tries = [];\n\n  if (\n    digitsOnly.startsWith(DEFAULT_CC) &&\n    digitsOnly.length >= DEFAULT_CC.length + 7\n  ) {\n    tries.push(digitsOnly);\n  }\n\n  if (digitsOnly.startsWith('0')) {\n    tries.push(DEFAULT_CC + digitsOnly.slice(1));\n  } else {\n    tries.push(DEFAULT_CC + digitsOnly);\n  }\n\n  return tries.find(\n    (candidate) => checkE164(candidate) === null\n  ) || null;\n}\n\nfunction processPhone(raw) {\n  const original = cleanText(raw);\n\n  const base = {\n    phone: null,\n    phone_original: original,\n    fixes: [],\n  };\n\n  if (original === null) {\n    return {\n      ...base,\n      phone_status: 'missing',\n      issues: [],\n    };\n  }\n\n  const ambiguous = (issue) => ({\n    ...base,\n    phone_status: 'ambiguous',\n    issues: [issue],\n  });\n\n  const invalid = (issue) => ({\n    ...base,\n    phone_status: 'invalid',\n    issues: [issue],\n  });\n\n  if (/\\(\\s*0\\s*\\)/.test(original)) {\n    return ambiguous('phone_contains_trunk_zero');\n  }\n\n  if (/(ext\\.?|extension|x)\\s*\\d+\\s*$/i.test(original)) {\n    return ambiguous('phone_has_extension');\n  }\n\n  if (/[a-z]/i.test(original)) {\n    return invalid('phone_contains_letters');\n  }\n\n  let s = original.replace(/[\\s().\\/-]/g, '');\n\n  if (s.startsWith('00')) {\n    s = '+' + s.slice(2);\n  }\n\n  if (!s.startsWith('+')) {\n    const repaired = repairLocalPhone(s);\n\n    if (repaired) {\n      return {\n        ...base,\n        phone: '+' + repaired,\n        phone_status: 'valid',\n        issues: [],\n        fixes: [\n          `phone_added_country_code:+${DEFAULT_CC}`,\n        ],\n      };\n    }\n\n    return ambiguous('phone_missing_country_code');\n  }\n\n  if (!/^\\+\\d+$/.test(s)) {\n    return invalid('phone_invalid_characters');\n  }\n\n  const digits = s.slice(1);\n  const issue = checkE164(digits);\n\n  if (issue) return invalid(issue);\n\n  return {\n    ...base,\n    phone: '+' + digits,\n    phone_status: 'valid',\n    issues: [],\n  };\n}\n\n// ---------- Dates ----------\nconst isLeap = (year) =>\n  (year % 4 === 0 && year % 100 !== 0) ||\n  year % 400 === 0;\n\nconst daysIn = (year, month) =>\n  [\n    31,\n    isLeap(year) ? 29 : 28,\n    31, 30, 31, 30, 31, 31, 30, 31, 30, 31,\n  ][month - 1];\n\nconst pad = (n, width = 2) =>\n  String(n).padStart(width, '0');\n\nfunction buildDate(year, month, day) {\n  if (year < 1900 || year > 2100) {\n    return { ok: false, issue: 'out_of_range' };\n  }\n\n  if (\n    month < 1 ||\n    month > 12 ||\n    day < 1 ||\n    day > daysIn(year, month)\n  ) {\n    return { ok: false, issue: 'invalid_calendar_date' };\n  }\n\n  return {\n    ok: true,\n    value: `${pad(year, 4)}-${pad(month)}-${pad(day)}`,\n  };\n}\n\nfunction processDate(raw, field) {\n  const originalText = cleanText(raw);\n\n  const out = (status, value, issue) => ({\n    value: value || null,\n    original: originalText,\n    status,\n    issues: issue ? [`${field}_${issue}`] : [],\n  });\n\n  if (originalText === null) {\n    return out('missing', null, null);\n  }\n\n  const fromBuild = (result) =>\n    result.ok\n      ? out('valid', result.value, null)\n      : out('invalid', null, result.issue);\n\n  // Excel serial numbers, only when input is numeric.\n  if (typeof raw === 'number') {\n    if (\n      Number.isFinite(raw) &&\n      raw >= 1 &&\n      raw <= 73050\n    ) {\n      const date = new Date(\n        Date.UTC(1899, 11, 30) +\n        Math.floor(raw) * 86400000\n      );\n\n      return fromBuild(\n        buildDate(\n          date.getUTCFullYear(),\n          date.getUTCMonth() + 1,\n          date.getUTCDate()\n        )\n      );\n    }\n\n    return out('invalid', null, 'unsupported_format');\n  }\n\n  const s = originalText;\n  let match;\n\n  // ISO date or timestamp; preserve the written date component.\n  if (\n    (match = s.match(\n      /^(\\d{4})-(\\d{2})-(\\d{2})(?:[T ]\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d+)?)?(?:Z|[+-]\\d{2}:?\\d{2})?)?$/\n    ))\n  ) {\n    return fromBuild(\n      buildDate(+match[1], +match[2], +match[3])\n    );\n  }\n\n  // YYYY/MM/DD\n  if (\n    (match = s.match(\n      /^(\\d{4})\\/(\\d{1,2})\\/(\\d{1,2})$/\n    ))\n  ) {\n    return fromBuild(\n      buildDate(+match[1], +match[2], +match[3])\n    );\n  }\n\n  // DD/MM/YYYY, MM/DD/YYYY, DD-MM-YYYY, DD.MM.YYYY\n  if (\n    (match = s.match(\n      /^(\\d{1,2})([/.-])(\\d{1,2})\\2(\\d{4})$/\n    ))\n  ) {\n    const a = +match[1];\n    const b = +match[3];\n    const year = +match[4];\n\n    let day;\n    let month;\n\n    if (a > 12 && b <= 12) {\n      day = a;\n      month = b;\n    } else if (b > 12 && a <= 12) {\n      month = a;\n      day = b;\n    } else if (a > 12 && b > 12) {\n      return out('invalid', null, 'invalid_calendar_date');\n    } else if (a === b) {\n      day = a;\n      month = b;\n    } else if (DATE_CONVENTION === 'DMY') {\n      day = a;\n      month = b;\n    } else if (DATE_CONVENTION === 'MDY') {\n      month = a;\n      day = b;\n    } else {\n      return out('ambiguous', null, 'ambiguous_day_month');\n    }\n\n    return fromBuild(buildDate(year, month, day));\n  }\n\n  return out('invalid', null, 'unsupported_format');\n}\n\n// ---------- Main ----------\nreturn $input.all().map((item) => {\n  const {\n    source_row_number,\n    row,\n    _schema,\n  } = item.json;\n\n  const source =\n    row &&\n    typeof row === 'object' &&\n    !Array.isArray(row)\n      ? row\n      : {};\n\n  const textFields = {};\n\n  for (const [key, value] of Object.entries(source)) {\n    textFields[key] = cleanText(value);\n  }\n\n  const allBlank =\n    Object.keys(textFields).length === 0 ||\n    Object.values(textFields).every(\n      (value) => value === null\n    );\n\n  if (allBlank) {\n    const empty = {\n      record_type: 'empty_row',\n      source_row_number: source_row_number ?? null,\n    };\n\n    if (_schema !== undefined) {\n      empty._schema = _schema;\n    }\n\n    return { json: empty };\n  }\n\n  const email = processEmail(source.email);\n  const phone = processPhone(source.phone);\n  const dob = processDate(\n    source.date_of_birth,\n    'date_of_birth'\n  );\n  const created = processDate(\n    source.created_at,\n    'created_at'\n  );\n\n  const json = {\n    record_type: 'record',\n    source_row_number: source_row_number ?? null,\n\n    customer_id: textFields.customer_id ?? null,\n    first_name: textFields.first_name ?? null,\n    last_name: textFields.last_name ?? null,\n    full_name: textFields.full_name ?? null,\n\n    email: email.email,\n    phone: phone.phone,\n    date_of_birth: dob.value,\n    created_at: created.value,\n\n    company: textFields.company ?? null,\n    country: textFields.country ?? null,\n    city: textFields.city ?? null,\n    address: textFields.address ?? null,\n\n    // Original values retained for audit.\n    email_original: email.email_original,\n    phone_original: phone.phone_original,\n    date_of_birth_original: dob.original,\n    created_at_original: created.original,\n\n    // Field-level statuses and issues.\n    email_status: email.email_status,\n    phone_status: phone.phone_status,\n    date_of_birth_status: dob.status,\n    created_at_status: created.status,\n\n    field_issues: [\n      ...email.issues,\n      ...phone.issues,\n      ...dob.issues,\n      ...created.issues,\n    ],\n\n    auto_fixes: [\n      ...email.fixes,\n      ...phone.fixes,\n    ],\n\n    email_auto_fixed: email.fixes.length > 0,\n    phone_auto_fixed: phone.fixes.length > 0,\n  };\n\n  if (_schema !== undefined) {\n    json._schema = _schema;\n  }\n\n  return { json };\n});\n"
+      },
+      "id": "211aa504-a491-4b2c-b0ff-efb1dd2abf8a",
+      "name": "Clean & Standardize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Stage: Detect Duplicates  (Code node, \"Run Once for All Items\")\n//\n// Policy (see README \"Duplicate policy\"):\n//  * Keys: valid normalized email, valid E.164 phone, normalized customer_id (each can be switched off\n//    via Config.dedupeKeys). Names are never used: similar names are NOT merged.\n//  * The first record (lowest source_row_number) is kept. Later matches become duplicate_status=\"duplicate\"\n//    with duplicate_of_row + duplicate_reason. Nothing is merged and nothing is deleted.\n//  * Conservative rules - a match is only a \"candidate\" (record is kept, routed to review) when:\n//      - phone matches but both records have different valid emails (shared/family/company line), or\n//      - customer_id matches but both records have different valid emails or different valid phones, or\n//      - the record matches two or more different earlier records (cross-match conflict).\n//  * Keys of removed duplicates are not indexed, so chains (C matches only B, B duplicate of A) are not followed.\n\nconst cfg = $('Config').first().json;\nconst enabled = new Set(\n  String(cfg.dedupeKeys || 'email,phone,customer_id').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean)\n);\n\nconst idIndex = new Map();\nconst emailIndex = new Map();\nconst phoneIndex = new Map();\nconst keptByRow = new Map();\n\nconst normId = (v) => (v === null || v === undefined ? null : String(v).trim().toLowerCase() || null);\n\nfunction register(index, key, rowNo) {\n  if (key !== null && !index.has(key)) index.set(key, rowNo);\n}\n\nconst items = $input.all();\nconst out = [];\n\nfor (const item of items) {\n  const r = item.json;\n  if (r.record_type !== 'record') { out.push(item); continue; }\n\n  const email = enabled.has('email') && r.email_status === 'valid' ? r.email : null;\n  const phone = enabled.has('phone') && r.phone_status === 'valid' ? r.phone : null;\n  const cid = enabled.has('customer_id') ? normId(r.customer_id) : null;\n\n  const dupMatches = [];   // clear duplicates: { reason, master }\n  const conflicts = [];    // possible duplicates needing a human: { reason, master }\n\n  const check = (key, index, reasonBase, conflictTest) => {\n    if (key === null || !index.has(key)) return;\n    const master = keptByRow.get(index.get(key));\n    const conflict = conflictTest ? conflictTest(master) : null;\n    if (conflict) conflicts.push({ reason: `${reasonBase}_but_${conflict}`, master: master.source_row_number });\n    else dupMatches.push({ reason: reasonBase, master: master.source_row_number });\n  };\n\n  const differentEmail = (m) => (m.email_status === 'valid' && r.email_status === 'valid' && m.email !== r.email ? 'different_email' : null);\n  const differentContact = (m) =>\n    differentEmail(m) || (m.phone_status === 'valid' && r.phone_status === 'valid' && m.phone !== r.phone ? 'different_phone' : null);\n\n  check(email, emailIndex, 'same_email', null);\n  check(phone, phoneIndex, 'same_phone', differentEmail);\n  check(cid, idIndex, 'same_customer_id', differentContact);\n\n  const dupMasters = new Set(dupMatches.map((m) => m.master));\n  const allMasters = new Set([...dupMatches, ...conflicts].map((m) => m.master));\n\n  let status = 'unique';\n  let ofRow = null;\n  let reason = null;\n\n  if (dupMatches.length > 0 && dupMasters.size === 1 && allMasters.size === 1) {\n    status = 'duplicate';\n    ofRow = dupMatches[0].master;\n    reason = dupMatches.map((m) => m.reason).join('+');\n  } else if (allMasters.size > 1) {\n    status = 'candidate';\n    ofRow = [...allMasters][0];\n    reason = `matches_multiple_records(rows ${[...allMasters].join(',')})`;\n  } else if (conflicts.length > 0) {\n    status = 'candidate';\n    ofRow = conflicts[0].master;\n    reason = conflicts.map((m) => m.reason).join('+');\n  }\n\n  const json = { ...r, duplicate_status: status, duplicate_of_row: ofRow, duplicate_reason: reason };\n  out.push({ json });\n\n  if (status !== 'duplicate') {\n    keptByRow.set(r.source_row_number, json);\n    register(emailIndex, email, r.source_row_number);\n    register(phoneIndex, phone, r.source_row_number);\n    register(idIndex, cid, r.source_row_number);\n  }\n}\n\nreturn out;\n"
+      },
+      "id": "96611bef-2ae1-4b6c-a0db-aadce8de2564",
+      "name": "Detect Duplicates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Stage: Classify Records  (Code node, \"Run Once for All Items\")\n//\n// validation_status rules (applied to unique/candidate records; duplicates get \"duplicate\"):\n//   invalid      : no valid email AND no valid phone (record cannot be contacted or matched safely)\n//   needs_review : not invalid, but at least one of\n//                  - a required field (Config.requiredFields) is missing\n//                  - email present but invalid, phone invalid/ambiguous, date invalid/ambiguous\n//                  - duplicate candidate (possible duplicate that must not be auto-removed)\n//   valid        : none of the above. Empty OPTIONAL fields never lower the status.\n//                  Values repaired by the opt-in auto-fix rules count as valid; they are listed in auto_fixes.\n// Precedence: invalid > needs_review > valid.\n\nconst cfg = $('Config').first().json;\nconst required = new Set(\n  String(cfg.requiredFields || 'name,email').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean)\n);\n\nreturn $input.all().map((item) => {\n  const r = item.json;\n  if (r.record_type !== 'record') return item;\n\n  if (r.duplicate_status === 'duplicate') {\n    return { json: { ...r, auto_fixes: (r.auto_fixes || []).join('; ') || null, validation_status: 'duplicate', validation_issues: r.duplicate_reason, record_key: null } };\n  }\n\n  const issues = [...(r.field_issues || [])];\n  const hasName = Boolean(r.full_name || r.first_name || r.last_name);\n\n  if (required.has('name') && !hasName) issues.push('required_name_missing');\n  if (required.has('email') && r.email_status === 'missing') issues.push('required_email_missing');\n  if (required.has('phone') && r.phone_status === 'missing') issues.push('required_phone_missing');\n  if (required.has('customer_id') && !r.customer_id) issues.push('required_customer_id_missing');\n  if (r.duplicate_status === 'candidate') issues.push(`duplicate_candidate:${r.duplicate_reason}`);\n\n  const hasContact = r.email_status === 'valid' || r.phone_status === 'valid';\n  let status = 'valid';\n  if (!hasContact) {\n    status = 'invalid';\n    issues.push('no_valid_contact');\n  } else if (issues.length > 0) {\n    status = 'needs_review';\n  }\n\n  const record_key = r.email || r.phone || r.customer_id || null;\n  return { json: { ...r, auto_fixes: (r.auto_fixes || []).join('; ') || null, validation_status: status, validation_issues: issues.join('; '), record_key } };\n});\n"
+      },
+      "id": "d114a555-25d8-46b8-9d1c-318bd8238e65",
+      "name": "Classify Records",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5dac23f1-1bbd-47f9-a4e8-0c5d0cffd01e",
+                    "leftValue": "={{ $json.validation_status ?? '' }}",
+                    "rightValue": "valid",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "valid"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a505243d-bda7-4536-a20a-92af2a6b1111",
+                    "leftValue": "={{ $json.validation_status ?? '' }}",
+                    "rightValue": "needs_review",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "needs_review"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1255e040-82ee-4a87-a8c5-e9808d94dc08",
+                    "leftValue": "={{ $json.validation_status ?? '' }}",
+                    "rightValue": "invalid",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "invalid"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "920e347f-17bf-43e8-a5c1-708db5a5fcde",
+                    "leftValue": "={{ $json.validation_status ?? '' }}",
+                    "rightValue": "duplicate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "duplicate"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "665b8cb3-c619-46bf-afa0-a3c1492a1b6e",
+                    "leftValue": "={{ $json.record_type ?? '' }}",
+                    "rightValue": "empty_row",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "empty_row"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4a53af80-d9b6-4cf8-a3fd-7c1720a72f36",
+      "name": "Route by Status",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1088,
+        192
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "0d93272f-0e40-45a9-9d40-e09b219a80f3",
+      "name": "Valid Records",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        -16
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "02954f76-c15f-49f2-b937-dd01803ccfbf",
+      "name": "Needs Review Records",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        128
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d2cf4677-50f2-4759-94ed-2eeadfa6e25c",
+      "name": "Invalid Records",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        256
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e6b23239-b587-4684-ae0c-6259292987f8",
+      "name": "Duplicate Records",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        384
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "015ab856-ebc1-4d8f-bb42-8490e6078c63",
+      "name": "Empty Rows",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "id": "cb4dbe09-6f6d-413c-b82b-f0700bb84b91",
+      "name": "Merge All Records",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1552,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Stage: Build Report & Excel  (Code node, \"Run Once for All Items\")\n// 1) Computes the summary with mutually-consistent counts.\n// 2) Builds a real multi-sheet .xlsx binary. No external module is needed: the workbook is written as\n//    SpreadsheetML (inline strings) inside an uncompressed (\"stored\") ZIP using only Buffer.\n//\n// Count definitions (rows_read = every row returned by the parser = empty + records):\n//   records_processed  = rows_read - empty_rows_skipped\n//   records_processed  = unique_records + duplicate_records\n//   unique_records     = valid_records + needs_review_records + invalid_records\n// Field-level counts (invalid_email_count, ...) are measured over records_processed (duplicates\n// included), are NOT partitions, and one record can appear in several of them.\n\nconst STAGE = 'Build Report & Excel';\nconst all = $input.all().map((i) => i.json);\n\nlet sourceFileName = 'unknown';\ntry {\n  sourceFileName = $('Download Excel from Google Drive').first().binary.data.fileName || 'unknown';\n} catch (e) { /* keep 'unknown' */ }\nlet schema = {};\ntry { schema = $('Check Schema').first().json._schema || {}; } catch (e) { /* ignore */ }\n\nconst byRow = (a, b) => a.source_row_number - b.source_row_number;\nconst empties = all.filter((r) => r.record_type === 'empty_row');\nconst records = all.filter((r) => r.record_type === 'record').sort(byRow);\nconst dups = records.filter((r) => r.validation_status === 'duplicate');\nconst unique = records.filter((r) => r.validation_status !== 'duplicate');\nconst valid = unique.filter((r) => r.validation_status === 'valid');\nconst review = unique.filter((r) => r.validation_status === 'needs_review');\nconst invalid = unique.filter((r) => r.validation_status === 'invalid');\n\nconst count = (arr, fn) => arr.filter(fn).length;\nconst anyDate = (r, st) => r.date_of_birth_status === st || r.created_at_status === st;\n\nconst summary = {\n  source_file_name: sourceFileName,\n  processing_timestamp: new Date().toISOString(),\n  total_rows_read: all.length,\n  empty_rows_skipped: empties.length,\n  records_processed: records.length,\n  unique_records: unique.length,\n  duplicate_records: dups.length,\n  duplicate_candidates_kept_for_review: count(unique, (r) => r.duplicate_status === 'candidate'),\n  valid_records: valid.length,\n  needs_review_records: review.length,\n  invalid_records: invalid.length,\n  missing_email_count: count(records, (r) => r.email_status === 'missing'),\n  invalid_email_count: count(records, (r) => r.email_status === 'invalid'),\n  missing_phone_count: count(records, (r) => r.phone_status === 'missing'),\n  invalid_phone_count: count(records, (r) => r.phone_status === 'invalid'),\n  ambiguous_phone_count: count(records, (r) => r.phone_status === 'ambiguous'),\n  invalid_or_missing_phone_count: count(records, (r) => ['missing', 'invalid', 'ambiguous'].includes(r.phone_status)),\n  invalid_date_count: count(records, (r) => anyDate(r, 'invalid')),\n  ambiguous_date_count: count(records, (r) => anyDate(r, 'ambiguous')),\n  invalid_or_ambiguous_date_count: count(records, (r) => anyDate(r, 'invalid') || anyDate(r, 'ambiguous')),\n  auto_fixed_email_count: count(records, (r) => r.email_auto_fixed === true),\n  auto_fixed_phone_count: count(records, (r) => r.phone_auto_fixed === true),\n  ignored_source_columns: (schema.ignored_columns || []).join(', ') || null,\n};\n\n// Consistency guard: refuse to publish a report whose numbers do not add up.\nif (summary.total_rows_read !== summary.empty_rows_skipped + summary.records_processed ||\n    summary.records_processed !== summary.unique_records + summary.duplicate_records ||\n    summary.unique_records !== summary.valid_records + summary.needs_review_records + summary.invalid_records) {\n  throw new Error(`[Stage: ${STAGE}] Internal count mismatch - report not generated. ${JSON.stringify(summary)}`);\n}\n\n// ---------- sheet data ----------\nconst CORE = ['customer_id', 'first_name', 'last_name', 'full_name', 'email', 'phone', 'date_of_birth', 'created_at', 'company', 'country', 'city', 'address'];\nconst ORIGINALS = ['email_original', 'phone_original', 'date_of_birth_original', 'created_at_original'];\nconst toRows = (arr, cols) => arr.map((r) => cols.map((c) => (r[c] === undefined ? null : r[c])));\n\nconst sheets = [\n  { name: 'Cleaned_Data', cols: ['source_row_number', ...CORE, 'record_key', 'auto_fixes'], data: valid },\n  { name: 'Needs_Review', cols: ['source_row_number', 'validation_status', 'validation_issues', ...CORE, ...ORIGINALS, 'auto_fixes', 'duplicate_of_row', 'duplicate_reason'], data: review },\n  { name: 'Duplicates', cols: ['source_row_number', 'duplicate_of_row', 'duplicate_reason', ...CORE, ...ORIGINALS], data: dups },\n  { name: 'Invalid_Records', cols: ['source_row_number', 'validation_status', 'validation_issues', ...CORE, ...ORIGINALS], data: invalid },\n].map((s) => ({ name: s.name, header: s.cols, rows: toRows(s.data, s.cols) }));\n\nsheets.push({\n  name: 'Summary',\n  header: ['metric', 'value'],\n  rows: Object.entries(summary).map(([k, v]) => [k, v]),\n});\n\n// ---------- minimal XLSX writer ----------\nconst CRC_TABLE = (() => {\n  const t = new Uint32Array(256);\n  for (let n = 0; n < 256; n++) {\n    let c = n;\n    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;\n    t[n] = c >>> 0;\n  }\n  return t;\n})();\nfunction crc32(buf) {\n  let c = 0xffffffff;\n  for (let i = 0; i < buf.length; i++) c = CRC_TABLE[(c ^ buf[i]) & 0xff] ^ (c >>> 8);\n  return (c ^ 0xffffffff) >>> 0;\n}\n\nfunction zipStored(files) {\n  const DOS_TIME = 0;\n  const DOS_DATE = ((2026 - 1980) << 9) | (1 << 5) | 1;\n  const locals = [];\n  const centrals = [];\n  let offset = 0;\n  for (const f of files) {\n    const name = Buffer.from(f.name, 'utf8');\n    const data = f.data;\n    const crc = crc32(data);\n    const lh = Buffer.alloc(30);\n    lh.writeUInt32LE(0x04034b50, 0); lh.writeUInt16LE(20, 4); lh.writeUInt16LE(0x0800, 6); lh.writeUInt16LE(0, 8);\n    lh.writeUInt16LE(DOS_TIME, 10); lh.writeUInt16LE(DOS_DATE, 12); lh.writeUInt32LE(crc, 14);\n    lh.writeUInt32LE(data.length, 18); lh.writeUInt32LE(data.length, 22); lh.writeUInt16LE(name.length, 26); lh.writeUInt16LE(0, 28);\n    locals.push(lh, name, data);\n\n    const ch = Buffer.alloc(46);\n    ch.writeUInt32LE(0x02014b50, 0); ch.writeUInt16LE(20, 4); ch.writeUInt16LE(20, 6); ch.writeUInt16LE(0x0800, 8); ch.writeUInt16LE(0, 10);\n    ch.writeUInt16LE(DOS_TIME, 12); ch.writeUInt16LE(DOS_DATE, 14); ch.writeUInt32LE(crc, 16);\n    ch.writeUInt32LE(data.length, 20); ch.writeUInt32LE(data.length, 24); ch.writeUInt16LE(name.length, 28);\n    ch.writeUInt16LE(0, 30); ch.writeUInt16LE(0, 32); ch.writeUInt16LE(0, 34); ch.writeUInt16LE(0, 36); ch.writeUInt32LE(0, 38);\n    ch.writeUInt32LE(offset, 42);\n    centrals.push(ch, name);\n    offset += 30 + name.length + data.length;\n  }\n  const cdSize = centrals.reduce((n, b) => n + b.length, 0);\n  const end = Buffer.alloc(22);\n  end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(0, 4); end.writeUInt16LE(0, 6);\n  end.writeUInt16LE(files.length, 8); end.writeUInt16LE(files.length, 10);\n  end.writeUInt32LE(cdSize, 12); end.writeUInt32LE(offset, 16); end.writeUInt16LE(0, 20);\n  return Buffer.concat([...locals, ...centrals, end]);\n}\n\nconst xmlEscape = (s) =>\n  String(s).replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F]/g, '')\n    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;');\n\nfunction colName(i) {\n  let n = i + 1, s = '';\n  while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); }\n  return s;\n}\n\nfunction sheetXml(sheet) {\n  const widths = sheet.header.map((h, ci) => {\n    let w = String(h).length;\n    for (const row of sheet.rows.slice(0, 200)) {\n      const v = row[ci];\n      if (v !== null && v !== undefined) w = Math.max(w, String(v).length);\n    }\n    return Math.min(Math.max(w + 2, 10), 60);\n  });\n  const cols = widths.map((w, i) => `<col min=\"${i + 1}\" max=\"${i + 1}\" width=\"${w}\" customWidth=\"1\"/>`).join('');\n  const cell = (v, r, c, style) => {\n    if (v === null || v === undefined || v === '') return '';\n    const ref = `${colName(c)}${r}`;\n    const s = style ? ` s=\"${style}\"` : '';\n    if (typeof v === 'number' && Number.isFinite(v)) return `<c r=\"${ref}\"${s}><v>${v}</v></c>`;\n    const text = xmlEscape(String(v).slice(0, 32000));\n    return `<c r=\"${ref}\"${s} t=\"inlineStr\"><is><t xml:space=\"preserve\">${text}</t></is></c>`;\n  };\n  let rowsXml = `<row r=\"1\">${sheet.header.map((h, c) => cell(h, 1, c, 1)).join('')}</row>`;\n  sheet.rows.forEach((row, ri) => {\n    rowsXml += `<row r=\"${ri + 2}\">${row.map((v, c) => cell(v, ri + 2, c, 0)).join('')}</row>`;\n  });\n  return '<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>' +\n    '<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">' +\n    '<sheetViews><sheetView workbookViewId=\"0\"><pane ySplit=\"1\" topLeftCell=\"A2\" activePane=\"bottomLeft\" state=\"frozen\"/></sheetView></sheetViews>' +\n    `<cols>${cols}</cols><sheetData>${rowsXml}</sheetData></worksheet>`;\n}\n\nconst XML = '<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>';\nconst files = [\n  { name: '[Content_Types].xml', text: XML + '<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">' +\n    '<Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>' +\n    '<Default Extension=\"xml\" ContentType=\"application/xml\"/>' +\n    '<Override PartName=\"/xl/workbook.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\"/>' +\n    '<Override PartName=\"/xl/styles.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml\"/>' +\n    sheets.map((s, i) => `<Override PartName=\"/xl/worksheets/sheet${i + 1}.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/>`).join('') +\n    '</Types>' },\n  { name: '_rels/.rels', text: XML + '<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">' +\n    '<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"xl/workbook.xml\"/></Relationships>' },\n  { name: 'xl/workbook.xml', text: XML + '<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\"><sheets>' +\n    sheets.map((s, i) => `<sheet name=\"${s.name}\" sheetId=\"${i + 1}\" r:id=\"rId${i + 1}\"/>`).join('') + '</sheets></workbook>' },\n  { name: 'xl/_rels/workbook.xml.rels', text: XML + '<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">' +\n    sheets.map((s, i) => `<Relationship Id=\"rId${i + 1}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet${i + 1}.xml\"/>`).join('') +\n    `<Relationship Id=\"rId${sheets.length + 1}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/></Relationships>` },\n  { name: 'xl/styles.xml', text: XML + '<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">' +\n    '<fonts count=\"2\"><font><sz val=\"10\"/><name val=\"Arial\"/></font><font><b/><sz val=\"10\"/><name val=\"Arial\"/></font></fonts>' +\n    '<fills count=\"3\"><fill><patternFill patternType=\"none\"/></fill><fill><patternFill patternType=\"gray125\"/></fill>' +\n    '<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFD9E1F2\"/><bgColor indexed=\"64\"/></patternFill></fill></fills>' +\n    '<borders count=\"1\"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +\n    '<cellStyleXfs count=\"1\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/></cellStyleXfs>' +\n    '<cellXfs count=\"2\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\"/>' +\n    '<xf numFmtId=\"0\" fontId=\"1\" fillId=\"2\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\"/></cellXfs>' +\n    '<cellStyles count=\"1\"><cellStyle name=\"Normal\" xfId=\"0\" builtinId=\"0\"/></cellStyles></styleSheet>' },\n  ...sheets.map((s, i) => ({ name: `xl/worksheets/sheet${i + 1}.xml`, text: sheetXml(s) })),\n].map((f) => ({ name: f.name, data: Buffer.from(f.text, 'utf8') }));\n\nlet xlsxBuffer;\ntry {\n  xlsxBuffer = zipStored(files);\n} catch (e) {\n  throw new Error(`[Stage: ${STAGE}] Could not generate the XLSX file: ${e.message}`);\n}\n\nconst baseName = String(sourceFileName).replace(/\\.(xlsx|xlsm|xls)$/i, '').replace(/[^A-Za-z0-9._-]+/g, '_') || 'customers';\nconst outputFileName = `${baseName}_cleaned.xlsx`;\nconst binary = await this.helpers.prepareBinaryData(\n  xlsxBuffer,\n  outputFileName,\n  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'\n);\n\nreturn [{ json: { summary, output_file_name: outputFileName, sheets: sheets.map((s) => ({ name: s.name, data_rows: s.rows.length })) }, binary: { data: binary } }];\n"
+      },
+      "id": "2c3b398d-0fe2-43b9-96e8-8e0119c638cd",
+      "name": "Build Report & Excel",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1776,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "fileId": {
+          "value": "REPLACE_WITH_TARGET_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "a996533c-8db0-4eb8-af7a-b129070e1ec2",
+      "name": "Upload Excel to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2000,
+        256
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Stage: Prepare Summary Row  (Code node, \"Run Once for All Items\")\n// Emits exactly one item: the run summary, flattened for the Run_Summary worksheet (append-only log).\nconst s = $('Build Report & Excel').first().json;\nreturn [{ json: { ...s.summary, output_file_name: s.output_file_name } }];\n"
+      },
+      "id": "b4f1e596-4c6a-4834-8096-79b7ccb88929",
+      "name": "Prepare Summary Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2208,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "value": "REPLACE_WITH_TARGET_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "value": "RECONFIGURE_SHEET_NAME",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "source_row_number",
+              "displayName": "source_row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "        customer_id",
+              "displayName": "        customer_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "   first_name",
+              "displayName": "   first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "   last_name",
+              "displayName": "   last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "   full_name",
+              "displayName": "   full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "       email",
+              "displayName": "       email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "       phone",
+              "displayName": "       phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " date_of_birth",
+              "displayName": " date_of_birth",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "   created_at",
+              "displayName": "   created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "    company",
+              "displayName": "    company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "         city",
+              "displayName": "         city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "     address",
+              "displayName": "     address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "record_key",
+              "displayName": "record_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "4c63cec6-5341-4b45-b444-0aa96fc6227e",
+      "name": "Log Summary to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2432,
+        256
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Stage: Prepare Valid Rows  (Code node, \"Run Once for All Items\")\n// Emits only the unique records with validation_status = \"valid\", with the same columns as the\n// Cleaned_Data sheet. record_key (email, else phone, else customer_id) is the upsert key in Google Sheets.\nconst COLS = ['source_row_number', 'customer_id', 'first_name', 'last_name', 'full_name', 'email', 'phone',\n  'date_of_birth', 'created_at', 'company', 'country', 'city', 'address', 'record_key', 'auto_fixes'];\n\nconst rows = $('Merge All Records').all()\n  .map((i) => i.json)\n  .filter((r) => r.record_type === 'record' && r.validation_status === 'valid')\n  .sort((a, b) => a.source_row_number - b.source_row_number);\n\n// Guard: record_key must be unique among exported rows, otherwise upsert would overwrite rows.\nconst seen = new Set();\nfor (const r of rows) {\n  if (!r.record_key) throw new Error(`[Stage: Prepare Valid Rows] Row ${r.source_row_number} has no record_key.`);\n  if (seen.has(r.record_key)) throw new Error(`[Stage: Prepare Valid Rows] Duplicate record_key \"${r.record_key}\" among valid rows; refusing to export.`);\n  seen.add(r.record_key);\n}\n\n// Google Sheets cells: null -> empty string so cleared fields are written as blanks on update.\nreturn rows.map((r) => ({ json: Object.fromEntries(COLS.map((c) => [c, r[c] === null || r[c] === undefined ? '' : r[c]])) }));\n"
+      },
+      "id": "d800981a-0499-4722-9237-03a02bb11f1c",
+      "name": "Prepare Valid Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2656,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "value": "REPLACE_WITH_TARGET_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "value": "RECONFIGURE_SHEET_NAME",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "source_row_number": "={{ $json.source_row_number }}",
+            "        customer_id": "={{ $json.customer_id }}",
+            "   first_name": "={{ $json.first_name }}",
+            "   last_name": "={{ $json.last_name }}",
+            "   full_name": "={{ $json.full_name }}",
+            "       email": "={{ $json.email }}",
+            "       phone": "={{ $json.phone }}",
+            " date_of_birth": "={{ $json.date_of_birth }}",
+            "   created_at": "={{ $json.created_at }}",
+            "    company": "={{ $json.company }}",
+            "country": "={{ $json.country }}",
+            "         city": "={{ $json.city }}",
+            "     address": "={{ $json.address }}",
+            "record_key": "={{ $json.record_key }}"
+          },
+          "matchingColumns": [
+            "record_key"
+          ],
+          "schema": [
+            {
+              "id": "source_row_number",
+              "displayName": "source_row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "        customer_id",
+              "displayName": "        customer_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "   first_name",
+              "displayName": "   first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "   last_name",
+              "displayName": "   last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "   full_name",
+              "displayName": "   full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "       email",
+              "displayName": "       email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "       phone",
+              "displayName": "       phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": " date_of_birth",
+              "displayName": " date_of_birth",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "   created_at",
+              "displayName": "   created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "    company",
+              "displayName": "    company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "         city",
+              "displayName": "         city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "     address",
+              "displayName": "     address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "record_key",
+              "displayName": "record_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source_file_name",
+              "displayName": "source_file_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "processing_timestamp",
+              "displayName": "processing_timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total_rows_read",
+              "displayName": "total_rows_read",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "empty_rows_skipped",
+              "displayName": "empty_rows_skipped",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "records_processed",
+              "displayName": "records_processed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "unique_records",
+              "displayName": "unique_records",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "duplicate_records",
+              "displayName": "duplicate_records",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "duplicate_candidates_kept_for_review",
+              "displayName": "duplicate_candidates_kept_for_review",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "valid_records",
+              "displayName": "valid_records",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "needs_review_records",
+              "displayName": "needs_review_records",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "invalid_records",
+              "displayName": "invalid_records",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "missing_email_count",
+              "displayName": "missing_email_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "invalid_email_count",
+              "displayName": "invalid_email_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "missing_phone_count",
+              "displayName": "missing_phone_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "invalid_phone_count",
+              "displayName": "invalid_phone_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ambiguous_phone_count",
+              "displayName": "ambiguous_phone_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "invalid_or_missing_phone_count",
+              "displayName": "invalid_or_missing_phone_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "invalid_date_count",
+              "displayName": "invalid_date_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ambiguous_date_count",
+              "displayName": "ambiguous_date_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "invalid_or_ambiguous_date_count",
+              "displayName": "invalid_or_ambiguous_date_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "auto_fixed_email_count",
+              "displayName": "auto_fixed_email_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "auto_fixed_phone_count",
+              "displayName": "auto_fixed_phone_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ignored_source_columns",
+              "displayName": "ignored_source_columns",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output_file_name",
+              "displayName": "output_file_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "0e59bd87-7ede-4eac-9d47-4319f2ee83fa",
+      "name": "Upsert Clean Customers to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2880,
+        256
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ '[Stage: Download from Google Drive] ' + (typeof $json.error === 'string' ? $json.error : ($json.error?.message || 'Unknown error')) + ' - check Config.driveFileId, that the file is an .xlsx (not a native Google Sheet), and the Google Drive credential/permissions.' }}"
+      },
+      "id": "58164eec-f21d-4275-9a0c-f917d187811c",
+      "name": "Stop: Drive Download Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ '[Stage: Parse Excel] ' + (typeof $json.error === 'string' ? $json.error : ($json.error?.message || 'Unknown error')) + ' - the file is not a readable .xlsx workbook or the worksheet could not be parsed.' }}"
+      },
+      "id": "189bbad7-423d-4a34-b4b9-5815a575ca91",
+      "name": "Stop: Excel Parse Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ '[Stage: Upload Excel to Google Drive] ' + (typeof $json.error === 'string' ? $json.error : ($json.error?.message || 'Unknown error')) + ' - the cleaned workbook was generated but could not be uploaded; check Config.outputDriveFolderId and write permission. Nothing was written to Google Sheets.' }}"
+      },
+      "id": "6250586c-5e13-4192-9dde-a904b53775bd",
+      "name": "Stop: Drive Upload Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ '[Stage: Log Summary to Google Sheets] ' + (typeof $json.error === 'string' ? $json.error : ($json.error?.message || 'Unknown error')) + ' - the Excel file was already uploaded; check the Run_Summary worksheet name, its header row, and Sheets credential. Cleaned rows were NOT exported.' }}"
+      },
+      "id": "dd54592b-f27b-4079-b9af-6ca0e0b70ba8",
+      "name": "Stop: Sheets Summary Log Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ '[Stage: Upsert Clean Customers to Google Sheets] ' + (typeof $json.error === 'string' ? $json.error : ($json.error?.message || 'Unknown error')) + ' - the Excel file was already uploaded and the summary logged; check the worksheet, its header row, and Sheets credential, then re-run (upsert is idempotent).' }}"
+      },
+      "id": "1b39beb9-1117-47f5-a5b0-a7ddf1ce4055",
+      "name": "Stop: Sheets Export Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        480
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Download Excel from Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Excel from Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Parse Excel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop: Drive Download Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Excel": {
+      "main": [
+        [
+          {
+            "node": "Check Schema",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop: Excel Parse Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Schema": {
+      "main": [
+        [
+          {
+            "node": "Clean & Standardize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean & Standardize": {
+      "main": [
+        [
+          {
+            "node": "Detect Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detect Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Classify Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Records": {
+      "main": [
+        [
+          {
+            "node": "Route by Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Status": {
+      "main": [
+        [
+          {
+            "node": "Valid Records",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Needs Review Records",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Invalid Records",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Duplicate Records",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Empty Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Records": {
+      "main": [
+        [
+          {
+            "node": "Merge All Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs Review Records": {
+      "main": [
+        [
+          {
+            "node": "Merge All Records",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Invalid Records": {
+      "main": [
+        [
+          {
+            "node": "Merge All Records",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Duplicate Records": {
+      "main": [
+        [
+          {
+            "node": "Merge All Records",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Empty Rows": {
+      "main": [
+        [
+          {
+            "node": "Merge All Records",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Merge All Records": {
+      "main": [
+        [
+          {
+            "node": "Build Report & Excel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Report & Excel": {
+      "main": [
+        [
+          {
+            "node": "Upload Excel to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Excel to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Prepare Summary Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop: Drive Upload Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Summary Row": {
+      "main": [
+        [
+          {
+            "node": "Log Summary to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Summary to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Prepare Valid Rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop: Sheets Summary Log Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Valid Rows": {
+      "main": [
+        [
+          {
+            "node": "Upsert Clean Customers to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Clean Customers to Google Sheets": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Stop: Sheets Export Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "tags": [],
+  "active": false
+}
