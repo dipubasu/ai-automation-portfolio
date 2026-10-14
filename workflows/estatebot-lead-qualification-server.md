@@ -16,7 +16,7 @@ Separating ingestion from the chat agent lets source documents be indexed indepe
 Configure the source document, Google Drive permissions, embedding model, Supabase credentials and collection/table settings. Re-index when source content changes, and verify the target schema before ingestion.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. The export is saved inactive; that may be intentional if ingestion is run only when the knowledge base needs updating.
+Live-tested by me in my own n8n environment. The export is saved inactive; that may be intentional if ingestion is run only when the knowledge base needs updating.
 
 
 ## Workflow export
