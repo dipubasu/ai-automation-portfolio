@@ -16,7 +16,7 @@ Keeping travel actions behind tools separates conversational planning from the o
 Configure the MCP server URL and exposed tools, model credentials, and preference-table access. The exact availability and accuracy of travel results depend on the connected MCP server and its upstream services.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. The exported active flag is not a promise that the copy is active in every environment.
+Live-tested by me in my own n8n environment. The exported active flag is not a promise that the copy is active in every environment.
 
 
 ## Workflow export
