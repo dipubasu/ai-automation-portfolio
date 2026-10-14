@@ -17,3 +17,8 @@ Configure Telegram, model, Supabase, Google Sheets, and database credentials. Ke
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. No lead-conversion or response-accuracy metrics are claimed in this case study.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](estatebot-ai-agent-memory-supabase-rag.json)
