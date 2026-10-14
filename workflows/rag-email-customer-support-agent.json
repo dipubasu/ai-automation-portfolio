@@ -25,13 +25,7 @@
       "position": [
         0,
         208
-      ],
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "qaD7Iv5zTHNQxmrY",
-          "name": "Gmail account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -83,13 +77,7 @@
       "position": [
         592,
         448
-      ],
-      "credentials": {
-        "supabaseApi": {
-          "id": "LpjnYg7ZnDMKKB3J",
-          "name": "Supabase account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -113,14 +101,7 @@
       "position": [
         944,
         208
-      ],
-      "webhookId": "13e4f6fb-a1cb-4b99-b6ce-39061636eb1b",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "kF0WdZK8l5LaQyuu",
-          "name": "Gmail account 2"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -171,14 +152,7 @@
       "position": [
         1392,
         112
-      ],
-      "webhookId": "af3c5445-23d5-49f3-a8b9-b8383d69ce23",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "qaD7Iv5zTHNQxmrY",
-          "name": "Gmail account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -216,13 +190,7 @@
         448
       ],
       "id": "7b7ba549-989f-4f1d-82a2-447502a60ffb",
-      "name": "Groq Chat Model",
-      "credentials": {
-        "groqApi": {
-          "id": "RdKMzsAmK9oqjpFH",
-          "name": "Groq account"
-        }
-      }
+      "name": "Groq Chat Model"
     },
     {
       "parameters": {
@@ -236,14 +204,7 @@
         112
       ],
       "id": "114d031a-0e74-41ba-b674-6d4035947d7a",
-      "name": "Mark a message as read",
-      "webhookId": "77fa2522-7c52-4be1-b214-2db3d657dd51",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "qaD7Iv5zTHNQxmrY",
-          "name": "Gmail account"
-        }
-      }
+      "name": "Mark a message as read"
     },
     {
       "parameters": {},
@@ -254,13 +215,7 @@
         656
       ],
       "id": "69d1e7c8-5965-4fa2-854c-e556da476bce",
-      "name": "Embeddings Google Gemini",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "1U1w3PYo1Q56y3cB",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      "name": "Embeddings Google Gemini"
     }
   ],
   "pinData": {},
@@ -372,20 +327,16 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "6f821990-327e-4466-bc29-115fe99583e0",
   "meta": {
     "aiBuilderAssisted": true,
-    "builderVariant": "mcp",
-    "templateCredsSetupCompleted": true,
-    "instanceId": "51bac464f9e7d20e1575e8f6c65c21447daf64ff86f97148cde2333d9de3e6d7"
+    "builderVariant": "mcp"
   },
   "nodeGroups": [],
-  "id": "3NusXrn0pgQz6HVZ",
   "tags": []
 }
