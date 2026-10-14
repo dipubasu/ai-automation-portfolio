@@ -16,7 +16,7 @@ Routing lets different message types or conversation conditions follow different
 Set Telegram credentials and chat permissions, inspect every switch/IF condition, and verify the audio input format and model node configuration. Confirm the intended human handoff path and access controls in the actual n8n canvas before production use.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. The exact handoff behavior depends on the configured branch logic and operational process.
+Live-tested by me in my own n8n environment. The exact handoff behavior depends on the configured branch logic and operational process.
 
 
 ## Workflow export
