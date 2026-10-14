@@ -20,3 +20,8 @@ Set the webhook contract, required lead fields, HubSpot credential and pipeline/
 
 ## Testing and status
 Live-tested by the author in their configured n8n environment. The export's active flag reflects the saved copy only; a workflow may be inactive when it is not currently needed. No business outcome metrics are claimed here.
+
+
+## Workflow export
+
+[**Open the n8n workflow JSON**](lead-intake-hubspot-crm-sync.json)
