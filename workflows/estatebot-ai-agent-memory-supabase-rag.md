@@ -1,24 +1,35 @@
-# Case Study: EstateBot — AI Agent, Memory and Supabase RAG
+# EstateBot — Real Estate Assistant, Property Search and Lead Qualification
 
-## Overview
-A Telegram-facing real-estate assistant that combines conversation memory with retrieval from a Supabase vector store and records completed lead details.
+## Business problem
+Property enquiries often arrive as unstructured conversations. Agents need to answer property questions accurately, understand a buyer's requirements, and collect enough details for follow-up. Asking every question at once can create friction, and answering property questions from memory risks inaccurate claims.
 
-## Workflow design
-The export includes Telegram trigger and response nodes, field preparation, an AI agent, lead-completion branching, lead-data extraction, Google Sheets logging, OpenRouter/Groq model nodes, a vector-store question-answer tool, Supabase vector storage, Google Gemini embeddings, short-term chat memory, and a property-ID lookup tool.
+## Solution
+I built a Telegram-based real-estate assistant that searches a property knowledge base for property-related questions and qualifies interested buyers through a step-by-step conversation. It collects name, phone, budget, location, property type, and buying timeline, then asks the user to confirm the summary before marking the lead complete. Completed details are logged to Google Sheets.
 
-## Integrations
-Telegram, n8n AI Agent, OpenRouter and Groq model nodes, Supabase vector store, Google Gemini embeddings, Google Sheets, and a PostgreSQL lookup tool.
+## Business value
+- Gives prospective buyers a conversational first point of contact.
+- Grounds property answers in the configured property database rather than model memory.
+- Collects a more structured lead record for a human sales agent.
+- Keeps conversational context for multi-turn enquiries.
+- Supports exact property-ID lookup as well as broader semantic property searches.
 
-## Why this design
-RAG can ground property-related responses in indexed source material, while memory supports multi-turn conversations. A completion branch provides a point to capture structured buyer requirements.
+## How it works
+1. A user messages the Telegram bot.
+2. The agent answers property questions using the Supabase retrieval tool or exact-ID lookup.
+3. For qualification, it asks for one requirement at a time and gathers the buyer's details.
+4. After the buyer confirms the summary, the workflow extracts the structured lead.
+5. The lead is appended to Google Sheets and the user receives a confirmation message.
 
-## Configuration and boundaries
-Configure Telegram, model, Supabase, Google Sheets, and database credentials. Keep the indexed property data current and verify that the lookup tool's schema and permissions match the database.
+## Intended use
+Real-estate agencies that want to handle first-line property questions and collect structured buyer enquiries before a human follow-up.
 
-## Testing and status
-Live-tested by me in my own n8n environment. No lead-conversion or response-accuracy metrics are claimed in this case study.
+## Setup and limitations
+Configure Telegram, model, Supabase, PostgreSQL lookup, and Google Sheets credentials; populate the property database and confirm the expected data format. The workflow collects personal contact information, so access to logs and sheets should be restricted. The confirmation message says an agent will contact the buyer within 24 hours; only use that promise if the business can actually meet it.
 
+## How I would measure success
+Track completed lead profiles, drop-off during qualification, property questions answered from retrieved records, human follow-up time, and invalid or incomplete lead records. These are suggested measures, not claimed results.
 
-## Workflow export
+## Testing and export
+I live-tested this workflow in my own n8n environment. Replace placeholder sheet IDs and environment-specific credentials before importing elsewhere.
 
-[**Open the n8n workflow JSON**](estatebot-ai-agent-memory-supabase-rag.json)
+[Open workflow JSON](estatebot-ai-agent-memory-supabase-rag.json)
