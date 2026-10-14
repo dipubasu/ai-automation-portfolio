@@ -16,7 +16,7 @@ RAG can ground property-related responses in indexed source material, while memo
 Configure Telegram, model, Supabase, Google Sheets, and database credentials. Keep the indexed property data current and verify that the lookup tool's schema and permissions match the database.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. No lead-conversion or response-accuracy metrics are claimed in this case study.
+Live-tested by me in my own n8n environment. No lead-conversion or response-accuracy metrics are claimed in this case study.
 
 
 ## Workflow export
