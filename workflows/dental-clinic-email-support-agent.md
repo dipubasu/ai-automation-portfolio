@@ -9,7 +9,7 @@ I built an email workflow that watches Gmail for incoming messages, asks an AI a
 ## Business value
 - Helps handle repetitive administrative email questions.
 - Keeps routine answers consistent with the configured clinic information.
-- Provides a clear response path for questions that the configured information cannot answer.
+- Can use a fallback response for questions outside the configured clinic information.
 
 ## How it works
 1. Gmail checks for incoming messages on the configured polling schedule.
