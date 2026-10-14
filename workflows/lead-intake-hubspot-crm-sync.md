@@ -1,27 +1,35 @@
-# Case Study: Lead Intake → HubSpot CRM Sync → Notification
+# Lead Intake → HubSpot CRM Sync → Notification
 
-## Overview
-This n8n workflow automates the initial processing of inbound leads: it accepts lead data through a webhook, validates required fields, synchronizes contact/deal information with HubSpot, and routes notifications or logs based on the flow's conditions.
+## Business problem
+When leads arrive through different forms or landing pages, sales teams can lose time copying details into a CRM, miss incomplete submissions, or notice valuable opportunities too late. Manual handoffs also make it harder to see why a lead failed to enter the pipeline.
 
-## Workflow design
-The exported workflow includes a configuration node, webhook trigger, validation branch, HubSpot contact create/update, deal creation, a high-value-deal branch, Telegram alerting, Google Sheets logging, and separate webhook responses for success, validation failure, and sync error.
+## Solution
+I built this n8n workflow to accept a new lead through a webhook, validate the submitted data, create or update the contact in HubSpot, create a deal, and route follow-up based on deal value. High-value opportunities trigger a Telegram alert; the standard path is logged to Google Sheets. The webhook returns different responses for validation failure, successful processing, and sync errors.
 
-## Integrations
-- n8n Webhook and conditional nodes
-- HubSpot contacts and deals
-- Telegram notifications
-- Google Sheets lead logging
+## Business value
+- Reduces repetitive lead entry between a website/form and CRM.
+- Gives sales a faster signal when a lead meets the configured high-value condition.
+- Creates a lightweight log for standard leads.
+- Makes failed CRM syncs visible so a lead can be followed up manually rather than silently disappearing.
 
-## Why this design
-Validation before CRM writes helps keep incomplete submissions out of the normal processing path. Separate response/error branches make the integration outcome easier to distinguish, while notifications and a sheet log support follow-up.
+## How the workflow operates
+1. Receives the lead payload by webhook.
+2. Checks whether the required lead fields are present.
+3. Creates or updates the HubSpot contact, then creates a deal.
+4. Checks the deal amount against the configured high-value condition.
+5. Sends a Telegram alert for high-value deals or logs standard leads in Google Sheets.
+6. Returns a success, validation-error, or sync-error response.
 
-## Configuration and boundaries
-Set the webhook contract, required lead fields, HubSpot credential and pipeline/stage settings, Telegram chat ID, and Google Sheets document/worksheet. The exported JSON contains placeholders for environment-specific values. Confirm HubSpot field mappings and duplicate-handling behavior in your own instance.
+## Intended use
+Small sales teams or businesses that collect leads online and use HubSpot as their CRM.
 
-## Testing and status
-Live-tested by me in my own n8n environment. The export's active flag reflects the saved copy only; a workflow may be inactive when it is not currently needed. No business outcome metrics are claimed here.
+## Setup and limitations
+Configure the incoming payload contract, required fields, HubSpot credentials and deal pipeline/stage, high-value threshold, Telegram chat ID, and Google Sheets destination. Verify duplicate handling and HubSpot field mappings in your account. The workflow's value depends on valid incoming data and correct CRM configuration; it does not guarantee lead conversion.
 
+## How I would measure success
+Track valid leads processed, CRM sync failures, time from submission to CRM entry, high-value alert latency, and leads requiring manual follow-up. These are suggested measures, not claimed results.
 
-## Workflow export
+## Testing and export
+I live-tested this workflow in my own n8n environment. The exported JSON uses placeholders for environment-specific values and may need configuration before import.
 
-[**Open the n8n workflow JSON**](lead-intake-hubspot-crm-sync.json)
+[Open workflow JSON](lead-intake-hubspot-crm-sync.json)
