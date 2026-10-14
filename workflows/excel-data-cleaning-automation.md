@@ -19,7 +19,7 @@ The project README records one development sample with four input rows, four pro
 Connect your own Drive and Sheets credentials, set source/destination IDs and worksheet names, and review date convention, phone country code, and email-repair options. Phone validation is conservative; ambiguous dates may need review.
 
 ## Testing and status
-Live-tested by the author in their configured n8n environment. The repository export is sanitized and intentionally inactive for sharing; configure it before running in another instance.
+Live-tested by me in my own n8n environment. The repository export is sanitized and intentionally inactive for sharing; configure it before running in another instance.
 
 
 ## Workflow export
