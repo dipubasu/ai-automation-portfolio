@@ -1,24 +1,34 @@
-# Case Study: YouTube Automation — Topic to Video
+# YouTube Automation — Topic to Short-Form Video
 
-## Overview
-A multi-step n8n pipeline that takes a video topic through content planning, visual and voice asset generation, video rendering, and YouTube upload.
+## Business problem
+Producing a short video usually involves several separate tasks: choosing a hook, writing a script, planning scenes, creating visuals, recording narration, editing, rendering, and uploading. Repeating these steps for every topic can make content production slow and difficult to standardize.
 
-## Workflow design
-The 26-node export includes a manual trigger, topic/configuration nodes, OpenAI ideation, video details, scene prompt splitting, image generation and file conversion, upload-URL requests and asset uploads, ingest waits and checks, voiceover generation, Shotstack payload construction and render-status polling, video download, and YouTube upload.
+## Solution
+I built an n8n pipeline that takes a topic and generates structured video metadata, a short voiceover script, and four scene prompts. It then generates scene images, creates a voiceover, uploads assets to Shotstack, assembles and renders a vertical video, and uploads the result to YouTube with private visibility configured in the exported workflow.
 
-## Integrations
-OpenAI, image-generation and audio-generation services configured through HTTP requests, Shotstack, and YouTube. The exact provider configuration should be read from the exported node parameters and environment settings.
+## Business value
+- Connects several repetitive production steps into one workflow.
+- Creates a consistent starting structure for short-form content.
+- Reduces manual handoffs between writing, asset generation, rendering, and upload.
+- Leaves the uploaded video private by default in the current export, allowing review before public release.
 
-## Why this design
-Breaking the process into asset generation, upload, render, and publish stages makes the pipeline easier to inspect and troubleshoot than a single opaque operation.
+## How it works
+1. A manual run starts from a configured topic.
+2. OpenAI generates the title, description, script, and scene prompts.
+3. Image and voice assets are generated and uploaded for processing.
+4. Shotstack renders a vertical MP4 from the generated assets.
+5. The rendered file is downloaded and uploaded to YouTube; the workflow prepares links to the uploaded video.
 
-## Configuration and boundaries
-Review API endpoints, request payloads, asset URLs, polling intervals, and YouTube visibility settings. Rendering and upload depend on external service quotas and successful asynchronous processing. Test with private/unlisted output and non-sensitive credentials before public publishing.
+## Intended use
+Creators or small marketing teams that want a repeatable starting point for producing short educational or promotional videos.
 
-## Testing and status
-Live-tested by me in my own n8n environment. This case study does not claim a specific number of videos, views, or time saved.
+## Setup and limitations
+Configure OpenAI, Cloudflare image generation, ElevenLabs, Shotstack, and YouTube credentials and account IDs. Verify provider endpoints, asset ingestion status, rendering completion, YouTube privacy settings, and quota limits. AI-generated facts and visuals still need editorial review; the workflow does not guarantee views, engagement, or monetization.
 
+## How I would measure success
+Track end-to-end render success, editing time per video, cost per finished video, rework rate, and viewer retention after publishing. These are suggested measures, not claimed results.
 
-## Workflow export
+## Testing and export
+I live-tested this workflow in my own n8n environment. The export uses placeholders for service credentials and is intended to be configured before use in another instance.
 
-[**Open the n8n workflow JSON**](youtube-automation-topic-to-video.json)
+[Open workflow JSON](youtube-automation-topic-to-video.json)
