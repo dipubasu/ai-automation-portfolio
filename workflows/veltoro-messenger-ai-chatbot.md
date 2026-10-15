@@ -1,4 +1,4 @@
-# VELTORO — Messenger AI Shopping Assistant
+# VELTORO — Messenger Assistant (AI Shopping Support)
 
 ## Business problem
 Customers shopping online often ask the same questions about product prices, SKU, materials, sizes, colors, fit, care instructions, and availability. If those questions wait for a human reply, customers may abandon the conversation; if a chatbot guesses, it can misrepresent the catalogue.
