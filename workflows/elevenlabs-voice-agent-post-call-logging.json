@@ -1,0 +1,216 @@
+{
+  "name": "SmileCare Dental Clinic — ElevenLabs Voice AI Call Logging",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "REPLACE_WITH_N8N_WEBHOOK_PATH",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "voice-webhook",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "Timestamp",
+              "type": "string",
+              "value": "={{ $json.body.data?.metadata?.start_time_unix_secs ? new Date($json.body.data.metadata.start_time_unix_secs * 1000).toISOString() : $now.toISO() }}"
+            },
+            {
+              "id": "a2",
+              "name": "Conversation ID",
+              "type": "string",
+              "value": "={{ $json.body.data?.conversation_id }}"
+            },
+            {
+              "id": "a3",
+              "name": "Summary",
+              "type": "string",
+              "value": "={{ $json.body.data?.analysis?.transcript_summary }}"
+            },
+            {
+              "id": "a4",
+              "name": "Duration (sec)",
+              "type": "number",
+              "value": "={{ $json.body.data?.metadata?.call_duration_secs }}"
+            },
+            {
+              "id": "a5",
+              "name": "Successful",
+              "type": "string",
+              "value": "={{ $json.body.data?.analysis?.call_successful }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "extract-call-data",
+      "name": "Extract Call Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.Timestamp }}",
+            "Conversation ID": "={{ $json['Conversation ID'] }}",
+            "Summary": "={{ $json.Summary }}",
+            "Duration (sec)": "={{ $json['Duration (sec)'] }}",
+            "Successful": "={{ $json.Successful }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Conversation ID",
+              "displayName": "Conversation ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Duration (sec)",
+              "displayName": "Duration (sec)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Successful",
+              "displayName": "Successful",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "log-to-google-sheets",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "REPLACE_WITH_NOTIFICATION_EMAIL",
+        "subject": "=New voice agent call: {{ $('Extract Call Data').item.json['Conversation ID'] }}",
+        "emailType": "text",
+        "message": "=A new call was logged.\\n\\nConversation ID: {{ $('Extract Call Data').item.json['Conversation ID'] }}\\nDuration: {{ $('Extract Call Data').item.json['Duration (sec)'] }} sec\\nSuccessful: {{ $('Extract Call Data').item.json.Successful }}\\n\\nSummary:\\n{{ $('Extract Call Data').item.json.Summary }}",
+        "options": {}
+      },
+      "id": "send-notification-email",
+      "name": "Send Notification Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Call Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Call Data": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Send Notification Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "sanitized-export",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
