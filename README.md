@@ -13,7 +13,7 @@ AI Automation Developer specializing in n8n workflows, RAG systems, AI agents, a
 
 - **Automation:** n8n · Make.com · Workflow Automation · Webhooks · MCP
 - **AI & LLM:** OpenAI · Gemini · Groq / Llama · RAG (Retrieval-Augmented Generation) · Embeddings · Prompt Engineering · AI Agents · Cloudflare AI (Flux)
-- **Voice & Audio:** ElevenLabs TTS · Telegram Voice Message Understanding
+- **Voice & Audio:** ElevenLabs Conversational AI · ElevenLabs TTS · Voice AI Receptionist · Telegram Voice Message Understanding
 - **Integrations:** HubSpot · Facebook Graph API · Telegram API · Gmail OAuth2 · WhatsApp · REST APIs · Shotstack · YouTube API · Google Drive API
 - **Data & Infrastructure:** Supabase Vector DB · Google Sheets · Google Drive · API Authentication · Error Handling · Secure Credential Management
 
@@ -71,6 +71,10 @@ Related: [Travel MCP Server](workflows/travel-mcp-server.json)
 A data-quality workflow that imports Excel customer records from Google Drive, maps inconsistent headers, standardizes names and contact fields, validates email/phone/date values, detects duplicate records, routes questionable rows for review, exports a cleaned workbook, and logs run metrics to Google Sheets.
 **Tech:** n8n · JavaScript · Google Drive · Google Sheets · Excel/XLSX · Data Validation · Deduplication · Error Handling
 **Highlights:** configurable rules, audit-friendly original values, explicit needs-review handling, and failure branches for key integration steps.
+
+### 10. [SmileCare Dental Clinic — ElevenLabs Voice AI Receptionist](workflows/elevenlabs-voice-agent-post-call-logging.md)
+An English-language dental clinic voice receptionist configured in ElevenLabs, paired with an n8n post-call webhook that extracts call metadata and summaries, appends structured records to Google Sheets, and emails a call notification to the clinic team. The exported workflow is sanitized and inactive until configured with your own credentials and destinations.
+**Tech:** ElevenLabs Conversational AI · n8n · Webhooks · Google Sheets · Gmail · GPT-4o mini
 
 ## Education
 
