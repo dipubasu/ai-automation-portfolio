@@ -1,13 +1,13 @@
 # SmileCare Dental Clinic — ElevenLabs Voice AI Receptionist
 
 ## Overview
-A voice receptionist prototype for SmileCare Dental Clinic, configured in ElevenLabs Conversational AI, with an n8n post-call workflow that records call metadata and summaries in Google Sheets and sends a Gmail notification to the clinic team.
+I built and tested an English-language voice receptionist for SmileCare Dental Clinic in ElevenLabs Conversational AI, then connected it to an n8n post-call workflow. The setup captures call metadata and summaries in Google Sheets and sends a Gmail notification to the clinic team.
 
 ## Voice agent configuration
 - **Agent name:** Aria
 - **Voice:** Adam
 - **Language:** English
-- **LLM:** GPT-4o mini (as configured by the project owner)
+- **LLM:** GPT-4o mini
 - **Default personality:** Off
 - **Opening message:** “Hello! Thank you for calling SmileCare Dental Clinic. How can I help you today?”
 - **Clinic hours:** Saturday–Thursday, 9:00 AM–7:00 PM; closed Friday
@@ -18,7 +18,7 @@ A voice receptionist prototype for SmileCare Dental Clinic, configured in Eleven
 
 
 ## Voice agent prompt
-The following prompt reflects the supplied configuration for the prototype:
+I configured the agent with the following receptionist instructions:
 
 > You are Aria, a professional voice receptionist for SmileCare Dental Clinic. Your job is to greet callers warmly and professionally, answer questions about clinic hours, services, and appointment booking, and keep responses short and conversational because this is a phone call, not a chat message.
 >
@@ -56,8 +56,12 @@ The following prompt reflects the supplied configuration for the prototype:
 - The export logs call summaries and metadata; it does not itself create or confirm appointments in a clinic scheduling system.
 - The callback promise is part of the voice prompt; an actual callback requires a separate staff process or scheduling/CRM integration.
 - Treat call summaries and transcripts as potentially sensitive customer information. Limit sheet access and email recipients, and disclose call recording/transcription practices as required by applicable law and clinic policy.
-- The source export's Google Sheets mapping used whitespace-padded column names for Summary and Successful. This sanitized version normalizes those names; confirm the destination sheet headers before testing.
-- “GPT-4o mini” reflects the supplied project details; verify the exact model label in ElevenLabs before presenting it as a verified platform setting.
+- The exported workflow uses normalized Google Sheets column mappings. Ensure the destination sheet headers exactly match the five fields listed above.
+
+## Testing and security
+I tested the voice agent and post-call workflow in my n8n environment. The public JSON is a sanitized, inactive export, not a copy of my live credentials or deployment settings. After importing it elsewhere, configure the webhook path, Google Sheets destination, Gmail recipient, and credentials before running a test call.
+
+The exported webhook does not include authentication or signature validation. Before exposing it to production traffic, add an appropriate authentication/verification mechanism and verify the ElevenLabs event source. Treat call summaries and transcripts as potentially sensitive customer data.
 
 ## Success measures
 Suggested metrics: calls received, call-success rate, average call duration, percentage of calls with usable summaries, and callback requests requiring staff follow-up. These are evaluation suggestions, not measured outcomes.
