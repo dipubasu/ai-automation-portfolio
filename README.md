@@ -73,7 +73,7 @@ A data-quality workflow that imports Excel customer records from Google Drive, m
 **Highlights:** configurable rules, audit-friendly original values, explicit needs-review handling, and failure branches for key integration steps.
 
 ### 10. [SmileCare Dental Clinic — ElevenLabs Voice AI Receptionist](workflows/elevenlabs-voice-agent-post-call-logging.md)
-An English-language dental clinic voice receptionist configured in ElevenLabs, paired with an n8n post-call webhook that extracts call metadata and summaries, appends structured records to Google Sheets, and emails a call notification to the clinic team. The exported workflow is sanitized and inactive until configured with your own credentials and destinations.
+I built and tested an English-language dental clinic voice receptionist in ElevenLabs, then connected it to an n8n post-call webhook. The workflow extracts call metadata and summaries, appends structured records to Google Sheets, and emails a call notification to the clinic team. The public JSON is a sanitized, inactive export; my live n8n setup is separate, and imported copies need their own credentials and destination settings.
 **Tech:** ElevenLabs Conversational AI · n8n · Webhooks · Google Sheets · Gmail · GPT-4o mini
 
 ## Education
