@@ -12,7 +12,8 @@ AI Automation Developer specializing in n8n workflows, RAG systems, AI agents, a
 ## Core Skills
 
 - **Automation:** n8n · Make.com · Workflow Automation · Webhooks · MCP
-- **AI & LLM:** OpenAI · Gemini · Groq / Llama · RAG (Retrieval-Augmented Generation) · Embeddings · Prompt Engineering · AI Agents · Cloudflare AI (Flux) · ElevenLabs TTS
+- **AI & LLM:** OpenAI · Gemini · Groq / Llama · RAG (Retrieval-Augmented Generation) · Embeddings · Prompt Engineering · AI Agents · Cloudflare AI (Flux)
+- **Voice & Audio:** ElevenLabs TTS · Telegram Voice Message Understanding
 - **Integrations:** HubSpot · Facebook Graph API · Telegram API · Gmail OAuth2 · WhatsApp · REST APIs · Shotstack · YouTube API · Google Drive API
 - **Data & Infrastructure:** Supabase Vector DB · Google Sheets · Google Drive · API Authentication · Error Handling · Secure Credential Management
 
@@ -40,13 +41,13 @@ A Telegram AI agent that answers property questions through Supabase retrieval a
 **Tech:** n8n · Telegram API · Groq / Llama · Supabase Vector DB · RAG · Google Sheets
 Related: [EstateBot AI Agent + Memory + Supabase RAG](workflows/estatebot-ai-agent-memory-supabase-rag.json)
 
-### 3. [Veltoro — AI Shopping Assistant (Messenger RAG Chatbot)](workflows/veltoro-messenger-ai-chatbot.md)
-A Messenger webhook assistant that retrieves product information from a Supabase vector store and generates catalogue-grounded answers to customer questions.
-**Tech:** n8n · Supabase · Google Gemini Embeddings · Groq / Llama · Facebook Graph API
+### 3. [Veltoro Messenger Assistant — AI Shopping Support](workflows/veltoro-messenger-ai-chatbot.md)
+A Facebook Messenger webhook assistant that retrieves product information from a Supabase vector store and generates catalogue-grounded answers to customer questions.
+**Tech:** n8n · Facebook Graph API · Supabase · Google Gemini Embeddings · Groq / Llama · RAG
 Related: [Veltoro RAG Knowledge Base Setup](workflows/veltoro-rag-knowledge-base-setup.json)
 
-### 4. [Veltoro — AI Email Support with Human-in-the-Loop Approval](workflows/rag-email-customer-support-agent.md)
-Detects unread customer emails every minute via Gmail, strips quoted replies/signatures, and uses a RAG agent (Groq, Supabase Vector Store, Gemini Embeddings) to search a policy knowledge base and draft a reply. Drafts go through human approval (Approve/Reject) before sending; rejected ones are flagged for manual review.
+### 4. [Veltoro Email Support — RAG with Human Approval](workflows/rag-email-customer-support-agent.md)
+Detects unread customer emails via Gmail, cleans quoted replies/signatures, and uses a RAG agent (Groq, Supabase Vector Store, Gemini Embeddings) to draft a policy-grounded reply. A human reviews the draft before it is sent; rejected messages are flagged for manual review.
 **Tech:** n8n · Gmail API · Groq / Llama · Supabase Vector DB · Google Gemini Embeddings · RAG · Human-in-the-Loop Approval
 
 ### 5. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.md)
@@ -59,7 +60,7 @@ Multilingual (Bangla, English, Banglish) Telegram support assistant with convers
 
 ### 7. [AI YouTube Video Automation — Multi-Scene Pipeline](workflows/youtube-automation-topic-to-video.md)
 An end-to-end pipeline that turns a topic into video metadata, a script, four scene prompts, generated images and voiceover, then renders a vertical video through Shotstack and uploads it to YouTube. The exported workflow sets upload privacy to private for review.
-**Tech:** n8n · OpenAI API · Cloudflare AI (Flux) · ElevenLabs · Shotstack API · YouTube API
+**Tech:** n8n · OpenAI API · Cloudflare AI (Flux) · ElevenLabs TTS · Shotstack API · YouTube API
 
 ### 8. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.md)
 An MCP-based conversational agent that coordinates multiple tools for hotel search, restaurant discovery, live weather information, and currency conversion.
