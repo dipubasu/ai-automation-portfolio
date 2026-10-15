@@ -1,4 +1,4 @@
-# Veltoro — RAG Email Customer Support with Human Approval
+# Veltoro — Email Support (RAG with Human Approval)
 
 ## Business problem
 An online fashion retailer may receive repetitive questions about shipping, returns, payments, sizing, warranty, account help, and escalation. Replying manually to every email can slow the queue; allowing an AI to send policy answers without review risks incorrect or off-brand commitments.
