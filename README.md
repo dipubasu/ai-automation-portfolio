@@ -64,7 +64,7 @@ An end-to-end pipeline that turns a topic into video metadata, a script, four sc
 
 ### 8. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.md)
 An MCP-based conversational agent that coordinates multiple tools for hotel search, restaurant discovery, live weather information, and currency conversion.
-**Tech:** n8n · MCP Server/Client · Groq / Llama · Geoapify · Open-Meteo
+**Tech:** n8n · MCP Server/Client · Google Gemini · Geoapify · Open-Meteo
 Related: [Travel MCP Server](workflows/travel-mcp-server.json)
 
 ### 9. [Excel Data Cleaning Automation](projects/excel-data-cleaning-automation/README.md)
