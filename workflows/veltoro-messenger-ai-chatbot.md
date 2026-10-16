@@ -31,3 +31,7 @@ Track first-response time, questions resolved without staff help, unanswered cat
 I live-tested this workflow in my own n8n environment. Replace the placeholder Meta values and configure the catalogue connection when importing elsewhere.
 
 [Open workflow JSON](veltoro-messenger-ai-chatbot.json)
+
+## Code reuse and permissions
+
+This project is public for viewing, review, testing, and portfolio evaluation. **Permission is required before reusing, copying, modifying, redistributing, or incorporating any code or other material from this project into another project or product.** Please contact the copyright holder and obtain written permission before reuse. Viewing or testing this project does not grant reuse rights. See the repository root [LICENSE](../LICENSE).
