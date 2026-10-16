@@ -61,6 +61,6 @@ See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assi
 
 This is a fictional portfolio demonstration, not a hosted service or a claim of production deployment. The repository publishes sanitized workflow JSON exports, but they have not been imported and re-executed as part of this documentation update. Any future export or import into another environment will require its own credentials, IDs, permissions, database setup, node versions, and API configuration. No quantified business outcome is claimed.
 
-## License
+## Code reuse and permissions
 
-MIT — see the repository root [LICENSE](../../LICENSE).
+This project is public for viewing, review, testing, and portfolio evaluation. Permission is required before reusing, copying, modifying, redistributing, or incorporating any code or other material from this project into another project or product. Obtain written permission from the copyright holder before reuse. See the repository root [LICENSE](../../LICENSE).
