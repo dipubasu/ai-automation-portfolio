@@ -6,7 +6,7 @@ An n8n-based portfolio project for multilingual, knowledge-grounded WhatsApp sup
 
 I built and tested this workflow in my configured environment before publishing this portfolio entry. It is designed to answer product, delivery, returns, and store-policy questions from a curated knowledge base; process supported voice notes; look up inventory and verified order status; create support tickets; and escalate uncertain or sensitive cases to a human operator.
 
-**Testing status:** The workflow was tested by me in my configured environment before publication. This documentation update did not rerun the workflow. The public repository currently contains project documentation and workflow design notes, not an importable Oakmere workflow JSON or a hosted deployment.
+**Testing status:** The workflow was tested by me in my configured environment before publication. This documentation update did not rerun the workflow. The public repository includes sanitized, inactive n8n workflow JSON exports for the assistant, knowledge-base ingestion, and Telegram error alerts. These are publication-safe starting points, not a hosted deployment; configure your own credentials and IDs before importing or running them.
 
 ## Architecture
 
@@ -43,13 +43,23 @@ Telegram is used for operator alerts.
 6. Test duplicate webhooks, voice-note failures, provider outages, unverified order requests, escalation, and terminal errors.
 7. Sanitize and review exports before publishing them.
 
+## Sanitized workflow exports
+
+The following JSON exports are included in [`workflows/`](workflows/):
+
+- [WhatsApp AI Customer Assistant](workflows/whatsapp-ai-customer-assistant.json)
+- [Knowledge Base Ingestion (RAG)](workflows/knowledge-base-ingestion-rag.json)
+- [Telegram Error Alert](workflows/error-alert-telegram.json)
+
+The published exports have been parsed as JSON, set inactive, and scanned for embedded credential objects, obvious token patterns, and numeric chat IDs. Credential references and instance/workflow metadata were removed, and Telegram chat destinations use placeholders. This is a static sanitization review, not a guarantee of security or successful import in every n8n version. Configure your own n8n credentials and IDs; inspect every node and expression before activation. Do not commit real credentials or execution data.
+
 ## Test checklist
 
 See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assistant-test-plan.md). It is a reusable checklist, not evidence that every listed scenario has a recorded pass result. Record observed outcomes before claiming specific test coverage.
 
 ## Limitations
 
-This is a fictional portfolio demonstration, not a hosted service or a claim of production deployment. The repository currently does not publish an importable Oakmere workflow JSON. Any future export or import into another environment will require its own credentials, IDs, permissions, database setup, node versions, and API configuration. No quantified business outcome is claimed.
+This is a fictional portfolio demonstration, not a hosted service or a claim of production deployment. The repository publishes sanitized workflow JSON exports, but they have not been imported and re-executed as part of this documentation update. Any future export or import into another environment will require its own credentials, IDs, permissions, database setup, node versions, and API configuration. No quantified business outcome is claimed.
 
 ## License
 
