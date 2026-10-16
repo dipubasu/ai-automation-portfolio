@@ -1,6 +1,6 @@
 # n8n Workflow Library
 
-This directory contains JSON exports of workflows that I have live-tested in my n8n environment. Some workflows may be intentionally inactive because they are not currently needed; an inactive export does not by itself mean a workflow is untested. When importing into another n8n instance, credentials, IDs, permissions, and service settings may need to be configured for that environment.
+The workflow projects documented in this portfolio were built and tested by me in my configured environment before I published their portfolio entries. This directory contains JSON exports for the workflows that currently have a published export; some projects are documentation-only. Some exports may be intentionally inactive because they are not currently needed; an inactive export does not by itself mean a workflow is untested. When importing into another n8n instance, credentials, IDs, permissions, and service settings may need to be configured for that environment.
 
 ## Workflow catalogue
 
