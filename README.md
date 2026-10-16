@@ -77,7 +77,7 @@ I built and tested an English-language dental clinic voice receptionist in Eleve
 **Tech:** ElevenLabs Conversational AI · n8n · Webhooks · Google Sheets · Gmail · GPT-4o mini
 
 ### 11. [Oakmere Living — WhatsApp AI Customer Support Assistant](projects/oakmere-whatsapp-ai-assistant/README.md)
-A WhatsApp customer-support portfolio project for a fictional home and furniture retailer. The design combines knowledge-grounded product and policy answers, voice-note processing, stock and verified order lookups, support-ticket creation, and human escalation with Telegram operator alerts. Includes setup guidance and security/readiness checks.
+I built and tested the full workflow in my configured environment for a fictional home and furniture retailer. It combines knowledge-grounded product and policy answers, voice-note processing, stock and verified order lookups, support-ticket creation, and human escalation with Telegram operator alerts. The public repository contains documentation and sanitized workflow material; importing it elsewhere requires your own credentials and environment configuration.
 **Tech:** n8n · WhatsApp Cloud API · Supabase Vector DB · RAG · Groq · OpenRouter fallback · Telegram · SQL
 
 ## Education
