@@ -76,6 +76,10 @@ A data-quality workflow that imports Excel customer records from Google Drive, m
 I built and tested an English-language dental clinic voice receptionist in ElevenLabs, then connected it to an n8n post-call webhook. The workflow extracts call metadata and summaries, appends structured records to Google Sheets, and emails a call notification to the clinic team. The public JSON is a sanitized, inactive export; my live n8n setup is separate, and imported copies need their own credentials and destination settings.
 **Tech:** ElevenLabs Conversational AI · n8n · Webhooks · Google Sheets · Gmail · GPT-4o mini
 
+### 11. [Oakmere Living — WhatsApp AI Customer Support Assistant](projects/oakmere-whatsapp-ai-assistant/README.md)
+A WhatsApp customer-support portfolio project for a fictional home and furniture retailer. The design combines knowledge-grounded product and policy answers, voice-note processing, stock and verified order lookups, support-ticket creation, and human escalation with Telegram operator alerts. Includes setup guidance and security/readiness checks.
+**Tech:** n8n · WhatsApp Cloud API · Supabase Vector DB · RAG · Groq · OpenRouter fallback · Telegram · SQL
+
 ## Education
 
 Diploma in Computer Science & Technology — Satkhira Polytechnic Institute | 2023
