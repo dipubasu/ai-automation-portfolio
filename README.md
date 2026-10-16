@@ -19,7 +19,7 @@ AI Automation Developer specializing in n8n workflows, RAG systems, AI agents, a
 
 ## Workflow Library
 
-The workflows in this portfolio have been live-tested by me in my n8n environment. The `workflows/` directory contains their importable JSON exports; these files are not hosted services, and a sanitized export may still need your own credentials, API access, IDs, and environment-specific configuration to run in another instance. Some workflows may be intentionally left inactive when they are not currently needed.
+The workflows featured in this portfolio were built and tested by me in my configured environment before I published their portfolio entries. The published artifacts vary by project: some have importable JSON exports, while others currently have documentation only. These files are not hosted services, and a sanitized export may still need your own credentials, API access, IDs, and environment-specific configuration to run in another instance. Some workflows may be intentionally left inactive when they are not currently needed.
 
 - **CRM and lead intake:** webhook-based lead validation and HubSpot synchronization.
 - **AI agents and RAG:** real-estate lead qualification, product-catalogue Q&A, and knowledge-grounded support flows.
