@@ -33,3 +33,7 @@ Track valid leads processed, CRM sync failures, time from submission to CRM entr
 I live-tested this workflow in my own n8n environment. The exported JSON uses placeholders for environment-specific values and may need configuration before import.
 
 [Open workflow JSON](lead-intake-hubspot-crm-sync.json)
+
+## Code reuse and permissions
+
+This project is public for viewing, review, testing, and portfolio evaluation. **Permission is required before reusing, copying, modifying, redistributing, or incorporating any code or other material from this project into another project or product.** Please contact the copyright holder and obtain written permission before reuse. Viewing or testing this project does not grant reuse rights. See the repository root [LICENSE](../LICENSE).
