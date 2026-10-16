@@ -32,3 +32,7 @@ Track end-to-end render success, editing time per video, cost per finished video
 I live-tested this workflow in my own n8n environment. The export uses placeholders for service credentials and is intended to be configured before use in another instance.
 
 [Open workflow JSON](youtube-automation-topic-to-video.json)
+
+## Code reuse and permissions
+
+This project is public for viewing, review, testing, and portfolio evaluation. **Permission is required before reusing, copying, modifying, redistributing, or incorporating any code or other material from this project into another project or product.** Please contact the copyright holder and obtain written permission before reuse. Viewing or testing this project does not grant reuse rights. See the repository root [LICENSE](../LICENSE).
