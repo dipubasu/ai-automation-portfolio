@@ -1,17 +1,17 @@
 # Oakmere Living — WhatsApp AI Customer Support Assistant
 
-> **Portfolio demo / validation status:** Documentation and test plan only. The live n8n workflow has not been modified or re-tested by this repository update. Importable workflow JSON should be added only after it has been exported, sanitized, and reviewed.
+> **Author testing status:** I built and tested this workflow in my configured environment before publishing this portfolio entry. This documentation update did not rerun the live workflow. The public repository currently contains this case study and a test checklist; no importable Oakmere workflow JSON is published here. Any future export should be sanitized and reviewed before publication.
 
 ## Overview
 
-Oakmere Living is a fictional online-store demo that explores WhatsApp customer support automation with n8n. The intended workflow combines policy-grounded answers, voice-note transcription, stock and order lookups, support-ticket creation, and human escalation.
+Oakmere Living is a fictional online-store demo exploring WhatsApp customer support automation with n8n. The workflow combines policy-grounded answers, voice-note transcription, stock and order lookups, support-ticket creation, and human escalation.
 
 ## Intended capabilities
 
 - Answer shipping, returns, product, and store-policy questions from a Supabase-backed knowledge base.
-- Transcribe supported WhatsApp voice notes before processing the customer request.
-- Check live stock through the configured data source.
-- Retrieve order status only after the required customer verification checks pass.
+- Transcribe supported WhatsApp voice notes before processing the request.
+- Check stock through the configured data source.
+- Retrieve order status only after required customer verification checks pass.
 - Escalate uncertain or sensitive requests to a human and notify the operator through Telegram.
 - Provide a customer-safe response when the AI or a downstream integration fails.
 
@@ -46,19 +46,19 @@ Failure paths should record a safe diagnostic event, alert the operator without 
 - Test a forced primary-provider failure and verify that only one customer reply is sent.
 - Treat provider fallback as best-effort, not a guarantee of availability. If both providers fail, use the customer-safe failure path and operator alert.
 
-## Validation status
+## Testing and validation
 
-No new live n8n execution has been run as part of this documentation. Fill in measured results only after running the test matrix in `../tests/oakmere-whatsapp-assistant-test-plan.md`.
+The workflow was tested in my configured environment before publication. This repository update did not rerun it, and this repository does not currently include recorded pass/fail evidence from that earlier testing. Use the [Oakmere WhatsApp assistant test plan](../tests/oakmere-whatsapp-assistant-test-plan.md) to record results when revalidating a changed workflow or an import in another environment.
 
 ## Suggested repository assets
 
-- Sanitized, inactive n8n workflow export(s)
+- Sanitized, inactive n8n workflow export, if/when published
 - SQL schema and indexes, including unique idempotency key
 - Fictional sample catalogue and policy data
-- Test matrix with pass/fail evidence
+- Test matrix with actual pass/fail evidence
 - Architecture diagram and redacted execution screenshots
 - Setup guide and environment-variable/credential checklist
 
 ## Demo disclaimer
 
-Oakmere Living is a fictional portfolio demonstration. Do not describe it as a deployed production service or claim measured business outcomes unless independently verified.
+Oakmere Living is a fictional portfolio demonstration, not a claim of production deployment. Do not claim measured business outcomes unless independently verified.
