@@ -1,6 +1,6 @@
 # Oakmere Living — WhatsApp AI Customer Support Assistant
 
-> **Author testing status:** I built and tested this workflow in my configured environment before publishing this portfolio entry. This documentation update did not rerun the live workflow. The public repository currently contains this case study and a test checklist; no importable Oakmere workflow JSON is published here. Any future export should be sanitized and reviewed before publication.
+> **Author testing status:** I built and tested this workflow in my configured environment before publishing this portfolio entry. This documentation update did not rerun the live workflow. The public repository now includes sanitized, inactive JSON exports for the assistant, RAG ingestion, and Telegram error alert under [`projects/oakmere-whatsapp-ai-assistant/workflows/`](../projects/oakmere-whatsapp-ai-assistant/workflows/). They were statically reviewed and parsed as JSON, but were not imported or re-executed during this documentation update.
 
 ## Overview
 
@@ -34,7 +34,7 @@ Failure paths should record a safe diagnostic event, alert the operator without 
 9. **Webhook security:** verify Meta's webhook signature using the official verification method supported by the deployment. Do not assume a public webhook URL alone authenticates requests.
 10. **Knowledge-base hygiene:** deduplicate/re-ingest the corpus in a controlled way and verify retrieval quality with known-answer tests.
 11. **Observability:** log correlation/message IDs, route, latency, provider, and sanitized error codes; do not log access tokens, full customer messages, or private order details unnecessarily.
-12. **Safe publishing:** export an inactive sanitized workflow; replace credential references and instance-specific IDs with placeholders; scan JSON, screenshots, logs, and sample data for secrets and personal information.
+12. **Safe publishing:** export an inactive sanitized workflow; replace credential references and instance-specific IDs with placeholders; scan JSON, screenshots, logs, and sample data for secrets and personal information. The public exports are starting points only; review node expressions and configure credentials before use.
 
 ## OpenRouter fallback configuration notes
 
@@ -50,9 +50,17 @@ Failure paths should record a safe diagnostic event, alert the operator without 
 
 The workflow was tested in my configured environment before publication. This repository update did not rerun it, and this repository does not currently include recorded pass/fail evidence from that earlier testing. Use the [Oakmere WhatsApp assistant test plan](../tests/oakmere-whatsapp-assistant-test-plan.md) to record results when revalidating a changed workflow or an import in another environment.
 
+## Published workflow exports
+
+- [WhatsApp AI Customer Assistant JSON](../projects/oakmere-whatsapp-ai-assistant/workflows/whatsapp-ai-customer-assistant.json)
+- [Knowledge Base Ingestion (RAG) JSON](../projects/oakmere-whatsapp-ai-assistant/workflows/knowledge-base-ingestion-rag.json)
+- [Telegram Error Alert JSON](../projects/oakmere-whatsapp-ai-assistant/workflows/error-alert-telegram.json)
+
+These exports are inactive and have placeholders for environment-specific chat/phone IDs. They are not a substitute for importing into a clean test instance and validating each credential, node version, and expression.
+
 ## Suggested repository assets
 
-- Sanitized, inactive n8n workflow export, if/when published
+- Sanitized, inactive n8n workflow export(s), if/when further versions are published
 - SQL schema and indexes, including unique idempotency key
 - Fictional sample catalogue and policy data
 - Test matrix with actual pass/fail evidence
