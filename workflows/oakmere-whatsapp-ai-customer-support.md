@@ -73,7 +73,7 @@ Oakmere Living is a fictional portfolio demonstration, not a claim of production
 
 ## Setup, Credentials & Testing
 
-This workflow is provided as an exported n8n JSON template. It is not guaranteed to run immediately after import.
+This workflow is provided as an exported n8n JSON template. It may require configuration before it runs successfully after import.
 
 ### Before running the workflow
 
@@ -85,7 +85,7 @@ This workflow is provided as an exported n8n JSON template. It is not guaranteed
 
 ### Important notes
 
-- Credentials and API keys are not included in this export. You must configure your own credentials for the services used by the workflow.
+- Credentials and API keys are not included in this export. Configure your own credentials for the services used by the workflow.
 - Some integrations may require API access, subscriptions, permissions, or additional setup.
 - The exported workflow may require environment-specific changes before it works correctly.
 - Importing this JSON does not automatically activate the workflow or guarantee successful execution.
