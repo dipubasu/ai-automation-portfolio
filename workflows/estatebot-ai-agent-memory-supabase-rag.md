@@ -40,7 +40,7 @@ This project is public for viewing, review, testing, and portfolio evaluation. *
 
 ## Setup, Credentials & Testing
 
-This workflow is provided as an exported n8n JSON template. It is not guaranteed to run immediately after import.
+This workflow is provided as an exported n8n JSON template. It may require configuration before it runs successfully after import.
 
 ### Before running the workflow
 
@@ -52,7 +52,7 @@ This workflow is provided as an exported n8n JSON template. It is not guaranteed
 
 ### Important notes
 
-- Credentials and API keys are not included in this export. You must configure your own credentials for the services used by the workflow.
+- Credentials and API keys are not included in this export. Configure your own credentials for the services used by the workflow.
 - Some integrations may require API access, subscriptions, permissions, or additional setup.
 - The exported workflow may require environment-specific changes before it works correctly.
 - Importing this JSON does not automatically activate the workflow or guarantee successful execution.
@@ -63,4 +63,3 @@ The original workflow was built and tested in the author's configured environmen
 ## Code reuse and permissions
 
 This project is public for viewing, review, testing, and portfolio evaluation. **Permission is required before reusing, copying, modifying, redistributing, or incorporating any code or other material from this project into another project or product.** Please contact the copyright holder and obtain written permission before reuse. Viewing or testing this project does not grant reuse rights. See the repository root [LICENSE](../../LICENSE).
-
