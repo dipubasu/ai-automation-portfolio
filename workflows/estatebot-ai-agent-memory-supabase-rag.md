@@ -59,7 +59,3 @@ This workflow is provided as an exported n8n JSON template. It may require confi
 - Test the workflow in your own n8n environment before using it in production.
 
 The original workflow was built and tested in the author's configured environment. Your results may vary depending on your credentials, service configuration, and n8n setup.
-
-## Code reuse and permissions
-
-This project is public for viewing, review, testing, and portfolio evaluation. **Permission is required before reusing, copying, modifying, redistributing, or incorporating any code or other material from this project into another project or product.** Please contact the copyright holder and obtain written permission before reuse. Viewing or testing this project does not grant reuse rights. See the repository root [LICENSE](../../LICENSE).
