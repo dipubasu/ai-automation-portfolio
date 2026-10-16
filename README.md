@@ -83,7 +83,3 @@ I built and tested the workflow in my configured environment before publishing t
 ## Education
 
 Diploma in Computer Science & Technology — Satkhira Polytechnic Institute | 2023
-
-## Code reuse and permissions
-
-This repository is public for viewing, review, testing, and portfolio evaluation. **Permission is required before reusing, copying, modifying, redistributing, or incorporating any code or other material from this repository into another project or product.** Please contact the copyright holder and obtain written permission before reuse. Viewing or testing the projects does not grant reuse rights. See the repository root [LICENSE](LICENSE).
