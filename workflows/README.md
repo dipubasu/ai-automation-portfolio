@@ -45,3 +45,7 @@ The `active` flag records the state saved in each export; some workflows are int
 ## Code reuse and permissions
 
 This repository is public for viewing, review, testing, and portfolio evaluation. Permission is required before reusing, copying, modifying, redistributing, or incorporating workflow JSON, code, or other repository material into another project or product. Obtain written permission from the copyright holder before reuse. See the repository root [LICENSE](../LICENSE).
+
+## Code reuse and permissions
+
+This repository is public for viewing, review, testing, and portfolio evaluation. Permission is required before reusing, copying, modifying, redistributing, or incorporating workflow JSON, code, or other repository material into another project or product. Obtain written permission from the copyright holder before reuse. See the repository root [LICENSE](../LICENSE).
