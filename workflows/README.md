@@ -41,3 +41,7 @@ The workflow projects documented in this portfolio were built and tested by me i
 5. When moving a workflow to a different instance or changing its configuration, run a controlled test and inspect success and error paths before enabling it for production use.
 
 The `active` flag records the state saved in each export; some workflows are intentionally inactive when not needed. I live-tested the published workflow exports in my configured environment before publishing them. The Oakmere WhatsApp project has sanitized JSON exports under its project directory; the case-study folder itself contains design notes. Behavior in another environment depends on its credentials, permissions, IDs, service availability, and configuration.
+
+## Code reuse and permissions
+
+This repository is public for viewing, review, testing, and portfolio evaluation. Permission is required before reusing, copying, modifying, redistributing, or incorporating workflow JSON, code, or other repository material into another project or product. Obtain written permission from the copyright holder before reuse. See the repository root [LICENSE](../LICENSE).
