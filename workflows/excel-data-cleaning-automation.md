@@ -37,3 +37,7 @@ Compare manual cleanup time, duplicate rate, number of rows sent to review, inva
 I live-tested this workflow in my own n8n environment. The public JSON is a sanitized, intentionally inactive export; configure your own credentials and IDs before running it.
 
 [Open workflow JSON](excel-data-cleaning-automation.json)
+
+## Code reuse and permissions
+
+This project is public for viewing, review, testing, and portfolio evaluation. **Permission is required before reusing, copying, modifying, redistributing, or incorporating any code or other material from this project into another project or product.** Please contact the copyright holder and obtain written permission before reuse. Viewing or testing this project does not grant reuse rights. See the repository root [LICENSE](../LICENSE).
