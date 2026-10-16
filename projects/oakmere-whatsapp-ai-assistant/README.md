@@ -4,9 +4,9 @@ An n8n-based portfolio project for multilingual, knowledge-grounded WhatsApp cus
 
 ## Project overview
 
-The assistant is designed to answer product, delivery, returns, and store-policy questions using a curated knowledge base, handle supported voice notes, look up inventory and verified order status, create support tickets, and hand uncertain or sensitive cases to a human operator.
+I built and tested the full workflow in my own configured environment. The assistant is designed to answer product, delivery, returns, and store-policy questions using a curated knowledge base, handle supported voice notes, look up inventory and verified order status, create support tickets, and hand uncertain or sensitive cases to a human operator.
 
-**Status:** Portfolio implementation package prepared; deployment and live end-to-end execution must be verified in the target n8n/Supabase/Meta environment before describing it as production-ready.
+**Testing status:** Full workflow tested by the project author in their configured environment. This describes my own test setup; it does not mean the public sanitized exports are deployed as a hosted service or will run in another environment without configuration.
 
 ## Architecture
 
@@ -50,7 +50,7 @@ Telegram is used for operator alerts. The design includes safe failure responses
 
 ## Validation and limitations
 
-This repository entry documents the project design and setup expectations. Do not claim a production deployment or measured business outcomes without independently verified live test evidence. Confirm that every imported workflow uses the intended node versions, credentials, database schema, and current API configuration.
+The full workflow has been tested by me in my configured environment. The public repository is documentation and sanitized workflow material, not a hosted deployment. Anyone importing it into another environment must configure their own credentials, IDs, permissions, database schema, node versions, and API settings. No production deployment or quantified business outcome is claimed here.
 
 ## License
 
