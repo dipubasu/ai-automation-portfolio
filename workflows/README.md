@@ -1,6 +1,6 @@
 # n8n Workflow Library
 
-This directory contains JSON exports of workflows that I have live-tested in my n8n environment. Some workflows may be intentionally inactive because they are not currently needed; an inactive export does not by itself mean a workflow is untested. When importing into another n8n instance, credentials, IDs, permissions, and service settings may need to be configured for that environment.
+The workflow projects documented in this portfolio were built and tested by me in my configured environment before I published their portfolio entries. This directory contains JSON exports for the workflows that currently have a published export; some projects are documentation-only. Some exports may be intentionally inactive because they are not currently needed; an inactive export does not by itself mean a workflow is untested. When importing into another n8n instance, credentials, IDs, permissions, and service settings may need to be configured for that environment.
 
 ## Workflow catalogue
 
@@ -16,6 +16,7 @@ This directory contains JSON exports of workflows that I have live-tested in my 
 
 ### Customer support and messaging
 
+- **[Oakmere Living — WhatsApp AI Customer Support Assistant](oakmere-whatsapp-ai-customer-support.md)** — Case study and production-readiness notes for a workflow I built and tested in my configured environment before publication. Sanitized, inactive JSON exports for the assistant, RAG ingestion, and Telegram error alert are linked from the [Oakmere project README](../projects/oakmere-whatsapp-ai-assistant/README.md#sanitized-workflow-exports); see also the [test checklist](../tests/oakmere-whatsapp-assistant-test-plan.md).
 - **[Dental Clinic Email Support Agent](dental-clinic-email-support-agent.json) · [Case study](dental-clinic-email-support-agent.md)** — Uses a Gmail trigger, an AI agent, and a Groq chat model to prepare a response to an incoming message, then replies through Gmail. Verify the prompt, knowledge sources, and clinic policies before using with real patient messages.
 - **[Veltoro RAG Email Customer Support Agent](rag-email-customer-support-agent.json) · [Case study](rag-email-customer-support-agent.md)** — Detects incoming customer email, cleans message content, drafts a knowledge-base-grounded response using a Supabase vector store, requests human approval, sends approved replies, and flags unapproved cases for manual review.
 - **[Telegram Chatbot + Human Bridge Support](telegram-chatbot-human-bridge-support.json) · [Case study](telegram-chatbot-human-bridge-support.md)** — Telegram support flow using an AI agent, short-term memory, routing branches, and message replies. It includes file retrieval and audio-analysis nodes for voice-message handling; review the branch conditions and handoff behavior in n8n before deployment.
@@ -39,4 +40,4 @@ This directory contains JSON exports of workflows that I have live-tested in my 
 4. Verify external API permissions, quotas, and request/response formats.
 5. When moving a workflow to a different instance or changing its configuration, run a controlled test and inspect success and error paths before enabling it for production use.
 
-The `active` flag records the state saved in the export; some workflows are intentionally inactive when not needed. I live-tested these workflows in my configured environment, and behavior in another environment depends on its credentials, permissions, IDs, service availability, and configuration.
+The `active` flag records the state saved in each export; some workflows are intentionally inactive when not needed. I live-tested the published workflow exports in my configured environment before publishing them. The Oakmere WhatsApp project has sanitized JSON exports under its project directory; the case-study folder itself contains design notes. Behavior in another environment depends on its credentials, permissions, IDs, service availability, and configuration.
