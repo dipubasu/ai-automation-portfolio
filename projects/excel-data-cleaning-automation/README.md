@@ -80,3 +80,7 @@ The workflow has been live-tested in my configured n8n environment. The reposito
 ---
 
 Built as a portfolio project by Dipu Basu.
+
+## Code reuse and permissions
+
+This project is public for viewing, review, testing, and portfolio evaluation. **Permission is required before reusing, copying, modifying, redistributing, or incorporating any code or other material from this project into another project or product.** Please contact the copyright holder and obtain written permission before reuse. Viewing or testing this project does not grant reuse rights. See the repository root [LICENSE](../../LICENSE).
