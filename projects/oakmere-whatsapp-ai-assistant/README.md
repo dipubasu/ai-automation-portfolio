@@ -6,7 +6,7 @@ An n8n-based portfolio project for multilingual, knowledge-grounded WhatsApp sup
 
 I built and tested this workflow in my configured environment before publishing this portfolio entry. It is designed to answer product, delivery, returns, and store-policy questions from a curated knowledge base; process supported voice notes; look up inventory and verified order status; create support tickets; and escalate uncertain or sensitive cases to a human operator.
 
-**Testing status:** The workflow was tested by me in my configured environment before publication. This documentation update did not rerun the workflow. The public repository includes sanitized, inactive n8n workflow JSON exports for the assistant, knowledge-base ingestion, and Telegram error alerts. These are publication-safe starting points, not a hosted deployment; configure your own credentials and IDs before importing or running them.
+**Testing status:** I built and tested the workflow myself in my configured environment. Most planned scenarios were tested and passed (approximately 80–90%). The remaining scenarios were not fully tested, and the test record does not represent exhaustive coverage. The public repository includes sanitized, inactive n8n workflow JSON exports for the assistant, knowledge-base ingestion, and Telegram error alerts. These are publication-safe starting points, not a hosted deployment; configure your own credentials and IDs before importing or running them.
 
 ## Architecture
 
@@ -55,11 +55,20 @@ The published exports have been parsed as JSON, set inactive, and scanned for em
 
 ## Test checklist
 
-See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assistant-test-plan.md). It is a reusable checklist, not evidence that every listed scenario has a recorded pass result. Record observed outcomes before claiming specific test coverage.
+See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assistant-test-plan.md). I tested the workflow myself, and most planned scenarios passed (approximately 80–90%). The remaining scenarios were not fully tested, so this should not be read as 100% test coverage. The checklist describes planned scenarios; it does not mean every scenario has a recorded pass result.
 
 ## Limitations
 
-This is a fictional portfolio demonstration, not a hosted service or a claim of production deployment. The repository publishes sanitized workflow JSON exports, but they have not been imported and re-executed as part of this documentation update. Any future export or import into another environment will require its own credentials, IDs, permissions, database setup, node versions, and API configuration. No quantified business outcome is claimed.
+This is a fictional portfolio demonstration using demo data, not a hosted service or a live production deployment. The repository publishes sanitized workflow JSON exports. These exports are inactive and require your own credentials, IDs, permissions, database setup, node versions, and API configuration before use in another environment.
+
+## Estimated impact (assumption-based)
+
+For a hypothetical real store with a high volume of messages, my estimate is that around 80% of support work may involve repetitive questions that could be automated, potentially saving around 15–20 hours of manual work per week. This is an assumption-based estimate for a fictional store—not a measured result, customer result, or production outcome.
+
+**Transparent calculation to complete:**  
+Estimated weekly hours saved = [messages per day] × [average minutes per repetitive query] × [share of repetitive queries] × [share of repetitive queries successfully automated] × 7 ÷ 60.
+
+To make this estimate auditable, fill in the bracketed assumptions with values you can justify. The 80% repetitive-work assumption and 15–20 hours/week estimate above have not been measured or validated against real store data.
 
 ## Code reuse and permissions
 
