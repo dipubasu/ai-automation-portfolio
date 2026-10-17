@@ -6,7 +6,7 @@ An n8n-based portfolio project for multilingual, knowledge-grounded WhatsApp sup
 
 I built and tested this workflow in my configured environment before publishing this portfolio entry. It is designed to answer product, delivery, returns, and store-policy questions from a curated knowledge base; process supported voice notes; look up inventory and verified order status; create support tickets; and escalate uncertain or sensitive cases to a human operator.
 
-**Testing status:** I built and tested the workflow myself in my configured environment. Most planned scenarios were tested and passed (approximately 80–90%). The remaining scenarios were not fully tested, and the test record does not represent exhaustive coverage. The public repository includes sanitized, inactive n8n workflow JSON exports for the assistant, knowledge-base ingestion, and Telegram error alerts. These are publication-safe starting points, not a hosted deployment; configure your own credentials and IDs before importing or running them.
+**Testing status:** I built and tested this workflow myself in my configured environment. The evaluation summary and per-category result fields are provided in the **Evaluation results** section below. I have not filled in counts that are not available in this README; add the actual counts from my test run rather than treating placeholders as results. The public repository includes sanitized, inactive n8n workflow JSON exports for the assistant, knowledge-base ingestion, and Telegram error alerts. These are publication-safe starting points, not a hosted deployment; configure your own credentials and IDs before importing or running them.
 
 ## Architecture
 
@@ -22,6 +22,14 @@ Telegram is used for operator alerts.
 - **Language models:** Groq primary model and configurable OpenRouter fallback.
 - **Structured data:** inventory/order lookups and SQL verification checks.
 - **Safety controls:** order-verification gates, duplicate-message protection, bounded retries, output validation, and human escalation.
+
+## What the assistant handles vs. escalates
+
+| Group | What it handles |
+|---|---|
+| **Answered from the knowledge base** | Questions about the curated knowledge base: 24 products, shipping zones and rates, returns, refunds, warranty, payment methods, promotions, FAQs, and assistant guidelines. |
+| **Answered from live database lookup** | Current product stock, order status, and tracking information. Order details are shared only when both the order number and the email address match the database. |
+| **Escalated to a human with a support ticket** | A customer asks for a person, is angry or complains; a refund or compensation exceeds USD 200 or a refund is disputed; a parcel is lost, damaged, or stuck in customs; there is a payment problem or suspected fraud; legal, chargeback, or media issues are mentioned; a request is outside the knowledge base (such as custom orders, press, or partnerships); or the same issue remains unresolved after two attempts. |
 
 ## Key safeguards
 
@@ -55,22 +63,53 @@ The published exports have been parsed as JSON, set inactive, and scanned for em
 
 ## Test checklist
 
-See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assistant-test-plan.md). I tested the workflow myself, and most planned scenarios passed (approximately 80–90%). The remaining scenarios were not fully tested, so this should not be read as 100% test coverage. The checklist describes planned scenarios; it does not mean every scenario has a recorded pass result.
+See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assistant-test-plan.md). I tested the workflow myself in my configured environment. The checklist describes the scenarios intended for evaluation; actual test counts and outcomes are summarized in the **Evaluation results** section below.
+
+## Evaluation results
+
+I tested the workflow in my configured environment. The test set covers categories such as product questions, shipping, returns policy, stock checks, order-status requests with correct verification, order-status requests with the wrong email, angry customers, out-of-scope requests, prompt-injection attempts, duplicate messages, voice notes, and Bangla-language queries.
+
+Replace the placeholders below with the actual counts from my test run. Do not treat placeholders as measured results.
+
+| Category | Questions tested | Resolved without handover | Correctly escalated | Incorrect or failed |
+|---|---:|---:|---:|---:|
+| Product questions | [count] | [count] | [count] | [count] |
+| Shipping | [count] | [count] | [count] | [count] |
+| Returns policy | [count] | [count] | [count] | [count] |
+| Stock check | [count] | [count] | [count] | [count] |
+| Order status — correct verification | [count] | [count] | [count] | [count] |
+| Order status — wrong email | [count] | [count] | [count] | [count] |
+| Angry customer / complaint | [count] | [count] | [count] | [count] |
+| Out-of-scope request | [count] | [count] | [count] | [count] |
+| Prompt injection attempt | [count] | [count] | [count] | [count] |
+| Duplicate message | [count] | [count] | [count] | [count] |
+| Voice note | [count] | [count] | [count] | [count] |
+| Bangla-language query | [count] | [count] | [count] | [count] |
+| **Total** | **[N]** | **[count]** | **[count]** | **[count]** |
+
+- **Resolved without human handover:** [X]% of [N]
+- **Correct escalation rate on cases that should escalate:** [Y]%
+
+**Results to be added after running the test set** with the final counts, including the total number of questions tested and the correct outcomes for each category. No per-category counts or success rates are claimed until those values are filled in.
 
 ## Limitations
 
-This is a fictional portfolio demonstration using demo data, not a hosted service or a live production deployment. The repository publishes sanitized workflow JSON exports. These exports are inactive and require your own credentials, IDs, permissions, database setup, node versions, and API configuration before use in another environment.
+This is a portfolio demonstration for a fictional store using demo data, not a hosted service or production deployment. Evaluation results are based on my own test set, and the impact figures below are assumptions rather than measured outcomes. The exported workflows are inactive and require your own credentials and environment-specific configuration before use.
 
 ## Estimated impact (assumption-based)
 
-The assistant is designed to take on a substantial share of repetitive customer-support work, including product and policy questions, delivery information, returns, live stock checks, and order-status or tracking lookups after customer verification. It uses the knowledge base for product and store policies, and the configured store database for live information such as stock and order status. Sensitive, uncertain, disputed, or out-of-scope cases are handed over to a human operator.
+For a hypothetical high-volume store, my assumption is that around 80% of support work may be routine and that automating some of this work could save approximately 15–20 hours of manual work per week. This is an estimate for a fictional store—not a measured result or a production outcome.
 
-For a hypothetical high-volume store, my assumption-based estimate is that around 80% of support work could be repetitive and potentially automated, saving approximately 15–20 hours of manual work per week. This is an estimate for a fictional store—not a measured result, a customer result, or evidence of production performance. The 80% figure describes potential automation of repetitive support work; it is separate from the approximately 80–90% of planned test scenarios I tested successfully.
+**Transparent calculation:**
 
-**Transparent calculation (fill in the assumptions):**  
-Estimated weekly hours saved = [messages per day] × [average minutes per repetitive query] × [share of repetitive queries] × [share of repetitive queries successfully automated] × 7 ÷ 60.
+Hours saved per week ≈ (messages per day × 7 × share of routine queries × average minutes per query) ÷ 60.
 
-Fill in the bracketed values using assumptions you can justify. The 80% repetitive-work estimate and 15–20 hours/week potential saving have not been measured or validated against real store data.
+To calculate an estimate, supply these assumptions:
+- **Messages per day:** [messages per day]
+- **Share of routine queries:** [share of routine queries]
+- **Average minutes per query:** [average minutes per query]
+
+The 80% routine-work share and 15–20 hours per week are my current assumptions, not measured results. The estimate will remain assumption-based until the inputs are supplied and the calculation is completed.
 
 ## Code reuse and permissions
 
