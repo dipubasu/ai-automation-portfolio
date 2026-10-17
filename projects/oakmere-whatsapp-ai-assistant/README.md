@@ -63,12 +63,14 @@ This is a fictional portfolio demonstration using demo data, not a hosted servic
 
 ## Estimated impact (assumption-based)
 
-For a hypothetical real store with a high volume of messages, my estimate is that around 80% of support work may involve repetitive questions that could be automated, potentially saving around 15–20 hours of manual work per week. This is an assumption-based estimate for a fictional store—not a measured result, customer result, or production outcome.
+The assistant is designed to take on a substantial share of repetitive customer-support work, including product and policy questions, delivery information, returns, live stock checks, and order-status or tracking lookups after customer verification. It uses the knowledge base for product and store policies, and the configured store database for live information such as stock and order status. Sensitive, uncertain, disputed, or out-of-scope cases are handed over to a human operator.
 
-**Transparent calculation to complete:**  
+For a hypothetical high-volume store, my assumption-based estimate is that around 80% of support work could be repetitive and potentially automated, saving approximately 15–20 hours of manual work per week. This is an estimate for a fictional store—not a measured result, a customer result, or evidence of production performance. The 80% figure describes potential automation of repetitive support work; it is separate from the approximately 80–90% of planned test scenarios I tested successfully.
+
+**Transparent calculation (fill in the assumptions):**  
 Estimated weekly hours saved = [messages per day] × [average minutes per repetitive query] × [share of repetitive queries] × [share of repetitive queries successfully automated] × 7 ÷ 60.
 
-To make this estimate auditable, fill in the bracketed assumptions with values you can justify. The 80% repetitive-work assumption and 15–20 hours/week estimate above have not been measured or validated against real store data.
+Fill in the bracketed values using assumptions you can justify. The 80% repetitive-work estimate and 15–20 hours/week potential saving have not been measured or validated against real store data.
 
 ## Code reuse and permissions
 
