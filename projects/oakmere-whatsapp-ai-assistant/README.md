@@ -6,7 +6,15 @@ An n8n-based portfolio project for multilingual, knowledge-grounded WhatsApp sup
 
 I built and tested this workflow in my configured environment before publishing this portfolio entry. It is designed to answer product, delivery, returns, and store-policy questions from a curated knowledge base; process supported voice notes; look up inventory and verified order status; create support tickets; and escalate uncertain or sensitive cases to a human operator.
 
-**Testing status:** I built and tested this workflow myself in my configured environment. The evaluation summary and per-category result fields are provided in the **Evaluation results** section below. I have not filled in counts that are not available in this README; add the actual counts from my test run rather than treating placeholders as results. The public repository includes sanitized, inactive n8n workflow JSON exports for the assistant, knowledge-base ingestion, and Telegram error alerts. These are publication-safe starting points, not a hosted deployment; configure your own credentials and IDs before importing or running them.
+**Testing status:** I built and tested this workflow myself in my configured environment. In my own testing, 18 of 19 listed scenarios passed; this does not represent exhaustive coverage. The public repository includes sanitized, inactive n8n workflow JSON exports for the assistant, knowledge-base ingestion, and Telegram error alerts. These are publication-safe starting points, not a hosted deployment; configure your own credentials and IDs before importing or running them.
+
+## What the assistant handles vs. escalates
+
+| Handling method | Scenarios |
+|---|---|
+| **Answered from the knowledge base** | Product specs, care and warranty; shipping zones, rates and free-shipping thresholds; returns, refunds and cancellations; payments, promotions and loyalty; FAQs. |
+| **Answered from live database lookup** | Stock by SKU/option; order status and tracking, only after the order number and email both match. |
+| **Escalated to a human operator with a support ticket** | Customer asks for a person or is angry/complaining; refund or compensation over USD 200 or a disputed refund; lost, damaged or customs-stuck parcels; payment problems or suspected fraud; legal, chargeback or media mentions; requests outside the knowledge base (custom orders, press, partnerships); same issue unresolved after two attempts. |
 
 ## Architecture
 
@@ -63,7 +71,33 @@ The published exports have been parsed as JSON, set inactive, and scanned for em
 
 ## Test checklist
 
-See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assistant-test-plan.md). I tested the workflow myself in my configured environment. The checklist describes the scenarios intended for evaluation; actual test counts and outcomes are summarized in the **Evaluation results** section below.
+See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assistant-test-plan.md). I tested the workflow myself in my configured environment. The checklist describes the scenarios intended for evaluation; 18 of 19 listed scenarios passed in my own testing. This does not represent exhaustive coverage.
+
+### Test results
+
+| Scenario | Result |
+|---|---|
+| Product questions (specs, care, warranty) | Pass |
+| Shipping zones, rates and delivery time | Pass |
+| Returns, refunds and cancellation policy | Pass |
+| Payments, promo code and loyalty | Not tested |
+| Stock lookup | Pass |
+| Order status with correct order number and email | Pass |
+| Order status with wrong email (must be refused) | Pass |
+| Tracking lookup after verification | Pass |
+| Angry customer escalation to human | Pass |
+| Refund over USD 200 escalation | Pass |
+| Lost or damaged parcel ticket | Pass |
+| Out-of-scope request (custom order, press) | Pass |
+| Prompt-injection attempt (must be refused) | Pass |
+| Duplicate message / duplicate webhook | Pass |
+| Voice note transcription | Pass |
+| Voice note failure handling | Pass |
+| Bangla-language query | Pass |
+| Provider outage / LLM fallback | Pass |
+| Terminal error alert to Telegram | Pass |
+
+18 of 19 listed scenarios passed in my own testing; 1 (payments, promo code and loyalty) was not tested. Results are self-reported from my configured environment.
 
 ## Evaluation results
 
@@ -98,18 +132,13 @@ This is a portfolio demonstration for a fictional store using demo data, not a h
 
 ## Estimated impact (assumption-based)
 
-For a hypothetical high-volume store, my assumption is that around 80% of support work may be routine and that automating some of this work could save approximately 15–20 hours of manual work per week. This is an estimate for a fictional store—not a measured result or a production outcome.
+For a hypothetical high-volume store, my assumption is that around 80% of support work may be routine and that automating some of this work could save approximately 15–20 hours of manual work per week. This is an assumption-based estimate for a fictional store, not a measured result, not a customer result, and not production evidence.
 
-**Transparent calculation:**
+**Illustrative calculation:**
 
-Hours saved per week ≈ (messages per day × 7 × share of routine queries × average minutes per query) ÷ 60.
+Illustrative assumptions for a hypothetical store: 100 messages per day, 80% repetitive, 70% of those handled without human help, about 3 minutes per query. Estimated weekly hours saved = 100 × 7 × 0.80 × 0.70 × 3 ÷ 60 ≈ 19.6 hours.
 
-To calculate an estimate, supply these assumptions:
-- **Messages per day:** [messages per day]
-- **Share of routine queries:** [share of routine queries]
-- **Average minutes per query:** [average minutes per query]
-
-The 80% routine-work share and 15–20 hours per week are my current assumptions, not measured results. The estimate will remain assumption-based until the inputs are supplied and the calculation is completed.
+The 80% repetitive-work figure is a separate assumption from the test results. The 80% routine-work share and 15–20 hours per week are assumptions, not measured results.
 
 ## Code reuse and permissions
 
