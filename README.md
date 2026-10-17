@@ -32,54 +32,53 @@ See each linked project entry for its scope, integrations, setup notes, and limi
 
 ## Projects
 
-### 1. [Automated Lead Management Pipeline](workflows/lead-intake-hubspot-crm-sync.md) — n8n + HubSpot CRM Automation
-Captures leads via webhook, validates submitted data, creates or updates HubSpot CRM records, and conditionally routes high-value opportunities. Includes Google Sheets logging and Telegram alerts for high-value leads and failed HubSpot syncs.
-**Tech:** n8n · HubSpot · Webhooks · Telegram · Google Sheets · REST APIs
+### 1. [Oakmere Living — WhatsApp AI Customer Support Assistant](projects/oakmere-whatsapp-ai-assistant/README.md)
+I built and tested the workflow in my configured environment before publishing this portfolio entry. For a fictional home and furniture retailer, it combines knowledge-grounded product and policy answers, voice-note processing, stock and verified order lookups, support-ticket creation, and human escalation with Telegram operator alerts. The repository includes sanitized, inactive n8n JSON exports for the assistant, RAG ingestion, and Telegram error alerts. They require your own credentials and environment configuration; see the [workflow files and safety notes](projects/oakmere-whatsapp-ai-assistant/README.md#sanitized-workflow-exports).
+**Tech:** n8n · WhatsApp Cloud API · Supabase Vector DB · RAG · Groq · OpenRouter fallback · Telegram · SQL
 
-### 2. [EstateBot — AI Real Estate Lead Qualification Agent](workflows/estatebot-ai-agent-memory-supabase-rag.md)
+### 2. [SmileCare Dental Clinic — ElevenLabs Voice AI Receptionist](workflows/elevenlabs-voice-agent-post-call-logging.md)
+I built and tested an English-language dental clinic voice receptionist in ElevenLabs, then connected it to an n8n post-call webhook. The workflow extracts call metadata and summaries, appends structured records to Google Sheets, and emails a call notification to the clinic team. The public JSON is a sanitized, inactive export; my live n8n setup is separate, and imported copies need their own credentials and destination settings.
+**Tech:** ElevenLabs Conversational AI · n8n · Webhooks · Google Sheets · Gmail · GPT-4o mini
+
+### 3. [EstateBot — AI Real Estate Lead Qualification Agent](workflows/estatebot-ai-agent-memory-supabase-rag.md)
 A Telegram AI agent that answers property questions through Supabase retrieval and a property-ID lookup, then collects buyer requirements step by step and logs confirmed lead details to Google Sheets.
 **Tech:** n8n · Telegram API · Groq / Llama · Supabase Vector DB · RAG · Google Sheets
 Related: [EstateBot AI Agent + Memory + Supabase RAG](workflows/estatebot-ai-agent-memory-supabase-rag.json)
-
-### 3. [Veltoro Messenger Assistant — AI Shopping Support](workflows/veltoro-messenger-ai-chatbot.md)
-A Facebook Messenger webhook assistant that retrieves product information from a Supabase vector store and generates catalogue-grounded answers to customer questions.
-**Tech:** n8n · Facebook Graph API · Supabase · Google Gemini Embeddings · Groq / Llama · RAG
-Related: [Veltoro RAG Knowledge Base Setup](workflows/veltoro-rag-knowledge-base-setup.json)
 
 ### 4. [Veltoro Email Support — RAG with Human Approval](workflows/rag-email-customer-support-agent.md)
 Detects unread customer emails via Gmail, cleans quoted replies/signatures, and uses a RAG agent (Groq, Supabase Vector Store, Gemini Embeddings) to draft a policy-grounded reply. A human reviews the draft before it is sent; rejected messages are flagged for manual review.
 **Tech:** n8n · Gmail API · Groq / Llama · Supabase Vector DB · Google Gemini Embeddings · RAG · Human-in-the-Loop Approval
 
-### 5. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.md)
-An AI email assistant that reads incoming clinic emails, uses clinic information configured in its prompt to draft a reply, and sends the response through Gmail. The exported workflow does not include a human approval step.
-**Tech:** n8n · Gmail API · Groq / Llama
+### 5. [Veltoro Messenger Assistant — AI Shopping Support](workflows/veltoro-messenger-ai-chatbot.md)
+A Facebook Messenger webhook assistant that retrieves product information from a Supabase vector store and generates catalogue-grounded answers to customer questions.
+**Tech:** n8n · Facebook Graph API · Supabase · Google Gemini Embeddings · Groq / Llama · RAG
+Related: [Veltoro RAG Knowledge Base Setup](workflows/veltoro-rag-knowledge-base-setup.json)
 
-### 6. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.md)
+### 6. [Automated Lead Management Pipeline](workflows/lead-intake-hubspot-crm-sync.md) — n8n + HubSpot CRM Automation
+Captures leads via webhook, validates submitted data, creates or updates HubSpot CRM records, and conditionally routes high-value opportunities. Includes Google Sheets logging and Telegram alerts for high-value leads and failed HubSpot syncs.
+**Tech:** n8n · HubSpot · Webhooks · Telegram · Google Sheets · REST APIs
+
+### 7. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.md)
 Multilingual (Bangla, English, Banglish) Telegram support assistant with conversation memory, voice-message understanding, and seamless escalation/hand-off to a human agent when needed.
 **Tech:** n8n · Groq / Llama · Google Gemini · Telegram API
-
-### 7. [AI YouTube Video Automation — Multi-Scene Pipeline](workflows/youtube-automation-topic-to-video.md)
-An end-to-end pipeline that turns a topic into video metadata, a script, four scene prompts, generated images and voiceover, then renders a vertical video through Shotstack and uploads it to YouTube. The exported workflow sets upload privacy to private for review.
-**Tech:** n8n · OpenAI API · Cloudflare AI (Flux) · ElevenLabs TTS · Shotstack API · YouTube API
 
 ### 8. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.md)
 An MCP-based conversational agent that coordinates multiple tools for hotel search, restaurant discovery, live weather information, and currency conversion.
 **Tech:** n8n · MCP Server/Client · Google Gemini · Geoapify · Open-Meteo
 Related: [Travel MCP Server](workflows/travel-mcp-server.json)
 
-### 9. [Excel Data Cleaning Automation](projects/excel-data-cleaning-automation/README.md)
+### 9. [AI YouTube Video Automation — Multi-Scene Pipeline](workflows/youtube-automation-topic-to-video.md)
+An end-to-end pipeline that turns a topic into video metadata, a script, four scene prompts, generated images and voiceover, then renders a vertical video through Shotstack and uploads it to YouTube. The exported workflow sets upload privacy to private for review.
+**Tech:** n8n · OpenAI API · Cloudflare AI (Flux) · ElevenLabs TTS · Shotstack API · YouTube API
+
+### 10. [Excel Data Cleaning Automation](projects/excel-data-cleaning-automation/README.md)
 A data-quality workflow that imports Excel customer records from Google Drive, maps inconsistent headers, standardizes names and contact fields, validates email/phone/date values, detects duplicate records, routes questionable rows for review, exports a cleaned workbook, and logs run metrics to Google Sheets.
 **Tech:** n8n · JavaScript · Google Drive · Google Sheets · Excel/XLSX · Data Validation · Deduplication · Error Handling
 **Highlights:** configurable rules, audit-friendly original values, explicit needs-review handling, and failure branches for key integration steps.
 
-### 10. [SmileCare Dental Clinic — ElevenLabs Voice AI Receptionist](workflows/elevenlabs-voice-agent-post-call-logging.md)
-I built and tested an English-language dental clinic voice receptionist in ElevenLabs, then connected it to an n8n post-call webhook. The workflow extracts call metadata and summaries, appends structured records to Google Sheets, and emails a call notification to the clinic team. The public JSON is a sanitized, inactive export; my live n8n setup is separate, and imported copies need their own credentials and destination settings.
-**Tech:** ElevenLabs Conversational AI · n8n · Webhooks · Google Sheets · Gmail · GPT-4o mini
-
-### 11. [Oakmere Living — WhatsApp AI Customer Support Assistant](projects/oakmere-whatsapp-ai-assistant/README.md)
-I built and tested the workflow in my configured environment before publishing this portfolio entry. For a fictional home and furniture retailer, it combines knowledge-grounded product and policy answers, voice-note processing, stock and verified order lookups, support-ticket creation, and human escalation with Telegram operator alerts. The repository includes sanitized, inactive n8n JSON exports for the assistant, RAG ingestion, and Telegram error alerts. They require your own credentials and environment configuration; see the [workflow files and safety notes](projects/oakmere-whatsapp-ai-assistant/README.md#sanitized-workflow-exports).
-**Tech:** n8n · WhatsApp Cloud API · Supabase Vector DB · RAG · Groq · OpenRouter fallback · Telegram · SQL
-
+### 11. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.md)
+An AI email assistant that reads incoming clinic emails, uses clinic information configured in its prompt to draft a reply, and sends the response through Gmail. The exported workflow does not include a human approval step.
+**Tech:** n8n · Gmail API · Groq / Llama
 ## Education
 
 Diploma in Computer Science & Technology — Satkhira Polytechnic Institute | 2023
