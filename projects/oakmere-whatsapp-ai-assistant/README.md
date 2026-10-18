@@ -1,6 +1,6 @@
 # Oakmere Living — WhatsApp AI Customer Support Assistant
 
-An n8n-based portfolio project for multilingual, knowledge-grounded WhatsApp support for a fictional home and furniture retailer.
+An n8n-based portfolio project for multilingual, knowledge-grounded WhatsApp support for a fictional home, kitchen, travel and wellness retailer.
 
 ## Overview
 
@@ -18,7 +18,7 @@ I built and tested this workflow in my configured environment before publishing 
 
 ## Architecture
 
-WhatsApp Cloud API → n8n webhook and message normalization → duplicate-message guard → text/voice processing → intent and policy routing → Supabase retrieval or approved data lookup → primary LLM with configured fallback → output validation → WhatsApp response.
+WhatsApp Cloud API → duplicate-message guard → message-type routing (text, voice, unsupported) → voice transcription → AI agent with tools (knowledge base, stock lookup, order lookup, support ticket, Telegram alert) → reply formatting → WhatsApp response. A fallback model runs if the primary model fails.
 
 Telegram is used for operator alerts.
 
@@ -29,13 +29,13 @@ Telegram is used for operator alerts.
 - **Knowledge retrieval:** Supabase vector store and a curated catalogue/policy reference.
 - **Language models:** Groq primary model and configurable OpenRouter fallback.
 - **Structured data:** inventory/order lookups and SQL verification checks.
-- **Safety controls:** order-verification gates, duplicate-message protection, bounded retries, output validation, and human escalation.
+- **Safety controls:** order-verification gates, duplicate-message protection, bounded retries, reply formatting, and human escalation.
 
 ## Key safeguards
 
 - Do not disclose order status unless required customer verification checks pass.
 - Ground policy answers in retrieved evidence; escalate when evidence is missing or conflicting.
-- Persist WhatsApp message IDs with a unique constraint to reduce duplicate side effects.
+- Ignore any WhatsApp message ID already seen in the last 24 hours (workflow static data, production runs).
 - Store provider credentials in n8n Credentials; never commit secrets.
 - Bound retries and fallback attempts and provide a safe terminal-failure path.
 - Send operators sanitized diagnostics rather than tokens or unnecessary customer data.
