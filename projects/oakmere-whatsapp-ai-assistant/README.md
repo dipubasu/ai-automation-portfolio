@@ -6,6 +6,8 @@ An n8n-based portfolio project for multilingual, knowledge-grounded WhatsApp sup
 
 I built and tested this workflow in my configured environment before publishing this portfolio entry. It is designed to answer product, delivery, returns, and store-policy questions from a curated knowledge base; process supported voice notes; look up inventory and verified order status; create support tickets; and escalate uncertain or sensitive cases to a human operator.
 
+<!-- ADD DEMO VIDEO LINK AND 2-3 SCREENSHOTS HERE (docs/images/...) -->
+
 **Testing status:** I built and tested this workflow myself in my configured environment. In my own testing, 18 of 19 listed scenarios passed; this does not represent exhaustive coverage. The public repository includes sanitized, inactive n8n workflow JSON exports for the assistant, knowledge-base ingestion, and Telegram error alerts. These are publication-safe starting points, not a hosted deployment; configure your own credentials and IDs before importing or running them.
 
 ## What the assistant handles vs. escalates
@@ -19,6 +21,19 @@ I built and tested this workflow in my configured environment before publishing 
 ## Architecture
 
 WhatsApp Cloud API → duplicate-message guard → message-type routing (text, voice, unsupported) → voice transcription → AI agent with tools (knowledge base, stock lookup, order lookup, support ticket, Telegram alert) → reply formatting → WhatsApp response. A fallback model runs if the primary model fails.
+
+```mermaid
+flowchart LR
+ A[WhatsApp message] --> B[Deduplicate<br/>24h message IDs]
+ B --> C{Message type}
+ C -->|text| E[AI agent]
+ C -->|voice| D[Groq Whisper<br/>transcription] --> E
+ C -->|other| F[Ask for text<br/>or voice note] --> E
+ E <-->|tools| T[Knowledge base RAG<br/>Stock lookup<br/>Order lookup<br/>Support ticket<br/>Telegram alert]
+ E --> G[Format reply] --> H[WhatsApp reply]
+ E -.->|primary fails| E2[Fallback agent<br/>OpenRouter] --> G
+ E2 -.->|fails too| X[Failure message<br/>+ owner Telegram alert]
+```
 
 Telegram is used for operator alerts.
 
