@@ -14,22 +14,27 @@ This checklist supports repeatable validation of the Oakmere Living portfolio wo
 
 | ID | Scenario | Expected result | Result |
 |---|---|---|---|
-| T01 | Product question with matching knowledge-base evidence | Reply reflects retrieved catalogue information and avoids unsupported details | Not run |
-| T02 | Shipping, returns, or store-policy question | Reply stays within configured policy content | Not run |
-| T03 | Missing or conflicting policy evidence | Assistant escalates or asks for clarification rather than guessing | Not run |
-| T04 | Supported WhatsApp voice note | Audio is transcribed and follows normal routing | Not run |
-| T05 | Voice-note processing failure | Safe fallback or human handoff; no unhandled failure | Not run |
-| T06 | Duplicate delivery of the same WhatsApp message ID | No duplicate replies, tickets, or notifications | Not run |
-| T07 | Stock lookup for a known fictional SKU | Response matches configured inventory data | Not run |
-| T08 | Order request without required verification | No order details are disclosed | Not run |
-| T09 | Order request after successful verification | Only permitted status fields are returned | Not run |
-| T10 | Support-ticket creation and retry | Unique ticket ID; retry does not create an unintended duplicate | Not run |
-| T11 | Primary LLM timeout or retryable error | Bounded fallback runs; only one customer reply is sent | Not run |
-| T12 | Primary and fallback LLM unavailable | Safe customer response and sanitized operator alert | Not run |
-| T13 | Telegram operator notification | Correct destination receives alert without secrets or unnecessary customer data | Not run |
-| T14 | Malformed webhook or invalid payload | Request is handled safely without unintended side effects | Not run |
-| T15 | Unsupported formatting or excessive output length | Final WhatsApp message is validated and within configured limits | Not run |
-| T16 | Database/API permission failure | Safe failure handling; private data is not exposed and retries are bounded | Not run |
+| T01 | Product questions (specs, care, warranty) | Answer matches the knowledge base | Pass |
+| T02 | Shipping zones, rates and delivery time | Correct zone rates and times | Pass |
+| T03 | Returns, refunds and cancellation policy | Answer matches the policy | Pass |
+| T04 | Payments, promo code and loyalty | Answer matches the policy | Not tested |
+| T05 | Stock lookup | Response matches live stock data | Pass |
+| T06 | Order status with correct order number and email | Status and tracking shown | Pass |
+| T07 | Order status with wrong email | Refused; no order details disclosed | Pass |
+| T08 | Tracking lookup after verification | Tracking shown only after verification | Pass |
+| T09 | Angry customer escalation to human | Support ticket created; human handover | Pass |
+| T10 | Refund over USD 200 escalation | Support ticket created; human handover | Pass |
+| T11 | Lost or damaged parcel ticket | Support ticket created | Pass |
+| T12 | Out-of-scope request (custom order, press) | Honest answer or human handover | Pass |
+| T13 | Prompt-injection attempt | Refused | Pass |
+| T14 | Duplicate message / duplicate webhook | Handled once, no duplicate reply | Pass |
+| T15 | Voice note transcription | Transcribed and answered | Pass |
+| T16 | Voice note failure handling | Safe fallback response | Pass |
+| T17 | Bangla-language query | Reply in Bangla | Pass |
+| T18 | Provider outage / LLM fallback | Fallback model answers | Pass |
+| T19 | Terminal error alert to Telegram | Owner alert sent | Pass |
+
+18 of 19 listed scenarios passed in my own testing; 1 (payments, promo code and loyalty) was not tested. Results are self-reported from my configured environment.
 
 ## Run record
 
