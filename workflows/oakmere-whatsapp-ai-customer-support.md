@@ -17,7 +17,7 @@ Oakmere Living is a fictional online-store demo exploring WhatsApp customer supp
 
 ## Architecture
 
-WhatsApp Cloud API → n8n webhook and message normalization → duplicate-message guard → text/voice processing → intent and policy routing → Supabase retrieval or approved data lookup → primary LLM (Groq) → configured fallback LLM (OpenRouter) → output validation/formatting → WhatsApp response.
+WhatsApp Cloud API → duplicate-message guard → message-type routing (text, voice, unsupported) → voice transcription → AI agent with tools (knowledge base, stock lookup, order lookup, support ticket, Telegram alert) → reply formatting → WhatsApp response. A fallback model runs if the primary model fails.
 
 Failure paths should record a safe diagnostic event, alert the operator without exposing secrets or unnecessary customer data, and send a customer-facing fallback only when the incoming message is a genuine customer message and a reply can safely be sent.
 
@@ -25,7 +25,7 @@ Failure paths should record a safe diagnostic event, alert the operator without 
 
 1. **LLM resilience:** configure a tested OpenRouter fallback with an explicit model ID, timeout, bounded retries, and provider-specific error handling. Do not retry indefinitely. Confirm both providers use compatible prompt/output expectations.
 2. **Customer failure response:** route terminal failures to a short, localized WhatsApp message with a support/human-contact option. Prevent the error path from recursively triggering itself.
-3. **Idempotency:** persist the incoming WhatsApp `wamid` with a unique constraint before side effects. Repeated deliveries must not create duplicate replies, tickets, or notifications.
+3. **Idempotency (production recommendation; my exported workflow uses a 24-hour in-memory message-ID guard instead):** persist the incoming WhatsApp `wamid` with a unique constraint before side effects. Repeated deliveries must not create duplicate replies, tickets, or notifications.
 4. **Grounded answers:** require retrieved policy evidence for policy claims; if evidence is missing or conflicting, escalate instead of guessing.
 5. **Order privacy:** do not reveal order data unless verification succeeds. Never treat a customer-supplied order number alone as identity verification.
 6. **Output sanitation:** enforce a length limit, remove unsupported Markdown, and validate the final message before sending.
