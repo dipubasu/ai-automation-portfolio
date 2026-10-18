@@ -17,6 +17,12 @@ AI Automation Developer specializing in n8n workflows, RAG systems, AI agents, a
 - **Integrations:** HubSpot · Facebook Graph API · Telegram API · Gmail OAuth2 · WhatsApp · REST APIs · Shotstack · YouTube API · Google Drive API
 - **Data & Infrastructure:** Supabase Vector DB · Google Sheets · Google Drive · API Authentication · Error Handling · Secure Credential Management
 
+## Featured projects
+
+1. **Oakmere Living — WhatsApp AI Customer Support Assistant:** n8n agent with RAG answers, live stock and order lookups (email-verified), voice-note transcription, support tickets and Telegram handover. Fictional store; 681 logged test executions, 6 errors (self-reported from my own n8n instance). [Project page](projects/oakmere-whatsapp-ai-assistant/README.md)
+2. **Veltoro Email Support — RAG with Human Approval:** drafts policy-grounded replies to customer emails; nothing is sent without human approval. [Project page](workflows/rag-email-customer-support-agent.md)
+3. **SmileCare Dental Clinic — ElevenLabs Voice AI Receptionist:** voice receptionist for a fictional clinic; a post-call n8n workflow logs summaries to Google Sheets and emails the clinic. [Project page](workflows/elevenlabs-voice-agent-post-call-logging.md)
+
 ## Workflow Library
 
 The workflows featured in this portfolio were built and tested by me in my configured environment before I published their portfolio entries. The published artifacts vary by project: some have importable JSON exports, while others currently have documentation only. These files are not hosted services, and a sanitized export may still need your own credentials, API access, IDs, and environment-specific configuration to run in another instance. Some workflows may be intentionally left inactive when they are not currently needed.
@@ -33,30 +39,32 @@ See each linked project entry for its scope, integrations, setup notes, and limi
 ## Projects
 
 ### 1. [Oakmere Living — WhatsApp AI Customer Support Assistant](projects/oakmere-whatsapp-ai-assistant/README.md)
-I built and tested the workflow in my configured environment before publishing this portfolio entry. For a fictional home and furniture retailer, it combines knowledge-grounded product and policy answers, voice-note processing, stock and verified order lookups, support-ticket creation, and human escalation with Telegram operator alerts. The repository includes sanitized, inactive n8n JSON exports for the assistant, RAG ingestion, and Telegram error alerts. They require your own credentials and environment configuration; see the [workflow files and safety notes](projects/oakmere-whatsapp-ai-assistant/README.md#sanitized-workflow-exports).
+I built and tested the workflow in my configured environment before publishing this portfolio entry. For a fictional home, kitchen, travel and wellness retailer, it combines knowledge-grounded product and policy answers, voice-note processing, stock and verified order lookups, support-ticket creation, and human escalation with Telegram operator alerts. The repository includes sanitized, inactive n8n JSON exports for the assistant, RAG ingestion, and Telegram error alerts. They require your own credentials and environment configuration; see the [workflow files and safety notes](projects/oakmere-whatsapp-ai-assistant/README.md#sanitized-workflow-exports).
 **Tech:** n8n · WhatsApp Cloud API · Supabase Vector DB · RAG · Groq · OpenRouter fallback · Telegram · SQL
 
-### 2. [SmileCare Dental Clinic — ElevenLabs Voice AI Receptionist](workflows/elevenlabs-voice-agent-post-call-logging.md)
+### 2. [Veltoro Email Support — RAG with Human Approval](workflows/rag-email-customer-support-agent.md)
+Detects unread customer emails via Gmail, cleans quoted replies/signatures, and uses a RAG agent (Groq, Supabase Vector Store, Gemini Embeddings) to draft a policy-grounded reply. A human reviews the draft before it is sent; rejected messages are flagged for manual review.
+**Tech:** n8n · Gmail API · Groq / Llama · Supabase Vector DB · Google Gemini Embeddings · RAG · Human-in-the-Loop Approval
+
+### 3. [SmileCare Dental Clinic — ElevenLabs Voice AI Receptionist](workflows/elevenlabs-voice-agent-post-call-logging.md)
 I built and tested an English-language dental clinic voice receptionist in ElevenLabs, then connected it to an n8n post-call webhook. The workflow extracts call metadata and summaries, appends structured records to Google Sheets, and emails a call notification to the clinic team. The public JSON is a sanitized, inactive export; my live n8n setup is separate, and imported copies need their own credentials and destination settings.
 **Tech:** ElevenLabs Conversational AI · n8n · Webhooks · Google Sheets · Gmail · GPT-4o mini
 
-### 3. [EstateBot — AI Real Estate Lead Qualification Agent](workflows/estatebot-ai-agent-memory-supabase-rag.md)
+## More projects
+
+### 4. [EstateBot — AI Real Estate Lead Qualification Agent](workflows/estatebot-ai-agent-memory-supabase-rag.md)
 A Telegram AI agent that answers property questions through Supabase retrieval and a property-ID lookup, then collects buyer requirements step by step and logs confirmed lead details to Google Sheets.
 **Tech:** n8n · Telegram API · Groq / Llama · Supabase Vector DB · RAG · Google Sheets
 Related: [EstateBot AI Agent + Memory + Supabase RAG](workflows/estatebot-ai-agent-memory-supabase-rag.json)
 
-### 4. [Veltoro Email Support — RAG with Human Approval](workflows/rag-email-customer-support-agent.md)
-Detects unread customer emails via Gmail, cleans quoted replies/signatures, and uses a RAG agent (Groq, Supabase Vector Store, Gemini Embeddings) to draft a policy-grounded reply. A human reviews the draft before it is sent; rejected messages are flagged for manual review.
-**Tech:** n8n · Gmail API · Groq / Llama · Supabase Vector DB · Google Gemini Embeddings · RAG · Human-in-the-Loop Approval
+### 5. [Automated Lead Management Pipeline](workflows/lead-intake-hubspot-crm-sync.md) — n8n + HubSpot CRM Automation
+Captures leads via webhook, validates submitted data, creates or updates HubSpot CRM records, and conditionally routes high-value opportunities. Includes Google Sheets logging and Telegram alerts for high-value leads and failed HubSpot syncs.
+**Tech:** n8n · HubSpot · Webhooks · Telegram · Google Sheets · REST APIs
 
-### 5. [Veltoro Messenger Assistant — AI Shopping Support](workflows/veltoro-messenger-ai-chatbot.md)
+### 6. [Veltoro Messenger Assistant — AI Shopping Support](workflows/veltoro-messenger-ai-chatbot.md)
 A Facebook Messenger webhook assistant that retrieves product information from a Supabase vector store and generates catalogue-grounded answers to customer questions.
 **Tech:** n8n · Facebook Graph API · Supabase · Google Gemini Embeddings · Groq / Llama · RAG
 Related: [Veltoro RAG Knowledge Base Setup](workflows/veltoro-rag-knowledge-base-setup.json)
-
-### 6. [Automated Lead Management Pipeline](workflows/lead-intake-hubspot-crm-sync.md) — n8n + HubSpot CRM Automation
-Captures leads via webhook, validates submitted data, creates or updates HubSpot CRM records, and conditionally routes high-value opportunities. Includes Google Sheets logging and Telegram alerts for high-value leads and failed HubSpot syncs.
-**Tech:** n8n · HubSpot · Webhooks · Telegram · Google Sheets · REST APIs
 
 ### 7. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.md)
 Multilingual (Bangla, English, Banglish) Telegram support assistant with conversation memory, voice-message understanding, and seamless escalation/hand-off to a human agent when needed.
@@ -79,6 +87,7 @@ A data-quality workflow that imports Excel customer records from Google Drive, m
 ### 11. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.md)
 An AI email assistant that reads incoming clinic emails, uses clinic information configured in its prompt to draft a reply, and sends the response through Gmail. The exported workflow does not include a human approval step.
 **Tech:** n8n · Gmail API · Groq / Llama
+
 ## Education
 
 Diploma in Computer Science & Technology — Satkhira Polytechnic Institute | 2023
