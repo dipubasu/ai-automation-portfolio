@@ -17,10 +17,10 @@
         "operation": "download",
         "fileId": {
           "__rl": true,
-          "value": "1F4eacM06Cay8CWf2iPUfdYl-m5Gpm_Om",
+          "value": "YOUR_FILE_ID",
           "mode": "list",
-          "cachedResultName": "Copy of EstateBot_Realty_Austin_Demo_Property_Knowledge_Base (1).pdf",
-          "cachedResultUrl": "https://drive.google.com/file/d/1F4eacM06Cay8CWf2iPUfdYl-m5Gpm_Om/view?usp=drivesdk"
+          "cachedResultName": "YOUR_FILE_NAME.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/YOUR_FILE_ID/view"
         },
         "options": {}
       },
