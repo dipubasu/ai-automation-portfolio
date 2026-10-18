@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "path": "64d67502-4704-49d0-bdec-6bb5bfa0831e"
+        "path": "YOUR_MCP_PATH"
       },
       "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
       "typeVersion": 2,
