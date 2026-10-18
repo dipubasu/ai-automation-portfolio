@@ -31,14 +31,6 @@ Telegram is used for operator alerts.
 - **Structured data:** inventory/order lookups and SQL verification checks.
 - **Safety controls:** order-verification gates, duplicate-message protection, bounded retries, output validation, and human escalation.
 
-## What the assistant handles vs. escalates
-
-| Group | What it handles |
-|---|---|
-| **Answered from the knowledge base** | Questions about the curated knowledge base: 24 products, shipping zones and rates, returns, refunds, warranty, payment methods, promotions, FAQs, and assistant guidelines. |
-| **Answered from live database lookup** | Current product stock, order status, and tracking information. Order details are shared only when both the order number and the email address match the database. |
-| **Escalated to a human with a support ticket** | A customer asks for a person, is angry or complains; a refund or compensation exceeds USD 200 or a refund is disputed; a parcel is lost, damaged, or stuck in customs; there is a payment problem or suspected fraud; legal, chargeback, or media issues are mentioned; a request is outside the knowledge base (such as custom orders, press, or partnerships); or the same issue remains unresolved after two attempts. |
-
 ## Key safeguards
 
 - Do not disclose order status unless required customer verification checks pass.
@@ -98,33 +90,6 @@ See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assi
 | Terminal error alert to Telegram | Pass |
 
 18 of 19 listed scenarios passed in my own testing; 1 (payments, promo code and loyalty) was not tested. Results are self-reported from my configured environment.
-
-## Evaluation results
-
-I tested the workflow in my configured environment. The test set covers categories such as product questions, shipping, returns policy, stock checks, order-status requests with correct verification, order-status requests with the wrong email, angry customers, out-of-scope requests, prompt-injection attempts, duplicate messages, voice notes, and Bangla-language queries.
-
-Replace the placeholders below with the actual counts from my test run. Do not treat placeholders as measured results.
-
-| Category | Questions tested | Resolved without handover | Correctly escalated | Incorrect or failed |
-|---|---:|---:|---:|---:|
-| Product questions | [count] | [count] | [count] | [count] |
-| Shipping | [count] | [count] | [count] | [count] |
-| Returns policy | [count] | [count] | [count] | [count] |
-| Stock check | [count] | [count] | [count] | [count] |
-| Order status — correct verification | [count] | [count] | [count] | [count] |
-| Order status — wrong email | [count] | [count] | [count] | [count] |
-| Angry customer / complaint | [count] | [count] | [count] | [count] |
-| Out-of-scope request | [count] | [count] | [count] | [count] |
-| Prompt injection attempt | [count] | [count] | [count] | [count] |
-| Duplicate message | [count] | [count] | [count] | [count] |
-| Voice note | [count] | [count] | [count] | [count] |
-| Bangla-language query | [count] | [count] | [count] | [count] |
-| **Total** | **[N]** | **[count]** | **[count]** | **[count]** |
-
-- **Resolved without human handover:** [X]% of [N]
-- **Correct escalation rate on cases that should escalate:** [Y]%
-
-**Results to be added after running the test set** with the final counts, including the total number of questions tested and the correct outcomes for each category. No per-category counts or success rates are claimed until those values are filled in.
 
 ## Limitations
 
