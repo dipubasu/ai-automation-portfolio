@@ -38,7 +38,7 @@
     },
     {
       "parameters": {
-        "endpointUrl": "http://n8n:5678/mcp/64d67502-4704-49d0-bdec-6bb5bfa0831e",
+        "endpointUrl": "http://n8n:5678/mcp/YOUR_MCP_PATH",
         "options": {}
       },
       "id": "2271a34f-0198-4420-a305-f13f6f6be619",
