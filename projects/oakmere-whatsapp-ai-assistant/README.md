@@ -91,6 +91,8 @@ See the [Oakmere WhatsApp assistant test plan](../../tests/oakmere-whatsapp-assi
 
 18 of 19 listed scenarios passed in my own testing; 1 (payments, promo code and loyalty) was not tested. Results are self-reported from my configured environment.
 
+*n8n execution log (as of 18 Oct 2026): 681 logged executions, 6 errors, all during development on 16 Oct; typical AI reply about 2 seconds. Self-reported from my own n8n instance.*
+
 ## Limitations
 
 This is a portfolio demonstration for a fictional store using demo data, not a hosted service or production deployment. Evaluation results are based on my own test set, and the impact figures below are assumptions rather than measured outcomes. The exported workflows are inactive and require your own credentials and environment-specific configuration before use.
