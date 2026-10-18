@@ -1,12 +1,12 @@
 # Oakmere WhatsApp AI Assistant — Test Plan
 
-This checklist supports repeatable validation of the Oakmere Living portfolio workflow. I built and tested the workflow in my configured environment before publishing the portfolio entry. This file does not claim that this repository update reran the workflow or that the cases below have recorded pass/fail evidence.
+This checklist supports repeatable validation of the Oakmere Living portfolio workflow. I built and tested the workflow in my configured environment before publishing the portfolio entry. Results below are self-reported from my own testing in my configured environment; this repository update did not rerun the workflow.
 
 ## How to use this checklist
 
 - Test in a non-production environment with fictional data and test credentials.
 - Record the date, n8n version, workflow revision, environment, and result for each test run.
-- Mark a case Pass or Fail only after observing the execution; otherwise leave it Not run.
+- Mark a case Pass or Fail only after observing the execution; otherwise leave it Not tested.
 - Do not include access tokens, personal customer data, or private order details in screenshots or logs.
 - When changing the workflow, rerun relevant cases before publishing the updated export.
 
