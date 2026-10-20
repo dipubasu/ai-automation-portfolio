@@ -6,7 +6,11 @@ An n8n-based portfolio project for multilingual, knowledge-grounded WhatsApp sup
 
 I built and tested this workflow in my configured environment before publishing this portfolio entry. It is designed to answer product, delivery, returns, and store-policy questions from a curated knowledge base; process supported voice notes; look up inventory and verified order status; create support tickets; and escalate uncertain or sensitive cases to a human operator.
 
-<!-- ADD DEMO VIDEO LINK AND 2-3 SCREENSHOTS HERE (docs/images/...) -->
+## Demo Video
+
+Watch the WhatsApp AI Customer Support Assistant demo: **[Play the demo video](https://drive.google.com/file/d/1vnoA_2zxv9qT1HPfu9BquTdWrt23Yku4/view)** · [Open video player](https://drive.google.com/file/d/1vnoA_2zxv9qT1HPfu9BquTdWrt23Yku4/preview)
+
+The demo walks through customer support questions, live stock lookup, verified order status, and human escalation. The video is hosted on Google Drive; viewers may need to be signed in if Drive sharing permissions restrict access.
 
 **Testing status:** I built and tested this workflow myself in my configured environment. In my own testing, 18 of 19 listed scenarios passed; this does not represent exhaustive coverage. The public repository includes sanitized, inactive n8n workflow JSON exports for the assistant, knowledge-base ingestion, and Telegram error alerts. These are publication-safe starting points, not a hosted deployment; configure your own credentials and IDs before importing or running them.
 
