@@ -22,6 +22,7 @@ AI Automation Developer specializing in n8n workflows, RAG systems, AI agents, a
 1. **Oakmere Living — WhatsApp AI Customer Support Assistant:** n8n agent with RAG answers, live stock and order lookups (email-verified), voice-note transcription, support tickets and Telegram handover. Fictional store; 681 logged test executions, 6 errors (self-reported from my own n8n instance). [Project page](projects/oakmere-whatsapp-ai-assistant/README.md)
 2. **Veltoro Email Support — RAG with Human Approval:** drafts policy-grounded replies to customer emails; nothing is sent without human approval. [Project page](workflows/rag-email-customer-support-agent.md)
 3. **SmileCare Dental Clinic — ElevenLabs Voice AI Receptionist:** voice receptionist for a fictional clinic; a post-call n8n workflow logs summaries to Google Sheets and emails the clinic. [Project page](workflows/elevenlabs-voice-agent-post-call-logging.md)
+4. **Sarah — AI Voice Receptionist for Bright Smile Dental:** ElevenLabs conversational voice agent with n8n appointment availability/booking workflows, Supabase slot storage, and post-call Google Sheets logging. Fictional clinic; published n8n exports are sanitized inactive templates that require your own credentials and configuration. [Project page](sarah-ai-dental-receptionist/README.md)
 
 ## Workflow Library
 
