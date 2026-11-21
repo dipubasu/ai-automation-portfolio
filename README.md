@@ -51,41 +51,45 @@ Detects unread customer emails via Gmail, cleans quoted replies/signatures, and 
 I built and tested an English-language dental clinic voice receptionist in ElevenLabs, then connected it to an n8n post-call webhook. The workflow extracts call metadata and summaries, appends structured records to Google Sheets, and emails a call notification to the clinic team. The public JSON is a sanitized, inactive export; my live n8n setup is separate, and imported copies need their own credentials and destination settings.
 **Tech:** ElevenLabs Conversational AI · n8n · Webhooks · Google Sheets · Gmail · GPT-4o mini
 
+### 4. [Sarah — AI Voice Receptionist for Bright Smile Dental](sarah-ai-dental-receptionist/README.md)
+An ElevenLabs conversational voice receptionist for a fictional dental clinic. It handles clinic FAQs, checks appointment availability, books available slots through n8n and Supabase, and logs post-call details to Google Sheets. The repository includes sanitized, inactive n8n workflow exports that need your own credentials and configuration before use.
+**Tech:** ElevenLabs Conversational AI · n8n · Supabase · Google Sheets · Webhooks
+
 ## More projects
 
-### 4. [EstateBot — AI Real Estate Lead Qualification Agent](workflows/estatebot-ai-agent-memory-supabase-rag.md)
+### 6. [EstateBot — AI Real Estate Lead Qualification Agent](workflows/estatebot-ai-agent-memory-supabase-rag.md)
 A Telegram AI agent that answers property questions through Supabase retrieval and a property-ID lookup, then collects buyer requirements step by step and logs confirmed lead details to Google Sheets.
 **Tech:** n8n · Telegram API · Groq / Llama · Supabase Vector DB · RAG · Google Sheets
 Related: [EstateBot AI Agent + Memory + Supabase RAG](workflows/estatebot-ai-agent-memory-supabase-rag.json)
 
-### 5. [Automated Lead Management Pipeline](workflows/lead-intake-hubspot-crm-sync.md) — n8n + HubSpot CRM Automation
+### 6. [Automated Lead Management Pipeline](workflows/lead-intake-hubspot-crm-sync.md) — n8n + HubSpot CRM Automation
 Captures leads via webhook, validates submitted data, creates or updates HubSpot CRM records, and conditionally routes high-value opportunities. Includes Google Sheets logging and Telegram alerts for high-value leads and failed HubSpot syncs.
 **Tech:** n8n · HubSpot · Webhooks · Telegram · Google Sheets · REST APIs
 
-### 6. [Veltoro Messenger Assistant — AI Shopping Support](workflows/veltoro-messenger-ai-chatbot.md)
+### 7. [Veltoro Messenger Assistant — AI Shopping Support](workflows/veltoro-messenger-ai-chatbot.md)
 A Facebook Messenger webhook assistant that retrieves product information from a Supabase vector store and generates catalogue-grounded answers to customer questions.
 **Tech:** n8n · Facebook Graph API · Supabase · Google Gemini Embeddings · Groq / Llama · RAG
 Related: [Veltoro RAG Knowledge Base Setup](workflows/veltoro-rag-knowledge-base-setup.json)
 
-### 7. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.md)
+### 8. [Telegram Chatbot + Human Bridge Support](workflows/telegram-chatbot-human-bridge-support.md)
 Multilingual (Bangla, English, Banglish) Telegram support assistant with conversation memory, voice-message understanding, and seamless escalation/hand-off to a human agent when needed.
 **Tech:** n8n · Groq / Llama · Google Gemini · Telegram API
 
-### 8. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.md)
+### 9. [AI Travel Assistant — MCP-Based Multi-Tool Agent](workflows/ai-travel-assistant-mcp.md)
 An MCP-based conversational agent that coordinates multiple tools for hotel search, restaurant discovery, live weather information, and currency conversion.
 **Tech:** n8n · MCP Server/Client · Google Gemini · Geoapify · Open-Meteo
 Related: [Travel MCP Server](workflows/travel-mcp-server.json)
 
-### 9. [AI YouTube Video Automation — Multi-Scene Pipeline](workflows/youtube-automation-topic-to-video.md)
+### 10. [AI YouTube Video Automation — Multi-Scene Pipeline](workflows/youtube-automation-topic-to-video.md)
 An end-to-end pipeline that turns a topic into video metadata, a script, four scene prompts, generated images and voiceover, then renders a vertical video through Shotstack and uploads it to YouTube. The exported workflow sets upload privacy to private for review.
 **Tech:** n8n · OpenAI API · Cloudflare AI (Flux) · ElevenLabs TTS · Shotstack API · YouTube API
 
-### 10. [Excel Data Cleaning Automation](projects/excel-data-cleaning-automation/README.md)
+### 11. [Excel Data Cleaning Automation](projects/excel-data-cleaning-automation/README.md)
 A data-quality workflow that imports Excel customer records from Google Drive, maps inconsistent headers, standardizes names and contact fields, validates email/phone/date values, detects duplicate records, routes questionable rows for review, exports a cleaned workbook, and logs run metrics to Google Sheets.
 **Tech:** n8n · JavaScript · Google Drive · Google Sheets · Excel/XLSX · Data Validation · Deduplication · Error Handling
 **Highlights:** configurable rules, audit-friendly original values, explicit needs-review handling, and failure branches for key integration steps.
 
-### 11. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.md)
+### 12. [Automated Dental Clinic Support Agent](workflows/dental-clinic-email-support-agent.md)
 An AI email assistant that reads incoming clinic emails, uses clinic information configured in its prompt to draft a reply, and sends the response through Gmail. The exported workflow does not include a human approval step.
 **Tech:** n8n · Gmail API · Groq / Llama
 
